@@ -16,12 +16,12 @@ const integer=(value:unknown,min=0,max=Number.MAX_SAFE_INTEGER):value is number=
 const projectList=(value:unknown):value is RecordedProject[]=>Array.isArray(value)&&value.length<=3&&new Set(value).size===value.length&&value.every(id=>projectIds.includes(id));
 function validRun(value:unknown):value is RunRecord{
  if(!object(value))return false;
- return typeof value.id==='string'&&value.id.length>0&&value.id.length<=120&&integer(value.clan)&&integer(value.seed,0,0xffffffff)&&integer(value.years,0,634)&&integer(value.endedYear,1392,2026)&&value.endedYear-1392===value.years&&integer(value.generations,1,100)&&projectList(value.projects)&&typeof value.reason==='string'&&value.reason.length<=200&&(value.endingId===undefined||isEnding(value.endingId));
+ return typeof value.id==='string'&&value.id.length>0&&value.id.length<=120&&integer(value.clan)&&integer(value.seed,0,0xffffffff)&&integer(value.years,0,Number.MAX_SAFE_INTEGER-1392)&&integer(value.endedYear,1392)&&value.endedYear-1392===value.years&&integer(value.generations,1)&&projectList(value.projects)&&typeof value.reason==='string'&&value.reason.length<=200&&(value.endingId===undefined||isEnding(value.endingId));
 }
 function parseRecords(raw:string|null):RunRecords|null{
  if(raw===null)return empty();
  const value:unknown=JSON.parse(raw);
- if(!object(value)||value.version!==1||!integer(value.bestYears,0,634)||!integer(value.bestGenerations,0,100)||!projectList(value.projects)||!Array.isArray(value.recent)||value.recent.length>10||!value.recent.every(validRun))return null;
+ if(!object(value)||value.version!==1||!integer(value.bestYears,0,Number.MAX_SAFE_INTEGER-1392)||!integer(value.bestGenerations)||!projectList(value.projects)||!Array.isArray(value.recent)||value.recent.length>10||!value.recent.every(validRun))return null;
  if(new Set(value.recent.map(r=>r.id)).size!==value.recent.length||value.recent.some(r=>r.years>Number(value.bestYears)||r.generations>Number(value.bestGenerations)||r.projects.some(p=>!(value.projects as RecordedProject[]).includes(p))))return null;
  if(value.endings!==undefined&&(!Array.isArray(value.endings)||value.endings.length>endings.length||new Set(value.endings).size!==value.endings.length||!value.endings.every(isEnding)))return null;
  // Version 1 existed before ending collections. Only exact known titles are

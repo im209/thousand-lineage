@@ -1,6 +1,6 @@
 # 천년가문 개발 안내
 
-한국어 웹 기반 가문 생존 게임. 1392년의 첫 인물에서 시작해 계승 가능한 후손이 없거나 2026년에 도달할 때까지 플레이한다. React 19 + TypeScript + Vite + Zustand를 사용하며 서버나 API 키 없이 동작한다.
+한국어 웹 기반 가문 생존 게임. 1392년의 첫 인물에서 시작해 계승 가능한 후손이 없을 때까지 플레이한다. 2026년에는 생존 결말을 기록하고, 같은 가문으로 상한 없는 가상의 미래를 계속할 수 있다. React 19 + TypeScript + Vite + Zustand를 사용하며 서버나 API 키 없이 동작한다.
 
 ## 실행과 확인
 
@@ -19,7 +19,7 @@
 - `src/main.tsx`, `src/play-flow.*`: 화면과 초반 진행 안내
 - `src/growth-guide.*`, `src/choice-feedback.ts`: 현재 목표·스탯 혜택·선택 결과의 설명
 - `src/share-links.ts`, `src/challenge-landing.tsx`, `src/result-share.tsx`: 도전 링크 검증·미리보기·결과 비교·네이티브 공유·이미지 생성
-- `src/pixel-avatar.tsx`, `docs/AVATAR-SOURCES.md`: DiceBear 도트 초상과 고정 인물 시드. 원격 아바타 API에 의존하지 않음
+- `src/pixel-avatar.tsx`, `docs/AVATAR-SOURCES.md`: 자체 한복 도트 초상과 고정 인물 시드. 원격 아바타 API에 의존하지 않음
 - `src/game-panels.tsx`: 가족·선택 결과·후계자 비교
 - `src/society.ts`, `src/chronicles.ts`, `src/projects.ts`: 신분·정치, 생활사, 장기 과업
 - `src/endings.ts`, `src/chronicle-panels.tsx`: 결말 판정과 발견형 도감
@@ -41,6 +41,7 @@
 - 도전 URL은 실행할 명령이나 저장 파일이 아니다. 범위와 규칙 버전을 검증한 출발 조건·점수만 읽는다. 링크 수신만으로 게임을 덮어쓰지 않는다.
 - 도전의 출발/시뮬레이션 규칙이나 본관 ID 체계가 바뀌면 `CHALLENGE_RULES`를 갱신한다. 이전 규칙 링크로 같은 조건의 시작을 약속하지 않는다.
 - 기본 공유 문구·PNG·초대 페이지에 결말 이름이나 미발견 도감 정보를 넣지 않는다. 공유 취소를 성공·복사·다운로드로 처리하지 않는다.
+- `endless`는 2026년 생존 결말 뒤 미래 계속하기로만 활성화한다. 미래는 창작으로 표시하고, 기존 결말은 보존한다. 연도 상한을 다시 두지 않는다.
 - 저장 구조 version 1과 기존 ID 호환성을 보존한다. 같은 시드·출발 조건의 재도전을 유지한다.
 - 역사적 배경과 게임 확률·창작·대체역사를 구분한다. 본관 데이터의 공개 통계 범위를 현재 등록 전체라고 과장하지 않는다.
 

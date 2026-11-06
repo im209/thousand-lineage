@@ -18,7 +18,7 @@ describe('portable family challenges',()=>{
  it('rejects malformed, oversized, duplicated and out-of-range links',()=>{
   expect(readChallenge('')).toEqual({kind:'none'});
   for(const hash of ['#challenge=bad!','#challenge=','#challenge=e30&challenge=e30','#challenge='+('a'.repeat(2049))])expect(readChallenge(hash).kind).toBe('invalid');
-  for(const patch of [{version:2},{seed:-1},{seed:0x100000000},{clan:clans.length},{years:635},{generations:0},{origin:'king'},{rules:'<script>'}])expect(readChallenge(unsafe({...sample,...patch})).kind).toBe('invalid');
+  for(const patch of [{version:2},{seed:-1},{seed:0x100000000},{clan:clans.length},{years:Number.MAX_SAFE_INTEGER},{generations:0},{origin:'king'},{rules:'<script>'}])expect(readChallenge(unsafe({...sample,...patch})).kind).toBe('invalid');
  });
  it('keeps old-rule records readable but prevents silently offering an equivalent run',()=>{
   const data={...sample,rules:'older-rules'};expect(readChallenge(unsafe(data))).toEqual({kind:'ready',data,compatible:false});

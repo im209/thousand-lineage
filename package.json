@@ -10,8 +10,6 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@dicebear/core": "10.7.0",
-    "@dicebear/styles": "10.6.0",
     "@tailwindcss/vite": "^4.0.0",
     "@xyflow/react": "^12.0.0",
     "motion": "^12.0.0",

@@ -3,14 +3,14 @@ import type {StartingStanding,State} from './engine';
 
 // Bump when initial-life or simulation rules change. Old links remain readable,
 // but must not silently claim to offer the same rules after an update.
-export const CHALLENGE_RULES='family-20261106-2';
+export const CHALLENGE_RULES='family-20261106-3';
 export type ChallengeBenchmark={rules:string;years:number;generations:number};
 export type FamilyChallenge=ChallengeBenchmark&{version:1;seed:number;clan:number;origin:StartingStanding};
 export type ChallengeRead={kind:'none'}|{kind:'invalid'}|{kind:'ready';data:FamilyChallenge;compatible:boolean};
 const origins=['commoner','specialist','yangban','nobi'];
-const integer=(n:unknown,min:number,max:number):n is number=>typeof n==='number'&&Number.isInteger(n)&&n>=min&&n<=max;
+const integer=(n:unknown,min:number,max:number):n is number=>typeof n==='number'&&Number.isSafeInteger(n)&&n>=min&&n<=max;
 const record=(v:unknown):v is Record<string,unknown>=>v!==null&&typeof v==='object'&&!Array.isArray(v);
-export function validBenchmark(v:unknown):v is ChallengeBenchmark{return record(v)&&typeof v.rules==='string'&&/^[a-z0-9-]{1,40}$/.test(v.rules)&&integer(v.years,0,634)&&integer(v.generations,1,100)}
+export function validBenchmark(v:unknown):v is ChallengeBenchmark{return record(v)&&typeof v.rules==='string'&&/^[a-z0-9-]{1,40}$/.test(v.rules)&&integer(v.years,0,Number.MAX_SAFE_INTEGER-1392)&&integer(v.generations,1,Number.MAX_SAFE_INTEGER)}
 function validChallenge(v:unknown):v is FamilyChallenge{return record(v)&&v.version===1&&integer(v.seed,0,0xffffffff)&&integer(v.clan,0,clans.length-1)&&typeof v.origin==='string'&&origins.includes(v.origin)&&validBenchmark(v)}
 
 export function readChallenge(hash:string):ChallengeRead{

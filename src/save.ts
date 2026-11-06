@@ -8,7 +8,7 @@ const finite=(v:unknown)=>typeof v==='number'&&Number.isFinite(v);
 const strings=(v:unknown):v is string[]=>Array.isArray(v)&&v.every(x=>typeof x==='string');
 export function decodeSave(raw:string|null):State|null{
  try{const s:unknown=JSON.parse(raw??'null');if(!record(s)||s.version!==1||!record(s.people)||!record(s.stats)||!record(s.peak))return null;
- if(!Number.isInteger(s.year)||s.year<1392||s.year>2026||!clans[s.clan]||!['play','succession','ended'].includes(s.phase)||!events.some(e=>e.id===s.event))return null;
+ if(!Number.isSafeInteger(s.year)||s.year<1392||s.year>2026&&s.endless!==true||!clans[s.clan]||!['play','succession','ended'].includes(s.phase)||!events.some(e=>e.id===s.event))return null;
  if(!finite(s.seed)||!finite(s.rng)||!finite(s.debt)||s.debt<0||!finite(s.turn)||!finite(s.peak.year)||!finite(s.peak.wealth))return null;
  if(!s.people[s.head]||!s.people[s.founder]||!strings(s.moves)||!s.moves.length||!strings(s.seen)||!Array.isArray(s.legacies))return null;
  if(!s.legacies.every((l:unknown)=>record(l)&&typeof l.key==='string'&&finite(l.generation)))return null;
@@ -25,6 +25,7 @@ export function decodeSave(raw:string|null):State|null{
  if(s.report){const r=s.report;if(!record(r)||!finite(r.from)||!finite(r.to)||r.to!==s.year||typeof r.title!=='string'||typeof r.decision!=='string'||!record(r.changes)||!record(r.immediate)||!entries(r.entries)||!['borrowed','debtBefore','debtAfter'].every(k=>finite(r[k])))return null;if(![r.changes,r.immediate].every(obj=>Object.entries(obj).every(([k,v])=>k in labels&&finite(v))))return null;}
  if(s.report?.outcome!==undefined&&(typeof s.report.outcome!=='string'||s.report.outcome.length>2000))return null;
  if(s.representativeCount!==undefined&&(!Number.isInteger(s.representativeCount)||s.representativeCount<1))return null;
+ if(s.endless!==undefined&&typeof s.endless!=='boolean')return null;
  if(s.challenge!==undefined&&!validBenchmark(s.challenge))return null;
  if(s.runId!==undefined&&(typeof s.runId!=='string'||s.runId.length<1||s.runId.length>120))return null;
  if(s.introPending!==undefined&&typeof s.introPending!=='boolean')return null;
