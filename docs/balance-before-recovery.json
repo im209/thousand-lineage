@@ -1,0 +1,2006 @@
+{
+  "scope": "Seeds 1..N; deterministic policies, no human retention evidence. Rotating uses first three options; balanced is resource-aware without selecting a project. Project policies use the same resource scoring plus project progress/threshold preference. Completed project remains the sole target; no switching to other projects. First engine candidate chosen: adults before minors, then education and health.",
+  "results": [
+    {
+      "policy": "rotating",
+      "seeds": 30,
+      "meanYears": 529.27,
+      "medianYears": 634,
+      "fullSurvival": 23,
+      "meanTurns": 54.43,
+      "completedByTurn10": 0,
+      "completedByEnding": 0,
+      "medianCompletionTurn": null,
+      "medianCompletionYear": null,
+      "noDescendantEndings": 3,
+      "meanUnlockChoices": 0,
+      "meanFinalDebt": 1114.44,
+      "meanFinalHealth": 63.19,
+      "runs": [
+        {
+          "seed": 1,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 334,
+          "finalDebt": 0,
+          "finalHealth": 60.72
+        },
+        {
+          "seed": 2,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 199,
+          "finalDebt": 2111.66,
+          "finalHealth": 18.29
+        },
+        {
+          "seed": 3,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 318,
+          "finalDebt": 408.32,
+          "finalHealth": 58.3
+        },
+        {
+          "seed": 4,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 282,
+          "finalDebt": 206.06,
+          "finalHealth": 38.16
+        },
+        {
+          "seed": 5,
+          "years": 118,
+          "turns": 13,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 4,
+          "finalDebt": 0,
+          "finalHealth": 64.02
+        },
+        {
+          "seed": 6,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 224,
+          "finalDebt": 10.22,
+          "finalHealth": 70.97
+        },
+        {
+          "seed": 7,
+          "years": 54,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 70.05
+        },
+        {
+          "seed": 8,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 259,
+          "finalDebt": 9728.87,
+          "finalHealth": 35.68
+        },
+        {
+          "seed": 9,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 299,
+          "finalDebt": 0,
+          "finalHealth": 80.62
+        },
+        {
+          "seed": 10,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 270,
+          "finalDebt": 0,
+          "finalHealth": 51.46
+        },
+        {
+          "seed": 11,
+          "years": 634,
+          "turns": 61,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 242,
+          "finalDebt": 5159.41,
+          "finalHealth": 46.75
+        },
+        {
+          "seed": 12,
+          "years": 77,
+          "turns": 9,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 1,
+          "finalDebt": 0,
+          "finalHealth": 78.23
+        },
+        {
+          "seed": 13,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 439,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 14,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 197,
+          "finalDebt": 565.23,
+          "finalHealth": 49.38
+        },
+        {
+          "seed": 15,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 275,
+          "finalDebt": 0,
+          "finalHealth": 62.16
+        },
+        {
+          "seed": 16,
+          "years": 61,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 74.05
+        },
+        {
+          "seed": 17,
+          "years": 307,
+          "turns": 31,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 20,
+          "finalDebt": 47.15,
+          "finalHealth": 81.68
+        },
+        {
+          "seed": 18,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 262,
+          "finalDebt": 0,
+          "finalHealth": 30.62
+        },
+        {
+          "seed": 19,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 174,
+          "finalDebt": 5053.49,
+          "finalHealth": 55.05
+        },
+        {
+          "seed": 20,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 347,
+          "finalDebt": 726.41,
+          "finalHealth": 36.27
+        },
+        {
+          "seed": 21,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 239,
+          "finalDebt": 2176.36,
+          "finalHealth": 37.89
+        },
+        {
+          "seed": 22,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 351,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 23,
+          "years": 611,
+          "turns": 66,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 130,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 24,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 344,
+          "finalDebt": 5425.69,
+          "finalHealth": 40.55
+        },
+        {
+          "seed": 25,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 309,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 26,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 306,
+          "finalDebt": 340.19,
+          "finalHealth": 53.75
+        },
+        {
+          "seed": 27,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 258,
+          "finalDebt": 1474.22,
+          "finalHealth": 75.26
+        },
+        {
+          "seed": 28,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 361,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 29,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 304,
+          "finalDebt": 0,
+          "finalHealth": 51.22
+        },
+        {
+          "seed": 30,
+          "years": 68,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 74.71
+        }
+      ]
+    },
+    {
+      "policy": "balanced",
+      "seeds": 30,
+      "meanYears": 494.77,
+      "medianYears": 634,
+      "fullSurvival": 22,
+      "meanTurns": 50.83,
+      "completedByTurn10": 0,
+      "completedByEnding": 0,
+      "medianCompletionTurn": null,
+      "medianCompletionYear": null,
+      "noDescendantEndings": 3,
+      "meanUnlockChoices": 0,
+      "meanFinalDebt": 0,
+      "meanFinalHealth": 97.8,
+      "runs": [
+        {
+          "seed": 1,
+          "years": 171,
+          "turns": 18,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 6,
+          "finalDebt": 0,
+          "finalHealth": 99.42
+        },
+        {
+          "seed": 2,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 300,
+          "finalDebt": 0,
+          "finalHealth": 97.3
+        },
+        {
+          "seed": 3,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 324,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 4,
+          "years": 634,
+          "turns": 60,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 267,
+          "finalDebt": 0,
+          "finalHealth": 89.8
+        },
+        {
+          "seed": 5,
+          "years": 112,
+          "turns": 13,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 4,
+          "finalDebt": 0,
+          "finalHealth": 99.83
+        },
+        {
+          "seed": 6,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 370,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 7,
+          "years": 54,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 80.04
+        },
+        {
+          "seed": 8,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 346,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 9,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 321,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 10,
+          "years": 211,
+          "turns": 22,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 8,
+          "finalDebt": 0,
+          "finalHealth": 99.63
+        },
+        {
+          "seed": 11,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 329,
+          "finalDebt": 0,
+          "finalHealth": 91
+        },
+        {
+          "seed": 12,
+          "years": 77,
+          "turns": 9,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 1,
+          "finalDebt": 0,
+          "finalHealth": 94.9
+        },
+        {
+          "seed": 13,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 365,
+          "finalDebt": 0,
+          "finalHealth": 98.8
+        },
+        {
+          "seed": 14,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 179,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 15,
+          "years": 141,
+          "turns": 15,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 5,
+          "finalDebt": 0,
+          "finalHealth": 97.91
+        },
+        {
+          "seed": 16,
+          "years": 61,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 94.41
+        },
+        {
+          "seed": 17,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 333,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 18,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 321,
+          "finalDebt": 0,
+          "finalHealth": 92.5
+        },
+        {
+          "seed": 19,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 187,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 20,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 330,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 21,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 303,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 22,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 388,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 23,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 356,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 24,
+          "years": 634,
+          "turns": 69,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 281,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 25,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 324,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 26,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 275,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 27,
+          "years": 634,
+          "turns": 68,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 216,
+          "finalDebt": 0,
+          "finalHealth": 98.5
+        },
+        {
+          "seed": 28,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 323,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 29,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 331,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 30,
+          "years": 68,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 100
+        }
+      ]
+    },
+    {
+      "policy": "learning",
+      "seeds": 30,
+      "meanYears": 512.27,
+      "medianYears": 634,
+      "fullSurvival": 23,
+      "meanTurns": 52.13,
+      "completedByTurn10": 22,
+      "completedByEnding": 27,
+      "medianCompletionTurn": 7,
+      "medianCompletionYear": 1441,
+      "noDescendantEndings": 3,
+      "meanUnlockChoices": 4.97,
+      "meanFinalDebt": 231.46,
+      "meanFinalHealth": 94.27,
+      "runs": [
+        {
+          "seed": 1,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 10,
+          "descendants": 288,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 2,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 9,
+            "year": 1455
+          },
+          "unlockChoices": 8,
+          "descendants": 282,
+          "finalDebt": 0,
+          "finalHealth": 94.6
+        },
+        {
+          "seed": 3,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1433
+          },
+          "unlockChoices": 10,
+          "descendants": 382,
+          "finalDebt": 0,
+          "finalHealth": 94.48
+        },
+        {
+          "seed": 4,
+          "years": 634,
+          "turns": 60,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1420
+          },
+          "unlockChoices": 8,
+          "descendants": 285,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 5,
+          "years": 112,
+          "turns": 13,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 4,
+          "finalDebt": 0,
+          "finalHealth": 85.48
+        },
+        {
+          "seed": 6,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1441
+          },
+          "unlockChoices": 4,
+          "descendants": 321,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 7,
+          "years": 54,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 88.58
+        },
+        {
+          "seed": 8,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 12,
+            "year": 1497
+          },
+          "unlockChoices": 1,
+          "descendants": 221,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 9,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1428
+          },
+          "unlockChoices": 8,
+          "descendants": 233,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 10,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 8,
+            "year": 1458
+          },
+          "unlockChoices": 6,
+          "descendants": 259,
+          "finalDebt": 0,
+          "finalHealth": 97.24
+        },
+        {
+          "seed": 11,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1418
+          },
+          "unlockChoices": 0,
+          "descendants": 309,
+          "finalDebt": 6943.67,
+          "finalHealth": 47.63
+        },
+        {
+          "seed": 12,
+          "years": 77,
+          "turns": 9,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 1,
+          "finalDebt": 0,
+          "finalHealth": 64.51
+        },
+        {
+          "seed": 13,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 10,
+            "year": 1474
+          },
+          "unlockChoices": 6,
+          "descendants": 312,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 14,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1436
+          },
+          "unlockChoices": 3,
+          "descendants": 253,
+          "finalDebt": 0,
+          "finalHealth": 99.4
+        },
+        {
+          "seed": 15,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 24,
+            "year": 1629
+          },
+          "unlockChoices": 3,
+          "descendants": 288,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 16,
+          "years": 61,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": null,
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 80.94
+        },
+        {
+          "seed": 17,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 10,
+            "year": 1474
+          },
+          "unlockChoices": 11,
+          "descendants": 377,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 18,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1419
+          },
+          "unlockChoices": 8,
+          "descendants": 169,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 19,
+          "years": 235,
+          "turns": 24,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 11,
+            "year": 1480
+          },
+          "unlockChoices": 1,
+          "descendants": 6,
+          "finalDebt": 0,
+          "finalHealth": 98.33
+        },
+        {
+          "seed": 20,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1447
+          },
+          "unlockChoices": 6,
+          "descendants": 247,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 21,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 13,
+            "year": 1509
+          },
+          "unlockChoices": 4,
+          "descendants": 251,
+          "finalDebt": 0,
+          "finalHealth": 87.94
+        },
+        {
+          "seed": 22,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1444
+          },
+          "unlockChoices": 12,
+          "descendants": 278,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 23,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 7,
+          "descendants": 347,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 24,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 9,
+            "year": 1466
+          },
+          "unlockChoices": 3,
+          "descendants": 255,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 25,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 8,
+          "descendants": 352,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 26,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1433
+          },
+          "unlockChoices": 5,
+          "descendants": 259,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 27,
+          "years": 634,
+          "turns": 69,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 18,
+            "year": 1555
+          },
+          "unlockChoices": 7,
+          "descendants": 363,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 28,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 9,
+            "year": 1466
+          },
+          "unlockChoices": 9,
+          "descendants": 359,
+          "finalDebt": 0,
+          "finalHealth": 88.91
+        },
+        {
+          "seed": 29,
+          "years": 179,
+          "turns": 18,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 6,
+            "year": 1435
+          },
+          "unlockChoices": 1,
+          "descendants": 10,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 30,
+          "years": 68,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 7,
+            "year": 1441
+          },
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 100
+        }
+      ]
+    },
+    {
+      "policy": "trade",
+      "seeds": 30,
+      "meanYears": 526.9,
+      "medianYears": 634,
+      "fullSurvival": 24,
+      "meanTurns": 54.27,
+      "completedByTurn10": 29,
+      "completedByEnding": 30,
+      "medianCompletionTurn": 4.5,
+      "medianCompletionYear": 1412,
+      "noDescendantEndings": 3,
+      "meanUnlockChoices": 9.33,
+      "meanFinalDebt": 0,
+      "meanFinalHealth": 95.95,
+      "runs": [
+        {
+          "seed": 1,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1432
+          },
+          "unlockChoices": 15,
+          "descendants": 302,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 2,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 13,
+          "descendants": 278,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 3,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 13,
+          "descendants": 216,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 4,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 13,
+          "descendants": 252,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 5,
+          "years": 118,
+          "turns": 13,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 0,
+          "descendants": 4,
+          "finalDebt": 0,
+          "finalHealth": 82.98
+        },
+        {
+          "seed": 6,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 11,
+          "descendants": 358,
+          "finalDebt": 0,
+          "finalHealth": 99.5
+        },
+        {
+          "seed": 7,
+          "years": 54,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 7,
+            "year": 1438
+          },
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 73.22
+        },
+        {
+          "seed": 8,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 13,
+          "descendants": 284,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 9,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1428
+          },
+          "unlockChoices": 12,
+          "descendants": 277,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 10,
+          "years": 213,
+          "turns": 23,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 6,
+            "year": 1431
+          },
+          "unlockChoices": 3,
+          "descendants": 8,
+          "finalDebt": 0,
+          "finalHealth": 83.1
+        },
+        {
+          "seed": 11,
+          "years": 634,
+          "turns": 68,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 14,
+            "year": 1524
+          },
+          "unlockChoices": 11,
+          "descendants": 240,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 12,
+          "years": 77,
+          "turns": 9,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 7,
+            "year": 1442
+          },
+          "unlockChoices": 0,
+          "descendants": 1,
+          "finalDebt": 0,
+          "finalHealth": 86.73
+        },
+        {
+          "seed": 13,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 11,
+          "descendants": 324,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 14,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1436
+          },
+          "unlockChoices": 10,
+          "descendants": 188,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 15,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 12,
+          "descendants": 264,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 16,
+          "years": 61,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 71.5
+        },
+        {
+          "seed": 17,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 13,
+          "descendants": 356,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 18,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 11,
+          "descendants": 350,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 19,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1430
+          },
+          "unlockChoices": 9,
+          "descendants": 254,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 20,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1432
+          },
+          "unlockChoices": 13,
+          "descendants": 266,
+          "finalDebt": 0,
+          "finalHealth": 97.9
+        },
+        {
+          "seed": 21,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 14,
+          "descendants": 344,
+          "finalDebt": 0,
+          "finalHealth": 99.4
+        },
+        {
+          "seed": 22,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1437
+          },
+          "unlockChoices": 8,
+          "descendants": 210,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 23,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 9,
+          "descendants": 324,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 24,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 10,
+          "descendants": 166,
+          "finalDebt": 0,
+          "finalHealth": 98.6
+        },
+        {
+          "seed": 25,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1433
+          },
+          "unlockChoices": 11,
+          "descendants": 279,
+          "finalDebt": 0,
+          "finalHealth": 89.8
+        },
+        {
+          "seed": 26,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1445
+          },
+          "unlockChoices": 10,
+          "descendants": 301,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 27,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1417
+          },
+          "unlockChoices": 6,
+          "descendants": 286,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 28,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1439
+          },
+          "unlockChoices": 14,
+          "descendants": 283,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 29,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 14,
+          "descendants": 298,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 30,
+          "years": 68,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 5,
+            "year": 1417
+          },
+          "unlockChoices": 1,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 95.87
+        }
+      ]
+    },
+    {
+      "policy": "care",
+      "seeds": 30,
+      "meanYears": 541.47,
+      "medianYears": 634,
+      "fullSurvival": 25,
+      "meanTurns": 55.93,
+      "completedByTurn10": 30,
+      "completedByEnding": 30,
+      "medianCompletionTurn": 4,
+      "medianCompletionYear": 1407,
+      "noDescendantEndings": 3,
+      "meanUnlockChoices": 7.1,
+      "meanFinalDebt": 76.97,
+      "meanFinalHealth": 97.69,
+      "runs": [
+        {
+          "seed": 1,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 6,
+          "descendants": 357,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 2,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 5,
+          "descendants": 332,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 3,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 14,
+          "descendants": 347,
+          "finalDebt": 0,
+          "finalHealth": 90.4
+        },
+        {
+          "seed": 4,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 5,
+          "descendants": 286,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 5,
+          "years": 123,
+          "turns": 13,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 7,
+            "year": 1439
+          },
+          "unlockChoices": 0,
+          "descendants": 4,
+          "finalDebt": 0,
+          "finalHealth": 99.55
+        },
+        {
+          "seed": 6,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 11,
+          "descendants": 329,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 7,
+          "years": 65,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 0,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 99.12
+        },
+        {
+          "seed": 8,
+          "years": 634,
+          "turns": 66,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 8,
+          "descendants": 367,
+          "finalDebt": 0,
+          "finalHealth": 96.7
+        },
+        {
+          "seed": 9,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1418
+          },
+          "unlockChoices": 10,
+          "descendants": 314,
+          "finalDebt": 0,
+          "finalHealth": 93.73
+        },
+        {
+          "seed": 10,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1431
+          },
+          "unlockChoices": 3,
+          "descendants": 220,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 11,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1428
+          },
+          "unlockChoices": 4,
+          "descendants": 114,
+          "finalDebt": 2309,
+          "finalHealth": 79.67
+        },
+        {
+          "seed": 12,
+          "years": 77,
+          "turns": 9,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 7,
+            "year": 1442
+          },
+          "unlockChoices": 0,
+          "descendants": 1,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 13,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1432
+          },
+          "unlockChoices": 14,
+          "descendants": 371,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 14,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 7,
+          "descendants": 334,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 15,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 7,
+          "descendants": 177,
+          "finalDebt": 0,
+          "finalHealth": 99.4
+        },
+        {
+          "seed": 16,
+          "years": 61,
+          "turns": 7,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 1,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 98.42
+        },
+        {
+          "seed": 17,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 9,
+          "descendants": 319,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 18,
+          "years": 634,
+          "turns": 69,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1419
+          },
+          "unlockChoices": 10,
+          "descendants": 236,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 19,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1436
+          },
+          "unlockChoices": 9,
+          "descendants": 322,
+          "finalDebt": 0,
+          "finalHealth": 92.2
+        },
+        {
+          "seed": 20,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1432
+          },
+          "unlockChoices": 6,
+          "descendants": 277,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 21,
+          "years": 634,
+          "turns": 68,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 9,
+          "descendants": 309,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 22,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 12,
+          "descendants": 383,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 23,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 9,
+          "descendants": 282,
+          "finalDebt": 0,
+          "finalHealth": 91.3
+        },
+        {
+          "seed": 24,
+          "years": 634,
+          "turns": 62,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 7,
+          "descendants": 198,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 25,
+          "years": 634,
+          "turns": 67,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1421
+          },
+          "unlockChoices": 9,
+          "descendants": 329,
+          "finalDebt": 0,
+          "finalHealth": 90.1
+        },
+        {
+          "seed": 26,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 7,
+            "year": 1445
+          },
+          "unlockChoices": 4,
+          "descendants": 289,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 27,
+          "years": 634,
+          "turns": 63,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 5,
+            "year": 1417
+          },
+          "unlockChoices": 7,
+          "descendants": 298,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 28,
+          "years": 634,
+          "turns": 65,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 6,
+            "year": 1432
+          },
+          "unlockChoices": 12,
+          "descendants": 293,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 29,
+          "years": 634,
+          "turns": 64,
+          "fullSurvival": true,
+          "completion": {
+            "turn": 4,
+            "year": 1407
+          },
+          "unlockChoices": 14,
+          "descendants": 363,
+          "finalDebt": 0,
+          "finalHealth": 100
+        },
+        {
+          "seed": 30,
+          "years": 68,
+          "turns": 8,
+          "fullSurvival": false,
+          "completion": {
+            "turn": 3,
+            "year": 1402
+          },
+          "unlockChoices": 1,
+          "descendants": 0,
+          "finalDebt": 0,
+          "finalHealth": 100
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# 천년가문 개발 안내
+
+한국어 웹 기반 가문 생존 게임. 1392년의 첫 인물에서 시작해 계승 가능한 후손이 없거나 2026년에 도달할 때까지 플레이한다. React 19 + TypeScript + Vite + Zustand를 사용하며 서버나 API 키 없이 동작한다.
+
+## 실행과 확인
+
+- Node.js 22.17 이상. 의존성 설치: `npm ci`
+- 로컬 실행: `npm run dev` (http://127.0.0.1:5173)
+- 빌드: `npm run build`
+- 엔진·저장 테스트: `npm test`
+- 브라우저: 최초 `npx playwright install chromium`, 이후 `npm run test:e2e`
+- Windows PowerShell 실행 정책 문제가 있으면 `npm.cmd`와 `npx.cmd`를 사용한다.
+- `main` push 후 GitHub Actions가 검사·빌드하고 GitHub Pages에 배포한다. 최초 Settings → Pages → Source: GitHub Actions 설정이 필요하다.
+
+## 코드 위치
+
+- `src/engine.ts`: 난수·시간 진행·가족·계승·선택·결과
+- `src/store.ts`, `src/save.ts`, `src/records.ts`: 자동 저장·검사·백업·회차 기록
+- `src/main.tsx`, `src/play-flow.*`: 화면과 초반 진행 안내
+- `src/game-panels.tsx`: 가족·선택 결과·후계자 비교
+- `src/society.ts`, `src/chronicles.ts`, `src/projects.ts`: 신분·정치, 생활사, 장기 과업
+- `src/endings.ts`, `src/chronicle-panels.tsx`: 결말 판정과 발견형 도감
+- `src/clan-census.json`: 2015 공개 성씨·본관 자료. 실행에 필요한 생성 결과가 포함되어 있어 재수집 없이 빌드 가능
+- `e2e/`: 데스크톱·모바일 실제 브라우저 흐름 검증
+
+## 유지할 사용자 요구
+
+- 밝은 배경, 선명한 글씨, 큰 선택지. 전통 장식은 소량 사용한다.
+- 초보자에게 사건과 선택을 먼저 보여준다. 상세 메뉴는 ‘가문 살펴보기’, 과업·진로는 ‘가문의 방향 정하기’에서 펼친다.
+- 새 가문과 재도전은 창시자의 이름·신분·출발 조건을 보여주고 확인 버튼에서 멈춘다. 확인 전 시간이 흐르면 안 된다.
+- 출발 신분은 성씨와 무관하게 무작위 배정하며 직접 고르게 하지 않는다.
+- 결말 도감은 미발견 제목·분류·설명·조건·힌트가 DOM과 접근성 트리에 새지 않게 한다. 회차 종료 후 대표 결말 하나만 공개한다.
+- 가족 이야기를 결과 수치보다 먼저 보여준다. 선택 후 결과, 다음 사건의 첫 부분으로 화면을 이동한다.
+- 여성 후손 등 성씨가 달라진 인물도 계보와 계승에서 보존한다. 인물 이름 대신 안정적인 ID로 관계를 연결한다.
+- 저장 구조 version 1과 기존 ID 호환성을 보존한다. 같은 시드·출발 조건의 재도전을 유지한다.
+- 역사적 배경과 게임 확률·창작·대체역사를 구분한다. 본관 데이터의 공개 통계 범위를 현재 등록 전체라고 과장하지 않는다.
+
+## 배포와 협업
+
+소스 저장소는 `im209/thousand-lineage`, Pages 목표 주소는 `https://im209.github.io/thousand-lineage/`이다. 빌드 출력 `dist/`와 `node_modules/`는 Git에 올리지 않는다. API 키·인증 토큰·개인 로컬 설정도 올리지 않는다. `vite.config.ts`의 상대 base를 유지해 프로젝트 하위 경로에서도 동작하게 한다.
+
+기존 서비스는 https://thousand-lineage.kklee09.chatgpt.site 이다. 이 저장소의 GitHub Actions는 GitHub Pages만 배포한다. 두 호스트와 로컬 개발 주소의 진행·수집 기록은 브라우저 origin별로 별개다.
+
+다음 개선 후보는 초보자용 규칙·용어 축소와 혼인·첫아이·계승을 통한 점진적 학습이다. 아직 단계별 기능 해금은 구현하지 않았으므로 완료된 것으로 설명하지 않는다.

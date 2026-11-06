@@ -1,0 +1,13 @@
+node_modules/
+.npm-cache/
+dist/
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.tar.gz
+*.zip
+.env
+.env.*
+!.env.example
+.DS_Store
+.claude/settings.local.json
