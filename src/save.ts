@@ -2,6 +2,7 @@ import {events,clans,labels} from './data';
 import {validate,type State} from './engine';
 import {projects} from './projects';
 import {chronicles} from './chronicles';
+import {validBenchmark} from './share-links';
 const record=(v:unknown):v is Record<string,any>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const finite=(v:unknown)=>typeof v==='number'&&Number.isFinite(v);
 const strings=(v:unknown):v is string[]=>Array.isArray(v)&&v.every(x=>typeof x==='string');
@@ -24,6 +25,7 @@ export function decodeSave(raw:string|null):State|null{
  if(s.report){const r=s.report;if(!record(r)||!finite(r.from)||!finite(r.to)||r.to!==s.year||typeof r.title!=='string'||typeof r.decision!=='string'||!record(r.changes)||!record(r.immediate)||!entries(r.entries)||!['borrowed','debtBefore','debtAfter'].every(k=>finite(r[k])))return null;if(![r.changes,r.immediate].every(obj=>Object.entries(obj).every(([k,v])=>k in labels&&finite(v))))return null;}
  if(s.report?.outcome!==undefined&&(typeof s.report.outcome!=='string'||s.report.outcome.length>2000))return null;
  if(s.representativeCount!==undefined&&(!Number.isInteger(s.representativeCount)||s.representativeCount<1))return null;
+ if(s.challenge!==undefined&&!validBenchmark(s.challenge))return null;
  if(s.runId!==undefined&&(typeof s.runId!=='string'||s.runId.length<1||s.runId.length>120))return null;
  if(s.introPending!==undefined&&typeof s.introPending!=='boolean')return null;
  if(s.introPending&&(s.year!==1392||s.turn!==0||s.phase!=='play'||s.report||s.head!==s.founder||s.event!=='h1392'))return null;

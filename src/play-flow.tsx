@@ -22,7 +22,7 @@ export function FirstChoiceGuide({s}:{s:State}){
  return <div className="first-choice-guide">
   <Avatar person={person} size={42}/>
   <div><strong>{person.name}{s.turn<3?`의 ${['첫 번째','두 번째','세 번째'][s.turn]} 선택`:''}</strong>
-   <p>{s.turn===0?'아래에서 하나를 눌러 첫 이야기를 시작하세요.':s.turn<3?'선택 하나가 끝나면, 가족에게 생긴 일을 읽어보세요.':`${s.year-person.born}세 · ${person.job} · ${person.region}`}</p>
+   <p><span className="representative-sex">{person.sex==='남'?'남성':'여성'}</span> · {s.turn===0?'아래에서 하나를 눌러 첫 이야기를 시작하세요.':s.turn<3?'선택 하나가 끝나면, 가족에게 생긴 일을 읽어보세요.':`${s.year-person.born}세 · ${person.job} · ${person.region}`}</p>
   </div><span aria-hidden="true">↓</span>
  </div>;
 }

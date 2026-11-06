@@ -1,5 +1,6 @@
 import {clans,events,regions,jobFor,type Stat,type Event} from './data';
 import {decisionFeedback} from './choice-feedback';
+import type {ChallengeBenchmark} from './share-links';
 import {projects,projectState,projectComplete,projectMatches,projectChoice,type ProjectId,type ProjectState} from './projects';
 import {societyState,randomStartingStanding,initializeSociety,societyAnnual,retireOffice,nextSocietyEvent,prepareSocialEvent,wrapAlternateHistory,socialLockReason,applySocialAction,type StartingStanding,type Society} from './society';
 import {nextChronicleEvent,prepareChronicleEvent,chronicleLockReason,applyChronicleAction,type ChronicleState} from './chronicles';
@@ -9,7 +10,7 @@ export {projects,projectState,projectProgress,projectComplete,projectMatches} fr
 export type {ProjectId} from './projects';
 export type Person={intendedJob?:'trade'|'study';id:string;name:string;surname:string;clan:number;sex:'여'|'남';born:number;died:number|null;parents:string[];adoptiveParents:string[];spouses:string[];children:string[];generation:number;job:string;education:number;health:number;region:string;trait:string;ability:number;estate:number;alive:boolean;lineage:boolean;life:{year:number;text:string}[]};
 export type TurnReport={outcome?:string;from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:{year:number;text:string;kind:string}[]};
-export type State={introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:{year:number;text:string;kind:string}[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
+export type State={challenge?:ChallengeBenchmark;introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:{year:number;text:string;kind:string}[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
 const clamp=(n:number)=>Math.max(0,Math.min(100,n));
 export function rand(s:State){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296}
 const pick=<T,>(s:State,a:T[])=>a[Math.floor(rand(s)*a.length)];
