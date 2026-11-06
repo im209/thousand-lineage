@@ -1,4 +1,5 @@
 import {clans,events,regions,jobFor,type Stat,type Event} from './data';
+import {decisionFeedback} from './choice-feedback';
 import {projects,projectState,projectComplete,projectMatches,projectChoice,type ProjectId,type ProjectState} from './projects';
 import {societyState,randomStartingStanding,initializeSociety,societyAnnual,retireOffice,nextSocietyEvent,prepareSocialEvent,wrapAlternateHistory,socialLockReason,applySocialAction,type StartingStanding,type Society} from './society';
 import {nextChronicleEvent,prepareChronicleEvent,chronicleLockReason,applyChronicleAction,type ChronicleState} from './chronicles';
@@ -7,7 +8,7 @@ export type {StartingStanding,Society,SocialFocus} from './society';
 export {projects,projectState,projectProgress,projectComplete,projectMatches} from './projects';
 export type {ProjectId} from './projects';
 export type Person={intendedJob?:'trade'|'study';id:string;name:string;surname:string;clan:number;sex:'여'|'남';born:number;died:number|null;parents:string[];adoptiveParents:string[];spouses:string[];children:string[];generation:number;job:string;education:number;health:number;region:string;trait:string;ability:number;estate:number;alive:boolean;lineage:boolean;life:{year:number;text:string}[]};
-export type TurnReport={from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:{year:number;text:string;kind:string}[]};
+export type TurnReport={outcome?:string;from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:{year:number;text:string;kind:string}[]};
 export type State={introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:{year:number;text:string;kind:string}[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
 const clamp=(n:number)=>Math.max(0,Math.min(100,n));
 export function rand(s:State){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296}
@@ -18,10 +19,10 @@ export function selectProject(state:State,id:ProjectId):State{
  const s=structuredClone(state);s.projects=structuredClone(projectState(s));s.projects.active=id;return s;
 }
 export function turnYears(s:State){return /^(social-|chronicle-)/.test(s.event)?{min:3,max:3}:s.turn<3?{min:5,max:5}:{min:10,max:15}}
-function advanceProject(s:State,c:import('./data').Choice){
+function advanceProject(s:State,c:import('./data').Choice,countChoice=true){
  const active=projectState(s).active;if(!active||projectComplete(s,active))return;
  s.projects=structuredClone(projectState(s));
- if(projectMatches(s,c))s.projects.progress[active]=Math.min(3,s.projects.progress[active]+1);
+ if(countChoice&&projectMatches(s,c)){const previous=s.projects.progress[active];s.projects.progress[active]=Math.min(3,previous+1);if(s.projects.progress[active]>previous)log(s,`${projects.find(p=>p.id===active)!.title} · 관련 선택 ${s.projects.progress[active]}/3`,'project-progress');}
  const project=projects.find(p=>p.id===active)!;
  if(s.projects.progress[active]<3||s.stats[project.stat]<project.threshold)return;
  s.projects.completed.push(active);s.projects.active=null;
@@ -40,7 +41,7 @@ function advanceProject(s:State,c:import('./data').Choice){
 }
 function person(s:State,born:number,generation:number,clan:number,sex?:'여'|'남',lineage=false):Person {const c=clans[clan];return {id:`p${Object.keys(s.people).length+1}`,name:c.surname+pick(s,born<1900?['덕수','정희','영수','순이','성준','복례','정원','명수','옥희','도윤']:['서연','민준','지우','하윤','서준','수현','지민','도현']),surname:c.surname,clan,sex:sex??pick(s,['여','남']),born,died:null,parents:[],adoptiveParents:[],spouses:[],children:[],generation,job:s.year-born<18?'미성년':jobFor(s.year,s.stats.education>60,false),education:s.stats.education,health:55+Math.floor(rand(s)*40),region:s.moves.at(-1)!,trait:pick(s,['신중함','다정함','진취적','끈기 있음']),ability:30+Math.floor(rand(s)*60),estate:s.year-born<18?0:5+Math.floor(rand(s)*10),alive:true,lineage,life:[]}}
 function add(s:State,p:Person){s.people[p.id]=p;return p}
-export function create(seed:number,clan=0,origin:StartingStanding=randomStartingStanding(seed)):State {const s:State={representativeCount:1,version:1,seed:seed>>>0,rng:seed>>>0,year:1392,clan,people:{},head:'',founder:'',stats:{wealth:40,stability:50,status:25,education:25,health:65,reputation:30,connections:35,cohesion:65},debt:0,phase:'play',event:'h1392',seen:[],log:[],legacies:[],peak:{year:1392,wealth:40},moves:['경상도'],endReason:'',turn:0};s.moves=[pick(s,regions)];s.stats.wealth=25+Math.floor(rand(s)*40);s.stats.education=15+Math.floor(rand(s)*35);const f=add(s,person(s,1392-18-Math.floor(rand(s)*9),1,clan,undefined,true));s.head=s.founder=f.id;f.job=pick(s,['농민','상인','수공업자','학인']);initializeSociety(s,origin);s.society!.focus='advancement';s.peak.wealth=s.stats.wealth;log(s,`${clans[clan].label} ${f.name}, 가문의 첫 장을 열다.`);return s}
+export function create(seed:number,clan=0,origin:StartingStanding=randomStartingStanding(seed)):State {const s:State={representativeCount:1,version:1,seed:seed>>>0,rng:seed>>>0,year:1392,clan,people:{},head:'',founder:'',stats:{wealth:40,stability:50,status:25,education:25,health:65,reputation:30,connections:35,cohesion:65},debt:0,phase:'play',event:'h1392',seen:[],log:[],legacies:[],peak:{year:1392,wealth:40},moves:['경상도'],endReason:'',turn:0};s.moves=[pick(s,regions)];s.stats.wealth=25+Math.floor(rand(s)*40);s.stats.education=15+Math.floor(rand(s)*35);const f=add(s,person(s,1392-18-Math.floor(rand(s)*9),1,clan,undefined,true));s.head=s.founder=f.id;f.job=pick(s,['농민','상인','수공업자','학인']);initializeSociety(s,origin);s.society!.focus='livelihood';s.peak.wealth=s.stats.wealth;log(s,`${clans[clan].label} ${f.name}, 가문의 첫 장을 열다.`);return s}
 export function candidates(s:State){return Object.values(s.people).filter(p=>p.lineage&&p.alive&&p.id!==s.head).sort((a,b)=>Number(s.year-b.born>=18)-Number(s.year-a.born>=18)||b.education-a.education||b.health-a.health)}
 function marry(s:State,p:Person){const c=pick(s,clans.filter(c=>c.id!==p.clan));const spouse=add(s,person(s,s.year-20-Math.floor(rand(s)*12),p.generation,c.id,p.sex==='여'?'남':'여'));spouse.region=p.region;p.spouses.push(spouse.id);spouse.spouses.push(p.id);p.life.push({year:s.year,text:`${spouse.name}와 혼인`});spouse.life.push({year:s.year,text:`${p.name}와 혼인`});log(s,`${p.name}와 ${spouse.name}, 혼인하다.`);s.stats.connections=clamp(s.stats.connections+2)}
 function die(s:State,p:Person){p.alive=false;p.died=s.year;p.life.push({year:s.year,text:'생을 마침'});log(s,`${p.name}, ${s.year-p.born}세에 생을 마치다.`);const heirs=p.children.map(id=>s.people[id]).filter(c=>c.alive);if(heirs.length){const share=p.estate/heirs.length;heirs.forEach(h=>h.estate+=share)}else s.stats.wealth=clamp(s.stats.wealth+p.estate*.1);p.estate=0}
@@ -87,9 +88,13 @@ export function choose(state:State,index:number):State {
  const immediate:Partial<Record<Stat,number>>={};for(const k of Object.keys(before) as Stat[])immediate[k]=s.stats[k]-before[k];
  const duration=turnYears(s);s.turn++;const until=Math.min(2026,s.year+duration.min+Math.floor(rand(s)*(duration.max-duration.min+1)));
  while(s.year<until&&s.phase==='play'){annual(s);if(events.some(e=>e.year===s.year&&!s.seen.includes(e.id)))break}
+ if(s.phase!=='ended')advanceProject(s,c,false);
+ if(s.stats.wealth>s.peak.wealth)s.peak={year:s.year,wealth:s.stats.wealth};
  if(s.phase==='play')s.event=nextEvent(s).id;
+ if(before.connections<60&&s.stats.connections>=60)log(s,'사회적 연결 60 달성! 거래 확장 사건의 큰 거래 비용이 재산 8에서 3으로 줄어듭니다.','benefit');
  const changes:Partial<Record<Stat,number>>={};for(const k of Object.keys(before) as Stat[])changes[k]=s.stats[k]-before[k];
- s.report={from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
+ const actionEntry=s.log.slice(logStart).find(l=>['society','alternate','chronicle'].includes(l.kind)&&l.text!==e.title+' — '+c.title);
+ s.report={outcome:(c.socialAction||c.chronicleAction)&&actionEntry?actionEntry.text:decisionFeedback(e,c,index),from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
 }
 export function beginStory(state:State):State{if(!state.introPending||state.phase!=='play')return state;return {...state,introPending:false}}
 export function continueStory(state:State):State{if(!state.report)return state;const s=structuredClone(state);delete s.report;return s}

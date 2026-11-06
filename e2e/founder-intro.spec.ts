@@ -21,6 +21,9 @@ test('meet the generated founder before the first decision, with identity preser
  for(const text of [`${before.year-founder.born}세`,founder.sex==='여'?'여성':'남성',`${founder.born}년생`])await expect(bio).toContainText(text);
  for(const text of [founder.region,founder.trait,founder.job])await expect(facts).toContainText(text);
  const labels:Record<string,string>={wealth:'재산',stability:'생계',status:'사회적 영향력',education:'교육',health:'생활환경',reputation:'명성',connections:'연결',cohesion:'결속'};
+ await expect(intro.getByRole('button',{name:'이 인물로 시작하기 →',exact:true})).toBeInViewport({ratio:1});
+ await expect(intro.locator('.founder-stats')).toBeHidden();
+ await intro.locator('.founder-extra > summary').click();
  const stats=intro.locator('.founder-stats');
  for(const [key,label] of Object.entries(labels)){await expect(stats).toContainText(label);await expect(stats.getByText(String(Math.round(before.stats[key])),{exact:true}).first()).toBeVisible();}
  const titles:Record<string,string>={commoner:'상민 가문',specialist:'기술·실무 가문',yangban:'양반 가문',nobi:'노비 신분의 가문'};

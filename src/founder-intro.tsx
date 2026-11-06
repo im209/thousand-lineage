@@ -20,16 +20,18 @@ export function FounderIntro({s,onBegin,error,saved}:{s:State;onBegin:()=>void;e
   <div className="founder-layout"><div className="founder-person">
    <div className="founder-portrait"><span>1392</span><Avatar person={founder} size={142}/><small>가문의 첫 번째 인물</small></div>
    <p className="founder-clan">{clans[s.clan].label}</p><h1 ref={title} tabIndex={-1}>{founder.name}</h1>
-   <p className="founder-bio">{s.year-founder.born}세 · {founder.sex==='여'?'여성':'남성'} · {founder.born}년생</p>
+   <p className="founder-bio">{s.year-founder.born}세 · {founder.sex==='여'?'여성':'남성'} · {founder.born}년생 · 미혼</p>
    <dl className="founder-facts"><div><dt>살고 있는 곳</dt><dd>{founder.region}</dd></div><div><dt>지금의 생업</dt><dd>{founder.job}</dd></div><div><dt>타고난 성향</dt><dd>{founder.trait}</dd></div></dl>
    <p className="founder-person-note">아직 혼인하지 않은 한 사람.<br/>이 작은 시작에서 가족의 이야기가 이어집니다.</p>
   </div><div className="founder-details">
    <AssignedBackground s={s}/>
+  </div></div>
+  <div className="founder-begin"><p><b>이 사람과 첫 선택을 해볼까요?</b><span>처음에는 생업과 가족 이야기부터 시작합니다.</span></p><button className="primary" onClick={onBegin}>이 인물로 시작하기 →</button><small>{saved?'이 인물과 출발 조건을 저장했습니다.':'저장 상태를 확인해 주세요.'}</small></div>
+  <details className="founder-extra"><summary>출발 능력치와 이 신분의 가능성 살펴보기</summary>
    <div className="founder-starting-point"><h3>이 출발점에서는</h3><p>{openingHints[origin]}</p></div>
    <div className="founder-stat-heading"><h3>가문의 출발 능력치</h3><span>0–100 기준</span></div>
    <dl className="founder-stats">{(Object.keys(labels) as Stat[]).map(key=><div key={key}><dt>{labels[key]}</dt><dd>{Math.round(s.stats[key])}</dd><i aria-hidden="true"><b style={{width:`${s.stats[key]}%`}}/></i></div>)}</dl>
-  </div></div>
-  <div className="founder-begin"><p><b>준비되면 첫 이야기를 시작하세요.</b><span>버튼을 누르기 전에는 시간이 흐르지 않습니다.</span></p><button className="primary" onClick={onBegin}>이 인물로 시작하기 →</button><small>{saved?'이 인물과 출발 조건을 저장했습니다.':'저장 상태를 확인해 주세요.'}</small></div>
+  </details>
   {error&&<p className="save-warning" role="alert">{error}</p>}
  </section></main>;
 }

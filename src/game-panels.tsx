@@ -18,13 +18,16 @@ export function TurnResult({s,onContinue}:{s:State;onContinue:()=>void}){
   ??entries.find(e=>e.text.includes('혼인'))
   ??entries.find(e=>e.kind==='growth')
   ??entries.find(e=>e.text.includes('생을 마치다'));
- const headline=milestone?.text??head.name+', '+(r.to-r.from)+'년의 시간을 지나왔습니다.';
+ const headline=r.outcome??milestone?.text??head.name+', '+(r.to-r.from)+'년의 시간을 지나왔습니다.';
  return <section className="event turn-result" aria-label="선택 결과">
   <p className="eyebrow">{r.to-r.from}년 동안, 우리 가족에게</p>
   <div className="result-year">{r.from}<span>→</span>{r.to}<small>년</small></div>
   <h2 className="result-headline">{headline}</h2>
   <p className="decision-recap">내가 고른 길 · “{r.decision}”</p>
-  <div className="turn-highlights" aria-label="이번 선택 이후 가족의 이야기">
+  <div className="immediate-effects" aria-label="선택 직후 변화">{(Object.entries(r.immediate) as [Stat,number][]).filter(([,v])=>Math.abs(v)>=.5).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,3).map(([stat,value])=><span key={stat}>{labels[stat]} <b className={value>=0?'up':'down'}>{value>=0?'+':''}{value.toFixed(1)}</b></span>)}</div><small className="immediate-label">선택 직후의 주요 변화 · 기간 전체 변화는 아래에서 확인합니다.</small>
+  {r.entries.some(e=>e.kind==='project-progress')&&<div className="goal-result" role="status"><b>이번 선택으로 목표에 한 걸음</b>{r.entries.filter(e=>e.kind==='project-progress').map((e,i)=><p key={i}>{e.text}</p>)}</div>}
+  {r.entries.some(e=>e.kind==='benefit')&&<div className="benefit-result" role="status"><b>쌓은 능력이 새 혜택으로</b>{r.entries.filter(e=>e.kind==='benefit').map((e,i)=><p key={i}>{e.text}</p>)}</div>}
+  <h3 className="family-time-heading">그동안 가족에게는</h3><div className="turn-highlights" aria-label="이번 선택 이후 가족의 이야기">
    {visible.length?visible.slice(0,expanded?visible.length:4).map((l,i)=><article key={i}><span>{l.text.includes('태어나다')?'새 생명':l.text.includes('생을 마치다')?'기억':l.text.includes('혼인')?'인연':l.kind==='growth'?'성장':'변화'}</span><div><small>{l.year}년</small><p>{l.text}</p></div></article>):<p>{head.name}의 가족은 조용한 날들을 보냈습니다.</p>}
   </div>
   {visible.length>4&&<button className="text-button" aria-expanded={expanded} onClick={()=>setExpandedReport(expanded?'':reportKey)}>{expanded?'접기':`이번 기간 기록 ${visible.length}개 모두 보기`}</button>}

@@ -5,10 +5,10 @@ import {decodeSave} from './save';
 function fixture(seed=42,origin:StartingStanding='commoner'){const s=create(seed,0,origin);s.year=1600;s.people[s.head].born=1575;s.people[s.head].sex='남';s.people[s.head].education=80;s.people[s.head].ability=80;s.stats={wealth:80,education:80,status:50,connections:80,reputation:80,cohesion:80,health:80,stability:80};s.event='social-career';return s}
 describe('social progression and alternate history',()=>{
  it('initializes backgrounds independently of surname and preserves pure helpers and focus changes',()=>{
-  const a=create(42,0,'nobi'),b=create(42,500,'nobi');expect(a.stats).toEqual(b.stats);expect(a.society).toEqual(b.society);expect(a.society!.standing).toBe('nobi');expect(a.society!.focus).toBe('advancement');
+  const a=create(42,0,'nobi'),b=create(42,500,'nobi');expect(a.stats).toEqual(b.stats);expect(a.society).toEqual(b.society);expect(a.society!.standing).toBe('nobi');expect(a.society!.focus).toBe('livelihood');
   const raw=JSON.stringify(a);societyState(a);examCandidate(a);examChance(a);coupChance(a);expect(JSON.stringify(a)).toBe(raw);
-  const next=selectSocialFocus(a,'politics');expect(next.year).toBe(a.year);expect(next.rng).toBe(a.rng);expect(a.society!.focus).toBe('advancement');
-  expect(selectSocialFocus(choose(a,0),'politics').society!.focus).toBe('advancement');
+  const next=selectSocialFocus(a,'politics');expect(next.year).toBe(a.year);expect(next.rng).toBe(a.rng);expect(a.society!.focus).toBe('livelihood');
+  expect(selectSocialFocus(choose(a,0),'politics').society!.focus).toBe('livelihood');
  });
  it('requires earned emancipation and prevents technical or unfree families bypassing the exam route',()=>{
   const s=fixture(42,'nobi');s.event='social-free';s.stats.wealth=24;expect(choiceAvailable(s,0)).toBe(false);expect(choose(s,0)).toBe(s);
@@ -66,7 +66,7 @@ describe('social progression and alternate history',()=>{
   const minor=fixture();minor.year=1900;minor.people[minor.head].born=1890;applySocialAction(minor,'modern-study',()=>0);expect(minor.people[minor.head].job).toBe('미성년');expect(minor.people[minor.head].intendedJob).toBe('study');
  });
  it('keeps a focused career chain on three-year decisions and returns to family life at its milestone',()=>{
-  const s=fixture();let next=continueStory(choose(s,0));expect(next.event).toBe('social-career');expect(turnYears(next)).toEqual({min:3,max:3});
+  const s=selectSocialFocus(fixture(),'advancement');let next=continueStory(choose(s,0));expect(next.event).toBe('social-career');expect(turnYears(next)).toEqual({min:3,max:3});
   next.society!.examPassed=true;next.society!.examPerson=next.head;next=continueStory(choose(next,2));expect(next.event).toBe('social-court');expect(next.society!.office).toBe('local');
   next.society!.recognition=2;next.stats.education=80;next.stats.connections=80;next.stats.reputation=80;next=choose(next,2);expect(next.society!.standing).toBe('yangban');expect(next.society!.focus).toBe('livelihood');expect(next.event.startsWith('social-')).toBe(false);
  });

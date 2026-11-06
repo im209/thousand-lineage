@@ -6,7 +6,7 @@ async function fixture(page:Page,mode:'fresh'|'locked'|'reward'|'ended'='fresh')
  await page.goto('/');
  await page.evaluate(async mode=>{
   const path='/src/engine.ts';const engine=await import(path);const s=engine.create(42,0);
-  s.runId='progression-fixture';if(s.society)s.society.focus='livelihood';
+  s.runId='progression-fixture';
   if(mode==='locked')s.event='life0';
   if(mode==='reward'){
    s.projects={active:'care',progress:{learning:0,trade:0,care:2},completed:[]};
