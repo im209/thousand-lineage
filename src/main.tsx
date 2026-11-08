@@ -30,6 +30,7 @@ import {BackgroundFate,SocietyPanel,SocietySummary} from './society-panels';
 import {endings} from './endings';
 import {recordedEndingFor} from './records';
 import {ProjectBoard,RecordShelf,FamilyOutlook} from './progression-panels';
+import './pixel.css';
 function download(name:string,body:Blob){const url=URL.createObjectURL(body);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function App(){const {game:g,start,choose,succeed,continueStory,continueFuture,beginStory,selectProject,selectSocialFocus,selectChronicle,error,saved,records,recordError}=useGame();const [invite,setInvite]=useState(()=>readChallenge(location.hash));const [screen,setScreen]=useState(()=>invite.kind==='none'?(g?'game':'home'):'challenge');const [randomPicked,setRandomPicked]=useState(false);const [tab,setTab]=useState('story');const [overview,setOverview]=useState(false);const [search,setSearch]=useState('');const [clan,setClan]=useState(-1);const [limit,setLimit]=useState(40);const matches=searchClans(search);const [person,setPerson]=useState<Person|null>(null);const [notice,setNotice]=useState('');const s=g;const h=s?.people[s.head];const result=s?summary(s):null;
  const closePerson=useCallback(()=>setPerson(null),[]);

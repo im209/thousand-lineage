@@ -28,7 +28,9 @@ test('a real new family has a visible goal and three family decisions, without a
  }
  if((await state(page)).phase==='play'){
   await page.screenshot({path:`test-results/${info.project.name}-growth-goal.png`,fullPage:true});
-  await page.reload();await expect(page.getByLabel('현재 목표 진행')).toContainText('함께 사는 집');
+  // A lucky seed can finish the care project within these three turns, which clears the active goal.
+  await page.reload();
+  if(!(await state(page)).projects.completed.includes('care'))await expect(page.getByLabel('현재 목표 진행')).toContainText('함께 사는 집');
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
