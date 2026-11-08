@@ -30,9 +30,11 @@ test('project selection persists, marks matching choices, and first three turns 
  await openStoryTools(page);
  const board=page.getByRole('region',{name:'가문 과업'});
  await board.getByRole('button',{name:/배움의 집/}).click();
- await expect(board.getByRole('heading',{name:'배움의 집'})).toBeVisible();
+ await expect(page.getByRole('region',{name:'가문의 목표와 성장 혜택'}).getByRole('heading',{name:'배움의 집'})).toBeVisible();
+ await expect(board.getByRole('button',{name:/배움의 집/})).toHaveAttribute('aria-pressed','true');
  await page.reload();await openStoryTools(page);
- await expect(board.getByRole('heading',{name:'배움의 집'})).toBeVisible();
+ await expect(page.getByRole('region',{name:'가문의 목표와 성장 혜택'}).getByRole('heading',{name:'배움의 집'})).toBeVisible();
+ await expect(board.getByRole('button',{name:/배움의 집/})).toHaveAttribute('aria-pressed','true');
  const learningChoice=page.getByRole('button',{name:/배움에 미래를 건다/});
  await expect(learningChoice).toContainText('가문 과업 진행 +1');
  await expect(page.locator('.event')).toContainText('이번 선택 후 5년을 진행합니다');

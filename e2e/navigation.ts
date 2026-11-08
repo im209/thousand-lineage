@@ -8,7 +8,7 @@ export async function openGameTab(page:Page,name:string){
 }
 
 export async function openStoryTools(page:Page){
- const tools=page.locator('details.story-tools');
+ const tools=page.locator('details.goal-picker');
  if(await tools.getAttribute('open')===null)await tools.locator('summary').click();
  await expect(tools).toHaveAttribute('open','');
 }

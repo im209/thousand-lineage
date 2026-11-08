@@ -4,14 +4,14 @@ import {projects,projectState,projectProgress,projectComplete,type ProjectId,typ
 import type {RunRecords} from './records';
 import {endings} from './endings';
 
-export function ProjectBoard({s,onSelect}:{s:State;onSelect:(id:ProjectId)=>void}){
+export function ProjectBoard({s,onSelect,picker=false}:{s:State;onSelect:(id:ProjectId)=>void;picker?:boolean}){
  const [open,setOpen]=useState(false);
  const state=projectState(s),active=projects.find(p=>p.id===state.active);
  const editable=s.phase==='play'&&!s.report;
- const showOptions=editable&&(open||(!active&&state.completed.length<projects.length));
- return <section className={`project-board ${active?'has-active':''}`} aria-label="가문 과업">
-  <div className="project-heading"><div><span className="eyebrow">가문이 함께 만드는 것</span><h3>{active?active.title:state.completed.length===3?'세 가지 유산을 남긴 가문':'이번 가문의 목표를 정해보세요'}</h3></div><span className="project-count">완성 {state.completed.length} / 3</span></div>
-  {active&&<><div className="project-progress"><div className="project-steps" aria-label={`선택 진행 ${projectProgress(s,active.id)} / 3`}>{[1,2,3].map(n=><i key={n} className={projectProgress(s,active.id)>=n?'done':''}>{projectProgress(s,active.id)>=n?'✓':n}</i>)}</div><span>관련 선택 {projectProgress(s,active.id)} / 3 · {labels[active.stat]} {Math.round(s.stats[active.stat])} / {active.threshold}</span></div><p className="project-reward"><b>완성하면</b> {active.reward}</p>{editable&&<button className="project-switch" onClick={()=>setOpen(!open)}>{open?'과업 목록 접기':'다른 과업 보기'} ↗</button>}</>}
+ const showOptions=editable&&(picker||open||(!active&&state.completed.length<projects.length));
+ return <section className={`project-board ${active?'has-active':''} ${picker?'picker':''}`} aria-label="가문 과업">
+  {!picker&&<div className="project-heading"><div><span className="eyebrow">가문이 함께 만드는 것</span><h3>{active?active.title:state.completed.length===3?'세 가지 유산을 남긴 가문':'이번 가문의 목표를 정해보세요'}</h3></div><span className="project-count">완성 {state.completed.length} / 3</span></div>}
+  {active&&!picker&&<><div className="project-progress"><div className="project-steps" aria-label={`선택 진행 ${projectProgress(s,active.id)} / 3`}>{[1,2,3].map(n=><i key={n} className={projectProgress(s,active.id)>=n?'done':''}>{projectProgress(s,active.id)>=n?'✓':n}</i>)}</div><span>관련 선택 {projectProgress(s,active.id)} / 3 · {labels[active.stat]} {Math.round(s.stats[active.stat])} / {active.threshold}</span></div><p className="project-reward"><b>완성하면</b> {active.reward}</p>{editable&&<button className="project-switch" onClick={()=>setOpen(!open)}>{open?'과업 목록 접기':'다른 과업 보기'} ↗</button>}</>}
   {!active&&state.completed.length<3&&!editable&&<p className="project-reward">다음 이야기에서 새로운 과업을 선택할 수 있습니다.</p>}
   {showOptions&&<><p className="project-intro">선택을 쌓아 유산을 완성하세요. 완성한 유산은 특별 선택을 열어줍니다.</p><div className="project-options">{projects.map(p=><button key={p.id} disabled={projectComplete(s,p.id)} aria-pressed={state.active===p.id} className={`project-option ${p.id}`} onClick={()=>{onSelect(p.id);setOpen(false)}}><span>{projectComplete(s,p.id)?'완성 ✓':p.id==='learning'?'배움':p.id==='trade'?'상업':'돌봄'}</span><strong>{p.title}</strong><small>{p.requirement}</small><p>{p.reward}</p><b>{projectComplete(s,p.id)?'특별 선택 해금됨':state.active===p.id?'진행 중':'이 과업 시작 →'}</b></button>)}</div></>}
   {state.completed.length>0&&<div className="earned-projects">{projects.filter(p=>state.completed.includes(p.id)).map(p=><span key={p.id}>✦ {p.title}</span>)}</div>}

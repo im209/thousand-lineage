@@ -17,14 +17,14 @@ async function noOverflow(page:Page){expect(await page.evaluate(()=>document.doc
 test('first play presents an actionable choice before optional systems, which remain accessible',async({page},info)=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
  await start(page);
- const before=await saved(page),tools=page.locator('details.story-tools');
+ const before=await saved(page),tools=page.locator('details.goal-picker');
  await expect(page.locator('.first-choice-guide')).toBeVisible();
  await expect(page.locator('.choice').first()).toBeInViewport({ratio:1});
  await expect(page.getByRole('button',{name:'신분·권력',exact:true})).toBeHidden();
  await expect(page.locator('.quick-stats')).toBeHidden();
  expect(await tools.getAttribute('open')).toBeNull();
  await expect(page.getByRole('region',{name:'가문 과업'})).toBeHidden();
- const positions=await page.evaluate(()=>({choice:document.querySelector('.choice')!.getBoundingClientRect().top,tools:document.querySelector('.story-tools')!.getBoundingClientRect().top}));
+ const positions=await page.evaluate(()=>({choice:document.querySelector('.choice')!.getBoundingClientRect().top,tools:document.querySelector('.goal-picker')!.getBoundingClientRect().top}));
  expect(positions.tools).toBeGreaterThan(positions.choice);
  await expect(page.locator('.event')).toHaveCSS('opacity','1');
  await page.screenshot({path:`test-results/${info.project.name}-focused-first-choice.png`,fullPage:true});

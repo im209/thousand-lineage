@@ -202,3 +202,75 @@ input{background:#fff!important;border:var(--px-line)!important;color:var(--px-i
  .hero-scene{margin-top:22px}
 }
 @media(prefers-reduced-motion:reduce){.first-choice-guide>span{animation:none}}
+
+/* Goal card: project picker and route shortcuts (replaces the old "가문의 방향 정하기" panel). */
+.goal-picker{margin-top:14px;border-top:2px dashed #d9ccab;padding-top:12px}
+.goal-picker>summary{cursor:pointer;font-family:var(--px-font);font-size:13px;color:var(--px-ink);list-style:none;display:flex;justify-content:space-between;align-items:center}
+.goal-picker>summary::-webkit-details-marker{display:none}
+.goal-picker>summary::after{content:'+';font-size:18px}
+.goal-picker[open]>summary::after{content:'−'}
+.goal-picker .project-board.picker{margin:12px 0 0;padding:0!important;border:0!important;background:none!important}
+.project-option{border:var(--px-thin)!important;background:#fff!important}
+.project-option[aria-pressed="true"]{background:var(--px-gold-soft)!important}
+.project-option:hover:not(:disabled){background:var(--px-green-soft)!important}
+.growth-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:16px;padding-top:14px;border-top:2px dashed #d9ccab;font-size:12px;color:var(--px-muted)}
+.growth-links span{flex-basis:100%}
+.growth-links button{font-family:var(--px-font);font-size:13px;color:var(--px-teal-dark)!important;padding:8px 10px!important;border:var(--px-thin)!important;background:#fff!important}
+.growth-links button:hover{background:var(--px-gold-soft)!important}
+
+/* ---------- Inner cards in the overview tabs, results and endings ---------- */
+/* Boxes that sit inside a panel: 2px ink outline, flat fill, no gradients. */
+.family-outlook,.society-facts>div,.society-rule,.exam-candidate,.exam-empty,.political-odds,.alternate-note,.alternate-banner,
+.society-sources,.social-result,.ending-catalog,.background-fate,.society-summary,.chronicle-summary,.active-chronicle,
+.life-period-note,.life-sources,.chronicle-result,.ending-companions,.gallery-empty,.project-result,.record-shelf,
+.gallery-count,.future-banner,.challenge-comparison,.share-preview,.succession-preview,.debt-note,.save-warning{
+ border:var(--px-thin)!important;background-image:none!important}
+.family-outlook,.society-rule,.life-period-note,.succession-preview,.debt-note,.save-warning{background-color:var(--px-gold-soft)!important;color:var(--px-ink)!important}
+.society-facts>div,.exam-empty,.society-sources,.life-sources,.ending-catalog,.gallery-empty,.ending-companions{background-color:var(--px-panel-2)!important}
+.exam-candidate,.active-chronicle,.project-result,.record-shelf{background-color:var(--px-green-soft)!important}
+.political-odds,.alternate-note,.alternate-banner,.social-result{background-color:#ece7f6!important}
+.chronicle-summary,.chronicle-result,.future-banner{background-color:var(--px-blue-soft)!important}
+.society-facts strong,.society-facts b{font-family:var(--px-font);font-weight:400;color:var(--px-ink)}
+.gallery-count{background-color:var(--px-gold-soft)!important}
+.gallery-count b,.gallery-count strong{font-family:var(--px-font);font-weight:400;color:var(--px-red)!important}
+.society-mark,.chronicle-emblem,.background-fate>span,.ending-mystery{border:var(--px-thin)!important;background:#fff!important;color:var(--px-ink)!important;font-family:var(--px-font)}
+.society-achievements span,.earned-projects span,.project-option>span,.ending-card>div span,.choice .chance-label,.choice .project-hint{border:2px solid var(--px-ink)!important;background:#fff!important;color:var(--px-ink)!important}
+
+/* Social route buttons (신분·권력 tab). */
+.social-focus button{border:var(--px-thin)!important;background:#fff!important;box-shadow:var(--px-shadow-sm)!important}
+.social-focus button[aria-pressed="true"]{background:var(--px-gold-soft)!important}
+.social-focus button:hover:not(:disabled){background:var(--px-green-soft)!important}
+.social-focus strong{font-family:var(--px-font);font-weight:400;color:var(--px-ink)!important}
+
+/* Life-arc cards (조선의 삶 tab): keep the per-arc accent colour only as a top band. */
+.life-card{background:#fff!important;border:var(--px-thin)!important;border-top:8px solid var(--arc-color)!important;box-shadow:var(--px-shadow-sm)!important}
+.life-card h3{color:var(--px-ink)!important}
+.life-motif{border:2px solid var(--px-ink)!important;background:var(--arc-bg)!important;font-family:var(--px-font)}
+.life-outcomes li,.life-outcomes span,.life-card ul li{border:2px solid var(--px-ink)!important;background:#fff!important;color:var(--px-ink)!important}
+.life-card button{border:var(--px-thin)!important;background:#fff!important;color:var(--px-ink)!important;font-family:var(--px-font)}
+.life-card button:hover:not(:disabled){background:var(--px-gold-soft)!important}
+.life-card button:disabled{background:#eee8da!important;color:var(--px-muted)!important}
+.life-steps b{border:2px solid var(--px-ink)!important;background:var(--px-gold)!important;color:var(--px-ink)!important;font-family:var(--px-font)}
+
+/* Ending gallery cards. */
+.ending-card{background:#fff!important;border:var(--px-thin)!important;box-shadow:var(--px-shadow-sm)!important}
+.ending-card.discovered{background:var(--px-gold-soft)!important}
+.ending-card.locked{background:repeating-linear-gradient(45deg,var(--px-panel-2) 0 6px,#f3ead2 6px 12px)!important;border-style:dashed!important}
+.ending-card h3,.ending-card strong{font-family:var(--px-font);font-weight:400;color:var(--px-ink)!important}
+.ending-gallery>progress{height:12px!important;border:var(--px-thin)!important;background:#fff!important}
+.ending-gallery>progress::-webkit-progress-bar{background:#fff}
+.ending-gallery>progress::-webkit-progress-value{background:var(--px-teal)}
+.ending-gallery>progress::-moz-progress-bar{background:var(--px-teal)}
+.ending-gallery-link,.replay-actions button,.share-options button,.challenge-secondary{border:var(--px-thin)!important;background:#fff!important;color:var(--px-ink)!important}
+.ending-gallery-link:hover,.replay-actions button:hover,.share-options button:hover{background:var(--px-gold-soft)!important}
+
+/* Project picker steps. */
+.project-steps i{border:2px solid var(--px-ink);background:#fff!important;color:var(--px-ink)!important;font-family:var(--px-font)}
+.project-steps .done{background:var(--px-green)!important;color:#fff!important}
+
+/* Ending: continue-into-the-future box. */
+.future-continuation{border:var(--px-thin)!important;background:var(--px-teal-soft)!important;background-image:none!important}
+
+/* Mobile succession: the confirm button is fixed to the bottom of the screen, so a nested
+   scroll box let the last heir's details slide under it. Let the page scroll instead. */
+@media(max-width:760px){.heir-list{max-height:none!important;overflow:visible!important}}
