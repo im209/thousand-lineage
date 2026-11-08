@@ -29,8 +29,8 @@ export function GrowthGuide({s,onSelect,onDirections}:{s:State;onSelect:(id:Proj
    <p className="growth-condition">{goal.requirement}{active?` · 현재 ${labels[goal.stat]} ${number(s.stats[goal.stat])}`:''}</p>
    {active?<p className="growth-tip">선택지의 ‘가문 과업 진행 +1’을 따라가세요. 관련 선택과 능력 조건을 모두 채우면 즉시 완성됩니다.</p>:<button className="goal-start" onClick={()=>onSelect(goal.id)}>{goal.title}을 목표로 →</button>}
   </>:<div className="growth-heading"><h3>세 가지 유산을 모두 남겼습니다</h3></div>}
-  <div className={`trade-benefit ${s.stats.connections>=60?'ready':''}`}><b>{s.stats.connections>=60?'쌓은 인맥이 혜택으로':'다음 생활 혜택 · 거래 신뢰'}</b><p>사회적 연결 <strong>{number(s.stats.connections)} / 60</strong> · 조건을 채우면 큰 거래 비용 <strong>8 → 3</strong></p><small>‘거래를 넓힐 기회’ 사건에서 적용됩니다.</small></div>
-  <details className="stat-benefits"><summary>스탯은 어디에 쓰이나요?</summary><dl>{(Object.keys(statHelp) as Stat[]).map(stat=><div key={stat}><dt>{labels[stat]} <b>{number(s.stats[stat])}</b></dt><dd>{statHelp[stat]}</dd></div>)}</dl></details>
+  {(s.turn>=3||s.stats.connections>=60)&&<div className={`trade-benefit ${s.stats.connections>=60?'ready':''}`}><b>{s.stats.connections>=60?'쌓은 인맥이 혜택으로':'다음 생활 혜택 · 거래 신뢰'}</b><p>사회적 연결 <strong>{number(s.stats.connections)} / 60</strong> · 조건을 채우면 큰 거래 비용 <strong>8 → 3</strong></p><small>‘거래를 넓힐 기회’ 사건에서 적용됩니다.</small></div>}
+  {s.turn>=3&&<details className="stat-benefits"><summary>스탯은 어디에 쓰이나요?</summary><dl>{(Object.keys(statHelp) as Stat[]).map(stat=><div key={stat}><dt>{labels[stat]} <b>{number(s.stats[stat])}</b></dt><dd>{statHelp[stat]}</dd></div>)}</dl></details>}
   {s.turn>=3&&<button className="career-invitation" onClick={onDirections}>가족의 기반이 생겼다면, 신분과 진로 살펴보기 ↗</button>}
  </section>;
 }

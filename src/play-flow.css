@@ -57,3 +57,17 @@
  .turn-result .continue-button{position:static;left:auto;bottom:auto;z-index:auto;width:100%;box-shadow:0 5px 0 #0f6267}
  .turn-result .result-headline{font-size:22px}
 }
+.how-to-play{grid-column:1/-1;list-style:none;margin:5px 0 0;padding:28px 0;border-top:1px solid #e7e6dd;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.how-to-play li{display:flex;gap:14px;align-items:flex-start}
+.how-to-play li>b{flex-shrink:0;width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#e9f6f1;color:#1d7c7f;font-size:15px}
+.how-to-play strong{display:block;font-size:16px;color:#223e46;margin-bottom:4px}
+.how-to-play span{font-size:13px;color:#61747a;line-height:1.6}
+.lead b{color:#b4572e}
+.founder-goal{margin-top:14px;padding:16px 18px;border-radius:14px;background:#fff6e8;border:1px solid #f0dcbc}
+.founder-goal>b{font-size:12px;color:#a2622f}
+.founder-goal p{margin:6px 0 0;font-size:14px;line-height:1.7;color:#5b4a35}
+.founder-goal strong{color:#b4572e}
+.founder-starting-point small{display:block;margin-top:8px;font-size:12px;color:#6d7f84}
+.first-choice-guide p b{color:#b4572e}
+.setup .random-clan{margin:14px 0 0;background:none;border:0;padding:0}
+@media(max-width:760px){.how-to-play{grid-template-columns:1fr;gap:16px;padding:22px 0}.founder-goal{display:none}}

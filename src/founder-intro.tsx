@@ -1,6 +1,6 @@
 import {useEffect,useRef} from 'react';
 import {clans,labels,type Stat} from './data';
-import {societyState,type State} from './engine';
+import {backgrounds,societyState,type State} from './engine';
 import {Avatar} from './game-panels';
 import {AssignedBackground} from './society-panels';
 
@@ -24,11 +24,12 @@ export function FounderIntro({s,onBegin,error,saved}:{s:State;onBegin:()=>void;e
    <dl className="founder-facts"><div><dt>살고 있는 곳</dt><dd>{founder.region}</dd></div><div><dt>지금의 생업</dt><dd>{founder.job}</dd></div><div><dt>타고난 성향</dt><dd>{founder.trait}</dd></div></dl>
    <p className="founder-person-note">아직 혼인하지 않은 한 사람.<br/>이 작은 시작에서 가족의 이야기가 이어집니다.</p>
   </div><div className="founder-details">
-   <AssignedBackground s={s}/>
+   <AssignedBackground s={s} hideEffect/>
+   <div className="founder-goal"><b>이 게임의 목표</b><p>{founder.name}의 후손이 <strong>끊기지 않게</strong> 가문을 이어가세요. 선택지 하나를 고를 때마다 몇 년이 흐르고, 가족은 혼인하고 아이를 낳고 세상을 떠납니다.</p></div>
   </div></div>
-  <div className="founder-begin"><p><b>이 사람과 첫 선택을 해볼까요?</b><span>처음에는 생업과 가족 이야기부터 시작합니다.</span></p><button className="primary" onClick={onBegin}>이 인물로 시작하기 →</button><small>{saved?'이 인물과 출발 조건을 저장했습니다.':'저장 상태를 확인해 주세요.'}</small></div>
+  <div className="founder-begin"><p><b>이 사람과 첫 선택을 해볼까요?</b><span>목표: 후손이 끊기지 않게 가문을 이어가세요.</span></p><button className="primary" onClick={onBegin}>이 인물로 시작하기 →</button><small>{saved?'이 인물과 출발 조건을 저장했습니다.':'저장 상태를 확인해 주세요.'}</small></div>
   <details className="founder-extra"><summary>출발 능력치와 이 신분의 가능성 살펴보기</summary>
-   <div className="founder-starting-point"><h3>이 출발점에서는</h3><p>{openingHints[origin]}</p></div>
+   <div className="founder-starting-point"><h3>이 출발점에서는</h3><p>{openingHints[origin]}</p><small>{backgrounds.find(b=>b.id===origin)?.effect}</small></div>
    <div className="founder-stat-heading"><h3>가문의 출발 능력치</h3><span>0–100 기준</span></div>
    <dl className="founder-stats">{(Object.keys(labels) as Stat[]).map(key=><div key={key}><dt>{labels[key]}</dt><dd>{Math.round(s.stats[key])}</dd><i aria-hidden="true"><b style={{width:`${s.stats[key]}%`}}/></i></div>)}</dl>
   </details>

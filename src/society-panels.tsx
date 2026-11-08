@@ -4,9 +4,9 @@ export function BackgroundFate(){
  return <section className="background-fate" aria-label="무작위 출발 신분"><span aria-hidden="true">?</span><div><h3>출발 신분은 운명이 정합니다</h3><p>상민·기술 실무층·양반·노비 중 하나로 태어납니다.<br/>어디에서 시작할지는 무작위, 어떤 길을 걸을지는 당신의 선택입니다.</p></div></section>;
 }
 
-export function AssignedBackground({s}:{s:State}){
+export function AssignedBackground({s,hideEffect=false}:{s:State;hideEffect?:boolean}){
  const background=backgrounds.find(b=>b.id===societyState(s).origin)!;
- return <section className={`assigned-background ${background.id}`} aria-label="배정된 출발 신분"><span className="eyebrow">1392년, 당신의 출발 신분</span><h3>{background.title}에서 이야기를 시작합니다.</h3><p>{background.description}</p><small>{background.effect}</small></section>;
+ return <section className={`assigned-background ${background.id}`} aria-label="배정된 출발 신분"><span className="eyebrow">1392년, 당신의 출발 신분</span><h3>{background.title}에서 이야기를 시작합니다.</h3><p>{background.description}</p>{!hideEffect&&<small>{background.effect}</small>}</section>;
 }
 
 export function SocietySummary({s,onOpen}:{s:State;onOpen:()=>void}){
