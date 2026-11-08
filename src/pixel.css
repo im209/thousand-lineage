@@ -274,3 +274,17 @@ input{background:#fff!important;border:var(--px-line)!important;color:var(--px-i
 /* Mobile succession: the confirm button is fixed to the bottom of the screen, so a nested
    scroll box let the last heir's details slide under it. Let the page scroll instead. */
 @media(max-width:760px){.heir-list{max-height:none!important;overflow:visible!important}}
+
+/* ---------- 돌발 사건 ---------- */
+.event.surprise-event{border-color:var(--px-red)!important;box-shadow:6px 6px 0 var(--px-red)!important;background:repeating-linear-gradient(-45deg,var(--px-panel) 0 14px,#fdf3ea 14px 28px)!important;position:relative}
+.event.surprise-event>.eyebrow{background:var(--px-red)!important;color:#fff!important}
+.surprise-alert{position:absolute;top:-22px;right:22px;width:44px;height:44px;display:grid;place-items:center;background:var(--px-gold);border:var(--px-line);box-shadow:var(--px-shadow-sm);font-family:var(--px-font);font-size:26px;color:var(--px-ink);animation:px-alert 1s steps(2) infinite}
+@keyframes px-alert{50%{background:var(--px-red);color:#fff}}
+.event.surprise-event .question{color:var(--px-red)!important}
+.surprise-notice{display:flex;gap:14px;align-items:center;margin:22px 0 4px;padding:14px 16px;border:var(--px-line);background:var(--px-red-soft);box-shadow:var(--px-shadow-sm)}
+.surprise-notice>b{flex-shrink:0;width:34px;height:34px;display:grid;place-items:center;background:var(--px-red);color:#fff;border:var(--px-thin);font-family:var(--px-font);font-size:20px;animation:px-alert 1s steps(2) infinite}
+.surprise-notice p{margin:0;font-size:13px;line-height:1.6;color:var(--px-ink)}
+.surprise-notice strong{display:block;font-family:var(--px-font);font-weight:400;font-size:15px;color:var(--px-red)}
+.turn-highlights article>span.surprise-tag{background:var(--px-red)!important;color:#fff!important}
+.choice .chance-label{background:var(--px-red-soft)!important}
+@media(prefers-reduced-motion:reduce){.surprise-alert,.surprise-notice>b{animation:none}}

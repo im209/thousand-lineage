@@ -33,6 +33,10 @@ async function install(page:Page,mode:Mode='fresh'){
      return {...option,score};
     }).sort((a:any,b:any)=>b.score-a.score||a.index-b.index)[0].index;
    };
+   // Natural play from real seeds. Random family events (including 돌발 사건) change which seed
+   // reaches a given ending, so search a few seeds instead of depending on one.
+   const attempt=(seed:number)=>{
+   let s=e.selectSocialFocus(e.create(seed,0,'commoner'),'livelihood');
    for(let steps=0;steps<450&&s.phase!=='ended';steps++){
     s=checked(e.continueStory(s));
     if(mode==='modern'&&s.year>=1894)break;
@@ -46,10 +50,16 @@ async function install(page:Page,mode:Mode='fresh'){
     s=checked(e.choose(s,index));
    }
    s=checked(e.continueStory(s));
-   if(!s.chronicles?.completed.includes('relief'))throw Error('Natural fixture did not complete relief');
-   if(mode==='ended'&&(s.phase!=='ended'||endings.endingFor(s).id!=='relief'))throw Error('Natural relief ending not reached');
-   if(mode==='combined-ended'&&(s.phase!=='ended'||endings.endingFor(s).id!=='healing_community'))throw Error('Natural combined care ending not reached');
-   if(mode==='modern'&&(s.year<1894||s.phase==='ended'))throw Error('Natural modern transition not reached');
+   if(!s.chronicles?.completed.includes('relief'))return null;
+   if(mode==='ended'&&(s.phase!=='ended'||endings.endingFor(s).id!=='relief'))return null;
+   if(mode==='combined-ended'&&(s.phase!=='ended'||endings.endingFor(s).id!=='healing_community'))return null;
+   if(mode==='modern'&&(s.year<1894||s.phase==='ended'))return null;
+   return s;
+   };
+   let found:any=null;
+   for(let seed=1;seed<=80&&!found;seed++)found=attempt(seed);
+   if(!found)throw Error(mode==='modern'?'Natural modern transition not reached':mode==='ended'?'Natural relief ending not reached':'Natural combined care ending not reached');
+   s=found;
   }
   s.runId='chronicles-e2e-'+mode;
   localStorage.setItem('thousand-lineage-v1',JSON.stringify(checked(s)));
@@ -148,6 +158,7 @@ test('undiscovered endings expose no spoilers in the catalogue DOM or accessibil
 test('a naturally reached ending is collected once and replay resets the arc but retains the collection',async({page},info)=>{
  await install(page,'ended');
  await expect(page.locator('.ending > .eyebrow')).toContainText('흉년을 함께 넘은 가문');
+ const fixtureSeed=(await state(page)).seed;
  const records=await page.evaluate(()=>JSON.parse(localStorage.getItem('thousand-lineage-records-v1')!));
  expect(records.endings).toEqual(['relief']);expect(records.recent).toHaveLength(1);
  await page.reload();expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('thousand-lineage-records-v1')!).recent.length)).toBe(1);
@@ -161,7 +172,7 @@ test('a naturally reached ending is collected once and replay resets the arc but
  await page.screenshot({path:`test-results/${info.project.name}-ending-discovered.png`,fullPage:true});
  await page.getByRole('button',{name:'이야기',exact:true}).click();
  await page.getByRole('button',{name:/같은 운명, 다른 선택으로 재도전/}).click();await page.getByRole('button',{name:'이 인물로 시작하기 →',exact:true}).click();
- const replay=await state(page);expect(replay.year).toBe(1392);expect(replay.seed).toBe(1);expect(replay.chronicles?.completed??[]).toEqual([]);expect(replay.chronicles?.active??null).toBeNull();expect(replay.runId).not.toBe('chronicles-e2e-ended');
+ const replay=await state(page);expect(replay.year).toBe(1392);expect(replay.seed).toBe(fixtureSeed);expect(replay.chronicles?.completed??[]).toEqual([]);expect(replay.chronicles?.active??null).toBeNull();expect(replay.runId).not.toBe('chronicles-e2e-ended');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('thousand-lineage-records-v1')!))).toEqual(records);
  await openGameTab(page,'결말 도감');
  await expect(gallery.locator('[data-ending-id="relief"]')).toContainText('발견 ✓');

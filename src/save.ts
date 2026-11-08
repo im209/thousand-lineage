@@ -3,6 +3,7 @@ import {validate,type State} from './engine';
 import {projects} from './projects';
 import {chronicles} from './chronicles';
 import {validBenchmark} from './share-links';
+import {validSurprise} from './surprises';
 const record=(v:unknown):v is Record<string,any>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const finite=(v:unknown)=>typeof v==='number'&&Number.isFinite(v);
 const strings=(v:unknown):v is string[]=>Array.isArray(v)&&v.every(x=>typeof x==='string');
@@ -29,6 +30,7 @@ export function decodeSave(raw:string|null):State|null{
  if(s.challenge!==undefined&&!validBenchmark(s.challenge))return null;
  if(s.runId!==undefined&&(typeof s.runId!=='string'||s.runId.length<1||s.runId.length>120))return null;
  if(s.introPending!==undefined&&typeof s.introPending!=='boolean')return null;
+ if(!validSurprise(s,s.surprise))return null;
  if(s.introPending&&(s.year!==1392||s.turn!==0||s.phase!=='play'||s.report||s.head!==s.founder||s.event!=='h1392'))return null;
  if(s.chronicles!==undefined){
   const c=s.chronicles,arcIds=chronicles.map(a=>a.id),outcomes=chronicles.flatMap(a=>a.outcomes.map(o=>o.id));

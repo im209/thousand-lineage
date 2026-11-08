@@ -4,13 +4,14 @@ import type {ChallengeBenchmark} from './share-links';
 import {projects,projectState,projectComplete,projectMatches,projectChoice,type ProjectId,type ProjectState} from './projects';
 import {societyState,randomStartingStanding,initializeSociety,societyAnnual,retireOffice,nextSocietyEvent,prepareSocialEvent,wrapAlternateHistory,socialLockReason,applySocialAction,type StartingStanding,type Society} from './society';
 import {nextChronicleEvent,prepareChronicleEvent,chronicleLockReason,applyChronicleAction,type ChronicleState} from './chronicles';
+import {SURPRISE_CHANCE,surpriseRoll,pickSurprise,prepareSurpriseEvent,type SurpriseState,type SurpriseAction} from './surprises';
 export {backgrounds,societyState,societyLabel,legalStatus,officeLabel,socialHint,examCandidate,examChance,coupChance,selectSocialFocus} from './society';
 export type {StartingStanding,Society,SocialFocus} from './society';
 export {projects,projectState,projectProgress,projectComplete,projectMatches} from './projects';
 export type {ProjectId} from './projects';
 export type Person={intendedJob?:'trade'|'study';id:string;name:string;surname:string;clan:number;sex:'여'|'남';born:number;died:number|null;parents:string[];adoptiveParents:string[];spouses:string[];children:string[];generation:number;job:string;education:number;health:number;region:string;trait:string;ability:number;estate:number;alive:boolean;lineage:boolean;life:{year:number;text:string}[]};
 export type TurnReport={outcome?:string;from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:{year:number;text:string;kind:string}[]};
-export type State={endless?:boolean;challenge?:ChallengeBenchmark;introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:{year:number;text:string;kind:string}[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
+export type State={surprise?:SurpriseState;endless?:boolean;challenge?:ChallengeBenchmark;introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:{year:number;text:string;kind:string}[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
 const clamp=(n:number)=>Math.max(0,Math.min(100,n));
 export function rand(s:State){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296}
 const pick=<T,>(s:State,a:T[])=>a[Math.floor(rand(s)*a.length)];
@@ -19,7 +20,7 @@ export function selectProject(state:State,id:ProjectId):State{
  if(state.introPending||state.phase!=='play'||state.report||!projects.some(p=>p.id===id)||projectComplete(state,id)||projectState(state).active===id)return state;
  const s=structuredClone(state);s.projects=structuredClone(projectState(s));s.projects.active=id;return s;
 }
-export function turnYears(s:State){return /^(social-|chronicle-)/.test(s.event)?{min:3,max:3}:s.turn<3?{min:5,max:5}:{min:10,max:15}}
+export function turnYears(s:State){if(s.event.startsWith('surprise-')){const r=s.surprise?.remaining??5;return {min:r,max:r}}return /^(social-|chronicle-)/.test(s.event)?{min:3,max:3}:s.turn<3?{min:5,max:5}:{min:10,max:15}}
 function advanceProject(s:State,c:import('./data').Choice,countChoice=true){
  const active=projectState(s).active;if(!active||projectComplete(s,active))return;
  s.projects=structuredClone(projectState(s));
@@ -50,6 +51,29 @@ function annual(s:State){s.year++;societyAnnual(s);const alive=Object.values(s.p
  retireOffice(s);s.stats.wealth=clamp(s.stats.wealth+(rand(s)-.52)*3+(s.stats.education-50)*.004);s.stats.stability=clamp(s.stats.stability+(s.stats.wealth-50)*.012);if(s.debt>0){const repayment=Math.min(s.debt,Math.max(0,s.stats.wealth-15)*.08);s.stats.wealth=clamp(s.stats.wealth-repayment);s.debt=Math.max(0,s.debt-repayment)*1.01;s.stats.stability=clamp(s.stats.stability-Math.min(1,s.debt*.015))}s.stats.health=clamp(s.stats.health+(s.stats.stability-50)*.006);if(s.stats.wealth>s.peak.wealth)s.peak={year:s.year,wealth:s.stats.wealth};
  if(!s.people[s.head].alive){if(candidates(s).length)s.phase='succession';else{s.phase='ended';s.endReason='후계자 부재'}}if(!s.endless&&s.year>=2026){s.phase='ended';s.endReason=Object.values(s.people).some(p=>p.lineage&&p.alive)?'2026년까지 존속':'후계자 부재'}}
 function debtEvent(s:State,e:Event):Event{return {...e,description:`${s.people[s.head].name}의 가족에게 부채 ${s.debt.toFixed(1)}점이 남아 있습니다. ${e.description} 조정 비율은 이번 선택의 부족한 비용까지 조달한 뒤 적용합니다.`}}
+function startSurprise(s:State,until:number){
+ // Never cut into a story that must continue: a prepared Joseon life arc, exile, or debt recovery.
+ if(s.chronicles?.active||nextChronicleEvent(s)||societyState(s).political==='exile'||s.debt>=25&&!s.seen.slice(-3).includes('life8'))return false;
+ const picked=pickSurprise(s);if(!picked)return false;
+ s.surprise={id:picked.id,target:picked.target,remaining:until-s.year};
+ if(picked.id==='surprise-twins'&&picked.target){
+  const p=s.people[picked.target],sp=p.spouses.map(id=>s.people[id]).find(x=>x.alive)!,father=p.sex==='남'?p:sp;
+  const twins=[0,1].map(()=>{const child=add(s,person(s,s.year,p.generation+1,father.clan,undefined,true));child.parents=[p.id,sp.id];child.region=p.region;child.education=clamp(s.stats.education*.5+p.education*.5);p.children.push(child.id);sp.children.push(child.id);child.life.push({year:s.year,text:p.name+'와 '+sp.name+'의 쌍둥이로 태어남'});return child});
+  for(let i=0;i<5&&twins[1].name===twins[0].name;i++)twins[1].name=person(s,s.year,1,father.clan).name;
+  log(s,twins[0].name+'와 '+twins[1].name+', 쌍둥이로 태어나다.');
+ }
+ log(s,'뜻밖의 일 · '+prepareSurpriseEvent(s,events.find(e=>e.id===picked.id)!).title,'surprise');
+ return true;
+}
+function applySurpriseAction(s:State,action:SurpriseAction){
+ const target=s.surprise?.target?s.people[s.surprise.target]:undefined,head=s.people[s.head],roll=surpriseRoll(s,5);
+ const leave=(p:Person)=>{const place=pick(s,regions.filter(r=>r!==p.region));p.region=place;p.life.push({year:s.year,text:place+'(으)로 떠나 따로 살아감'})};
+ if(action==='plague-doctor'&&target?.alive){target.health=clamp(target.health+10);target.life.push({year:s.year,text:'돌림병을 이겨냄'});log(s,target.name+', 의원의 약으로 병을 이겨내다.','surprise-result')}
+ if(action==='plague-home'&&target?.alive&&target.id!==s.head){if(roll<.25){die(s,target);log(s,'정성껏 간병했지만 '+target.name+'을(를) 지키지 못했습니다.','surprise-result')}else{target.life.push({year:s.year,text:'가족의 간병으로 병을 이겨냄'});log(s,target.name+', 가족의 간병으로 병을 이겨내다.','surprise-result')}}
+ if(action==='bandits-resist'){if(roll<.7)log(s,'장정들과 힘을 모아 도적을 물리쳤습니다. 마을이 이 가문을 다시 보게 되었습니다.','surprise-result');else{s.stats.wealth=clamp(s.stats.wealth-10);head.health=clamp(head.health-15);head.life.push({year:s.year,text:'도적과 맞서다 다침'});log(s,'도적을 막지 못해 재물을 잃고 '+head.name+'이(가) 다쳤습니다.','surprise-result')}}
+ if(action==='runaway-honor'&&target?.alive){leave(target);log(s,target.name+'은(는) 끝내 돌아오지 않고 '+target.region+'에서 새 삶을 꾸렸습니다.','surprise-result')}
+ if(action==='runaway-wait'&&target?.alive){if(roll<.5){s.stats.cohesion=clamp(s.stats.cohesion+4);target.life.push({year:s.year,text:'집으로 돌아옴'});log(s,target.name+', 계절이 바뀌기 전에 집으로 돌아오다.','surprise-result')}else{s.stats.cohesion=clamp(s.stats.cohesion-6);leave(target);log(s,target.name+'은(는) 돌아오지 않고 '+target.region+'에 자리를 잡았습니다.','surprise-result')}}
+}
 function nextEvent(s:State){
  const h=events.find(e=>e.year===s.year&&!s.seen.includes(e.id));if(h)return h;
  const social=nextSocietyEvent(s);if(social?.id==='social-exile')return social;
@@ -65,7 +89,7 @@ function nextEvent(s:State){
  // Two tickets for a project-relevant event, one for other eligible family events.
  return pick(s,eligible.flatMap(e=>e.choices.some(c=>projectMatches(s,c))?[e,e]:[e]));
 }
-function baseCurrentEvent(s:State):Event{const base=events.find(e=>e.id===s.event)??events[0];const special=projectChoice(base.id);const e=special?{...base,choices:[...base.choices,special]}:base;if(e.id==='life8')return debtEvent(s,e);if(e.id==='life2'){const child=Object.values(s.people).filter(p=>p.lineage&&p.alive&&s.year-p.born<18).sort((a,b)=>a.born-b.born)[0];if(child)return {...e,title:child.name+'에게 열린 배움의 길',description:child.name+'('+ (s.year-child.born)+'세)의 배움을 지원할 기회가 생겼습니다. 이 아이에게 쌓인 교육은 성인이 되었을 때 진로에 반영됩니다.',choices:e.choices.map(c=>({...c,target:child.id}))}}if(e.id==='life3'&&s.stats.connections>=60)return {...e,description:'오랫동안 쌓아 온 거래처의 신뢰 덕분에 적은 밑천으로 거래를 넓힐 수 있습니다.',choices:e.choices.map((c,i)=>i===0?{...c,description:'연결 60 이상 혜택 · 재산 −3 · 연결 +12',effects:{...c.effects,wealth:-3}}:c)};if(e.kind==='legacy'){const key=e.requires;const bonus:Partial<Record<Stat,number>>=key==='learning'?{education:10}:key==='migration'?{stability:10}:key==='trade'?{wealth:10}:key==='community'?{connections:10,reputation:5}:{health:8,cohesion:6};return {...e,description:'이전 세대가 남긴 선택이 오늘의 가족에게 기회가 되었습니다. 유산을 이어받거나 지금 필요한 자원으로 바꿀 수 있습니다.',choices:[{title:'가족의 유산을 이어받는다',description:'이어 온 경험이 가문의 역량을 높입니다.',effects:bonus},{title:'당장의 생활에 힘을 보탠다',description:'재산 +6 · 생계 +6',effects:{wealth:6,stability:6}},{title:'다음 세대의 배움에 투자한다',description:'재산 −4 · 교육 +12',effects:{wealth:-4,education:12},legacy:'learning'}]}}if(e.id==='h1997'&&['상인','자영업자'].includes(s.people[s.head].job))return {...e,description:'외환위기로 가문 대표의 사업이 어려움을 겪고 있습니다. 운영 규모와 소득원을 다시 결정해야 합니다.',choices:[{title:'사업 규모를 줄인다',description:'재산 −8 · 안정 +8',effects:{wealth:-8,stability:8},legacy:'trade'},{title:'다른 생업을 준비한다',description:'재산 −10 · 교육 +10',effects:{wealth:-10,education:10},legacy:'learning',job:'study'},{title:'거래처와 함께 회복을 기다린다',description:'재산 −15 · 연결 +12',effects:{wealth:-15,connections:12},legacy:'community'}]};if(e.id==='life4'||e.id==='life5')return {...e,description:s.people[s.head].name+'의 가족이 함께 결정할 일입니다. '+e.description};return e}
+function baseCurrentEvent(s:State):Event{const base=events.find(e=>e.id===s.event)??events[0];if(base.kind==='surprise')return prepareSurpriseEvent(s,base);const special=projectChoice(base.id);const e=special?{...base,choices:[...base.choices,special]}:base;if(e.id==='life8')return debtEvent(s,e);if(e.id==='life2'){const child=Object.values(s.people).filter(p=>p.lineage&&p.alive&&s.year-p.born<18).sort((a,b)=>a.born-b.born)[0];if(child)return {...e,title:child.name+'에게 열린 배움의 길',description:child.name+'('+ (s.year-child.born)+'세)의 배움을 지원할 기회가 생겼습니다. 이 아이에게 쌓인 교육은 성인이 되었을 때 진로에 반영됩니다.',choices:e.choices.map(c=>({...c,target:child.id}))}}if(e.id==='life3'&&s.stats.connections>=60)return {...e,description:'오랫동안 쌓아 온 거래처의 신뢰 덕분에 적은 밑천으로 거래를 넓힐 수 있습니다.',choices:e.choices.map((c,i)=>i===0?{...c,description:'연결 60 이상 혜택 · 재산 −3 · 연결 +12',effects:{...c.effects,wealth:-3}}:c)};if(e.kind==='legacy'){const key=e.requires;const bonus:Partial<Record<Stat,number>>=key==='learning'?{education:10}:key==='migration'?{stability:10}:key==='trade'?{wealth:10}:key==='community'?{connections:10,reputation:5}:{health:8,cohesion:6};return {...e,description:'이전 세대가 남긴 선택이 오늘의 가족에게 기회가 되었습니다. 유산을 이어받거나 지금 필요한 자원으로 바꿀 수 있습니다.',choices:[{title:'가족의 유산을 이어받는다',description:'이어 온 경험이 가문의 역량을 높입니다.',effects:bonus},{title:'당장의 생활에 힘을 보탠다',description:'재산 +6 · 생계 +6',effects:{wealth:6,stability:6}},{title:'다음 세대의 배움에 투자한다',description:'재산 −4 · 교육 +12',effects:{wealth:-4,education:12},legacy:'learning'}]}}if(e.id==='h1997'&&['상인','자영업자'].includes(s.people[s.head].job))return {...e,description:'외환위기로 가문 대표의 사업이 어려움을 겪고 있습니다. 운영 규모와 소득원을 다시 결정해야 합니다.',choices:[{title:'사업 규모를 줄인다',description:'재산 −8 · 안정 +8',effects:{wealth:-8,stability:8},legacy:'trade'},{title:'다른 생업을 준비한다',description:'재산 −10 · 교육 +10',effects:{wealth:-10,education:10},legacy:'learning',job:'study'},{title:'거래처와 함께 회복을 기다린다',description:'재산 −15 · 연결 +12',effects:{wealth:-15,connections:12},legacy:'community'}]};if(e.id==='life4'||e.id==='life5')return {...e,description:s.people[s.head].name+'의 가족이 함께 결정할 일입니다. '+e.description};return e}
 export function currentEvent(s:State):Event{let e=s.year>=1894&&s.event.startsWith('social-')?events.find(e=>e.id==='social-modern')!:s.year<1894&&s.event.startsWith('social-')&&societyState(s).political==='exile'?events.find(e=>e.id==='social-exile')!:baseCurrentEvent(s);if(e.kind==='society'||e.id==='h1894')e=prepareSocialEvent(s,e);if(e.kind==='chronicle')e=prepareChronicleEvent(s,e);return wrapAlternateHistory(s,e)}
 export function choiceCost(s:State,index:number){const c=currentEvent(s).choices[index];const modifier=s.event==='h1592'&&s.moves.at(-1)==='경상도'?1.4:1;return Math.max(0,-(c?.effects.wealth??0)*modifier)}
 export function choiceLockReason(s:State,index:number):string|null{const c=currentEvent(s).choices[index];if(!c)return '선택지를 찾을 수 없습니다.';if(c.unlock&&!projectComplete(s,c.unlock))return projects.find(p=>p.id===c.unlock)!.title+' 완성 필요';return socialLockReason(s,c)??chronicleLockReason(s,c)}
@@ -84,18 +108,21 @@ export function choose(state:State,index:number):State {
  if(c.job){const p=s.people[s.head];p.intendedJob=c.job;if(s.year-p.born>=18)p.job=jobFor(s.year,c.job==='study',c.job==='trade');else {p.job='미성년';log(s,'가족이 '+p.name+'의 성년 이후 진로를 준비합니다.','growth')}}
  if(c.socialAction)applySocialAction(s,c.socialAction,()=>rand(s));
  if(c.chronicleAction)applyChronicleAction(s,c.chronicleAction);
+ if(c.surpriseAction)applySurpriseAction(s,c.surpriseAction);
  if(c.debtRelief){const forgiven=Math.min(s.debt,s.debt*Math.max(0,Math.min(1,c.debtRelief)));s.debt=Math.max(0,s.debt-forgiven);log(s,`비용 조달 후 부채 ${forgiven.toFixed(1)}점을 조정했습니다. 남은 부채 ${s.debt.toFixed(1)}점.`,'economy');}
  advanceProject(s,c);
  const immediate:Partial<Record<Stat,number>>={};for(const k of Object.keys(before) as Stat[])immediate[k]=s.stats[k]-before[k];
- const duration=turnYears(s);s.turn++;const target=s.year+duration.min+Math.floor(rand(s)*(duration.max-duration.min+1)),until=s.endless?target:Math.min(2026,target);
- while(s.year<until&&s.phase==='play'){annual(s);if(events.some(e=>e.year===s.year&&!s.seen.includes(e.id)))break}
+ const duration=turnYears(s),wasSurprise=e.kind==='surprise',routeTurn=/^(social-|chronicle-)/.test(s.event);s.turn++;delete s.surprise;const target=s.year+duration.min+Math.floor(rand(s)*(duration.max-duration.min+1)),until=s.endless?target:Math.min(2026,target);
+ // 돌발 사건: from the 4th choice, one roll per turn picks a year inside this span to interrupt.
+ const interruptAt=!wasSurprise&&!routeTurn&&s.turn>3&&until-s.year>=2&&surpriseRoll(s,1)<SURPRISE_CHANCE?s.year+1+Math.floor(surpriseRoll(s,4)*(until-s.year-1)):0;
+ while(s.year<until&&s.phase==='play'){annual(s);if(events.some(e=>e.year===s.year&&!s.seen.includes(e.id)))break;if(s.year===interruptAt&&s.phase==='play'&&startSurprise(s,until))break}
  if(s.phase!=='ended')advanceProject(s,c,false);
  if(s.stats.wealth>s.peak.wealth)s.peak={year:s.year,wealth:s.stats.wealth};
- if(s.phase==='play')s.event=nextEvent(s).id;
+ if(s.phase==='play'){const pending=s.surprise as SurpriseState|undefined;s.event=pending?pending.id:nextEvent(s).id}
  if(before.connections<60&&s.stats.connections>=60)log(s,'사회적 연결 60 달성! 거래 확장 사건의 큰 거래 비용이 재산 8에서 3으로 줄어듭니다.','benefit');
  const changes:Partial<Record<Stat,number>>={};for(const k of Object.keys(before) as Stat[])changes[k]=s.stats[k]-before[k];
- const actionEntry=s.log.slice(logStart).find(l=>['society','alternate','chronicle'].includes(l.kind)&&l.text!==e.title+' — '+c.title);
- s.report={outcome:(c.socialAction||c.chronicleAction)&&actionEntry?actionEntry.text:decisionFeedback(e,c,index),from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
+ const actionEntry=s.log.slice(logStart).find(l=>['society','alternate','chronicle','surprise-result'].includes(l.kind)&&l.text!==e.title+' — '+c.title);
+ s.report={outcome:(c.socialAction||c.chronicleAction||c.surpriseAction)&&actionEntry?actionEntry.text:decisionFeedback(e,c,index),from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
 }
 export function beginStory(state:State):State{if(!state.introPending||state.phase!=='play')return state;return {...state,introPending:false}}
 export function continueStory(state:State):State{if(!state.report)return state;const s=structuredClone(state);delete s.report;return s}
