@@ -1,3 +1,5 @@
+import type {AbilityCheck} from './ability-checks';
+import {examChance} from './society';
 import {clans,events,regions,jobFor,type Stat,type Event} from './data';
 import {decisionFeedback} from './choice-feedback';
 import {withParticle} from './korean';
@@ -13,7 +15,7 @@ export type {StartingStanding,Society,SocialFocus} from './society';
 export {projects,projectState,projectProgress,projectComplete,projectMatches} from './projects';
 export type {ProjectId} from './projects';
 export type Person={intendedJob?:'trade'|'study';id:string;name:string;surname:string;clan:number;sex:'여'|'남';born:number;died:number|null;parents:string[];adoptiveParents:string[];spouses:string[];children:string[];generation:number;job:string;education:number;health:number;region:string;trait:string;ability:number;estate:number;alive:boolean;lineage:boolean;life:{year:number;text:string}[]};
-export type TurnReport={outcome?:string;from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:LogEntry[]};
+export type TurnReport={checks?:AbilityCheck[];outcome?:string;from:number;to:number;title:string;decision:string;changes:Partial<Record<Stat,number>>;immediate:Partial<Record<Stat,number>>;borrowed:number;debtBefore:number;debtAfter:number;entries:LogEntry[]};
 export type State={journey?:JourneyState;surprise?:SurpriseState;endless?:boolean;challenge?:ChallengeBenchmark;introPending?:boolean;chronicles?:ChronicleState;society?:Society;runId?:string;projects?:ProjectState;report?:TurnReport;representativeCount?:number;version:1;seed:number;rng:number;year:number;clan:number;people:Record<string,Person>;head:string;founder:string;stats:Record<Stat,number>;debt:number;phase:'play'|'succession'|'ended';event:string;seen:string[];log:LogEntry[];legacies:{key:string;generation:number}[];peak:{year:number;wealth:number};moves:string[];endReason:string;turn:number};
 const clamp=(n:number)=>Math.max(0,Math.min(100,n));
 export function rand(s:State){s.rng=(Math.imul(1664525,s.rng)+1013904223)>>>0;return s.rng/4294967296}
@@ -87,17 +89,24 @@ function applySurpriseAction(s:State,action:SurpriseAction){
  if(action==='runaway-honor'&&target?.alive){leave(target);log(s,target.name+'은(는) 끝내 돌아오지 않고 '+target.region+'에서 새 삶을 꾸렸습니다.','surprise-result')}
  if(action==='runaway-wait'&&target?.alive){if(roll<.5){s.stats.cohesion=clamp(s.stats.cohesion+4);target.life.push({year:s.year,text:'집으로 돌아옴'});log(s,target.name+', 계절이 바뀌기 전에 집으로 돌아오다.','surprise-result')}else{s.stats.cohesion=clamp(s.stats.cohesion-6);leave(target);log(s,target.name+'은(는) 돌아오지 않고 '+target.region+'에 자리를 잡았습니다.','surprise-result')}}
 }
-function applyJourneyAction(s:State,action:JourneyAction):boolean{
+function takeExam(s:State,checks:AbilityCheck[],id?:string){
+ const p=id?s.people[id]:examCandidate(s)!;
+ const check:AbilityCheck={actor:p.id,label:'과거시험',chance:examChance(s,p),success:false,factors:[{label:'개인 교육',value:p.education},{label:'개인 능력',value:p.ability},{label:'가문 교육',value:s.stats.education}]};
+ applySocialAction(s,'exam',()=>rand(s),p.id);check.success=societyState(s).examPassed;checks.push(check);
+}
+function applyJourneyAction(s:State,action:JourneyAction,checks:AbilityCheck[]):boolean{
  const trip=s.journey!,p=s.people[trip.candidate];
+ const fatal=action==='risk'&&surpriseRoll(s,22)<journeyRisk(s);
+ if(action==='risk')checks.push({actor:p.id,label:'과거길 돌파',chance:1-journeyRisk(s),success:!fatal,factors:[{label:'개인 능력',value:p.ability},{label:'개인 건강',value:p.health}]});
  if(action==='return'){
   p.life.push({year:s.year,text:'험한 과거길에서 귀환하여 다음 기약을 남김'});
   log(s,`${withParticle(p.name,'은/는')} 이번 과거를 포기하고 무사히 집으로 돌아왔습니다. 이미 쓴 준비비는 돌아오지 않습니다.`,'journey');
- }else if(action==='risk'&&surpriseRoll(s,22)<journeyRisk(s)){
+ }else if(fatal){
   die(s,p,trip.id.slice('journey-'.length) as DeathCause);retireOffice(s);checkSuccession(s);delete s.journey;return true;
  }else{
   const text=action==='escort'?`위험을 피해 ${examCapital(s.year)}에 무사히 도착했습니다.`:journeyText(trip.id,s.year).survived;
   p.life.push({year:s.year,text});log(s,`${p.name}, ${text}`,'journey');
-  applySocialAction(s,'exam',()=>rand(s),p.id);
+  takeExam(s,checks,p.id);
  }
  delete s.journey;return false;
 }
@@ -133,13 +142,14 @@ export function choose(state:State,index:number):State {
  if(c.target&&c.personalEducation){const p=s.people[c.target];if(p?.alive){p.education=clamp(p.education+c.personalEducation);p.life.push({year:s.year,text:'가족의 지원으로 교육 '+c.personalEducation+' 증가'});log(s,p.name+'의 교육이 '+c.personalEducation+'점 높아졌습니다.','growth')}}
  if(c.move){const place=pick(s,regions.filter(r=>r!==s.moves.at(-1)));s.moves.push(place);Object.values(s.people).filter(p=>p.alive).forEach(p=>p.region=place);log(s,place+'에 새 터전을 마련하다.')}
  if(c.job){const p=s.people[s.head];p.intendedJob=c.job;if(s.year-p.born>=18)p.job=jobFor(s.year,c.job==='study',c.job==='trade');else {p.job='미성년';log(s,'가족이 '+p.name+'의 성년 이후 진로를 준비합니다.','growth')}}
+ const checks:AbilityCheck[]=[];
  let startingJourney=false,journeyDeath=false;
  if(c.socialAction==='exam'){
   const trip=beginExamJourney(s,examCandidate(s)!);
   if(trip){s.journey=trip;startingJourney=true;log(s,`${withParticle(s.people[trip.candidate].name,'은/는')} 과거를 보러 ${examCapital(s.year)}으로 떠났습니다. ${journeyText(trip.id,s.year).title}.`,'journey');}
-  else applySocialAction(s,c.socialAction,()=>rand(s));
+  else takeExam(s,checks);
  }else if(c.socialAction)applySocialAction(s,c.socialAction,()=>rand(s));
- if(c.journeyAction)journeyDeath=applyJourneyAction(s,c.journeyAction);
+ if(c.journeyAction)journeyDeath=applyJourneyAction(s,c.journeyAction,checks);
  if(c.chronicleAction)applyChronicleAction(s,c.chronicleAction);
  if(c.surpriseAction)applySurpriseAction(s,c.surpriseAction);
  if(c.debtRelief){const forgiven=Math.min(s.debt,s.debt*Math.max(0,Math.min(1,c.debtRelief)));s.debt=Math.max(0,s.debt-forgiven);log(s,`비용 조달 후 부채 ${forgiven.toFixed(1)}점을 조정했습니다. 남은 부채 ${s.debt.toFixed(1)}점.`,'economy');}
@@ -157,7 +167,7 @@ export function choose(state:State,index:number):State {
  const actionEntries=s.log.slice(logStart).filter(l=>l.text!==e.title+' — '+c.title);
  const actionEntry=(c.journeyAction?actionEntries.find(l=>l.kind==='society'):undefined)??actionEntries.find(l=>['society','alternate','chronicle','surprise-result','journey'].includes(l.kind));
  const deathEntry=s.log.slice(logStart).find(l=>l.family?.type==='farewell'&&(l.family.people.includes(s.head)||l.family.cause));
- s.report={outcome:deathEntry?.text??((c.socialAction||c.chronicleAction||c.surpriseAction||c.journeyAction)&&actionEntry?actionEntry.text:decisionFeedback(e,c,index)),from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
+ s.report={...(checks.length?{checks}:{}),outcome:deathEntry?.text??((c.socialAction||c.chronicleAction||c.surpriseAction||c.journeyAction)&&actionEntry?actionEntry.text:decisionFeedback(e,c,index)),from,to:s.year,title:e.title,decision:c.title,changes,immediate,borrowed,debtBefore,debtAfter:s.debt,entries:s.log.slice(logStart)};return s;
 }
 export function beginStory(state:State):State{if(!state.introPending||state.phase!=='play')return state;return {...state,introPending:false}}
 export function continueStory(state:State):State{if(!state.report)return state;const s=structuredClone(state);delete s.report;return s}

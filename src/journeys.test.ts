@@ -26,6 +26,32 @@ function fatal(id:JourneyId='journey-tiger'):State {
 }
 
 describe('exam-road surprises',()=>{
+ it('uses personal ability and health in the actual risk and persists the pre-action check',()=>{
+  const weak=pending(1);weak.people[weak.head].ability=20;weak.people[weak.head].health=20;
+  const strong=structuredClone(weak);strong.people[strong.head].ability=90;strong.people[strong.head].health=90;
+  expect(journeyRisk(strong)).toBeLessThan(journeyRisk(weak));
+  let changed=false;
+  for(let seed=1;seed<=100;seed++){
+   weak.seed=strong.seed=seed;const a=choose(weak,1),b=choose(strong,1);
+   for(const [before,after] of [[weak,a],[strong,b]]){
+    const check=after.report!.checks![0];expect(check.chance).toBeCloseTo(1-journeyRisk(before));
+    expect(check.success).toBe(surpriseRoll(before,22)>=journeyRisk(before));
+    expect(check.factors[0].value).toBe(before.people[before.head].ability);
+    expect(decodeSave(JSON.stringify(after))).toEqual(after);
+   }
+   if(a.report!.checks![0].success!==b.report!.checks![0].success)changed=true;
+  }
+  expect(changed).toBe(true);
+ });
+ it('keeps exam checks on the actual candidate and rejects corrupt check records',()=>{
+  const s=pending();const out=choose(s,0),check=out.report!.checks![0];
+  expect(check.label).toBe('과거시험');expect(check.actor).toBe(s.head);
+  expect(check.factors[0].value).toBe(s.people[s.head].education);
+  for(const change of [{actor:'missing'},{actor:'constructor'},{actor:'toString'},{chance:2},{success:'yes'},{factors:[{label:'교육',value:'high'}]}]){
+   const bad=structuredClone(out);Object.assign(bad.report!.checks![0],change);expect(decodeSave(JSON.stringify(bad))).toBeNull();
+  }
+  delete out.report!.checks;expect(decodeSave(JSON.stringify(out))).toEqual(out);
+ });
  it('uses the contemporary capital in the event, arrival and death records',()=>{
   for(const [year,capital] of [[1393,'개경'],[1394,'한양'],[1398,'한양'],[1399,'개경'],[1404,'개경'],[1405,'한양']] as const)expect(examCapital(year)).toBe(capital);
   for(const year of [1399,1404,1405]){

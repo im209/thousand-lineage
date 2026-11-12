@@ -1,12 +1,13 @@
 import {test,expect} from '@playwright/test';
 
 test('a fatal exam journey preserves its story through reload and succession',async({page},info)=>{
+ await page.emulateMedia({reducedMotion:'no-preference'});
  await page.goto('/');
  await page.evaluate(async()=>{
   const enginePath='/src/engine.ts',journeyPath='/src/journeys.ts',surprisePath='/src/surprises.ts';
   const e=await import(enginePath),j=await import(journeyPath),r=await import(surprisePath);
   const s=e.create(1,0,'commoner');s.year=1600;s.turn=5;s.event='journey-tiger';s.introPending=false;
-  const p=s.people[s.head];p.born=1570;p.sex='남';p.trait='다정함';
+  const p=s.people[s.head];p.born=1570;p.sex='남';p.trait='다정함';p.health=50;p.ability=50;
   s.people.child={...structuredClone(p),id:'child',name:'김후손',born:1590,generation:2,parents:[p.id],spouses:[],children:[],life:[],job:'미성년'};p.children.push('child');
   s.journey={id:'journey-tiger',candidate:p.id,startedYear:1600};
   while(r.surpriseRoll(s,22)>=j.journeyRisk(s))s.seed++;
@@ -18,10 +19,22 @@ test('a fatal exam journey preserves its story through reload and succession',as
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:`test-results/${info.project.name}-journey.png`,fullPage:true});
  await page.locator('.choice').nth(1).click();
+ const reveal=page.getByRole('region',{name:'판정과 변화'});
+ await expect(reveal).toBeVisible();
+ await expect(reveal).toHaveClass(/is-revealing/);
+ await expect(page.locator('.result-headline')).not.toBeVisible();
+ const saved=await page.evaluate(()=>localStorage.getItem('thousand-lineage-v1'));
+ const skip=reveal.getByRole('button',{name:'연출 건너뛰기'});
+ await skip.click();
+ await expect(reveal.locator('.ability-result')).toContainText('실패');
+ await expect(reveal.locator('.ability-result')).toContainText('성공 확률 65%');
+ expect(await page.evaluate(()=>localStorage.getItem('thousand-lineage-v1'))).toBe(saved);
  await expect(page.locator('.result-headline')).toContainText('호환');
  await expect(page.locator('.result-year')).toHaveText('1600년');
  await expect(page.locator('.memory-copy h3')).not.toContainText('호환');
  await page.reload();await expect(page.locator('.result-headline')).toContainText('호환');
+ await expect(reveal).toHaveClass(/is-revealed/);
+ await page.screenshot({path:`test-results/${info.project.name}-ability-result.png`,fullPage:true});
  await page.getByRole('button',{name:'다음 대표 선택하기 →'}).click();
  await expect(page.locator('.representative-memory')).toBeVisible();
  await page.locator('.heir-pick').first().click();await page.locator('.succession .continue-button').click();

@@ -1,3 +1,4 @@
+import {validChecks} from './ability-checks';
 import {events,clans,labels} from './data';
 import {validate,type State} from './engine';
 import {projects} from './projects';
@@ -27,6 +28,7 @@ export function decodeSave(raw:string|null):State|null{
  }
  if(s.report){const r=s.report;if(!record(r)||!finite(r.from)||!finite(r.to)||r.to!==s.year||typeof r.title!=='string'||typeof r.decision!=='string'||!record(r.changes)||!record(r.immediate)||!entries(r.entries)||!['borrowed','debtBefore','debtAfter'].every(k=>finite(r[k])))return null;if(![r.changes,r.immediate].every(obj=>Object.entries(obj).every(([k,v])=>k in labels&&finite(v))))return null;}
  if(s.report&&!s.report.entries.every((l:any)=>typeof l.kind==='string'&&validFamilyEvent(l.family,s.people)))return null;
+ if(!validChecks(s.report?.checks,s.people))return null;
  if(s.report?.outcome!==undefined&&(typeof s.report.outcome!=='string'||s.report.outcome.length>2000))return null;
  if(s.representativeCount!==undefined&&(!Number.isInteger(s.representativeCount)||s.representativeCount<1))return null;
  if(s.endless!==undefined&&typeof s.endless!=='boolean')return null;

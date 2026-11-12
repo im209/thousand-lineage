@@ -20,7 +20,7 @@ export function beginExamJourney(s:State,candidate:Person):JourneyState|undefine
  if(s.turn<3||s.year<1394||s.year>=1894||surpriseRoll(s,20)>=JOURNEY_CHANCE)return undefined;
  return {id:journeyIds[Math.floor(surpriseRoll(s,21)*journeyIds.length)],candidate:candidate.id,startedYear:s.year};
 }
-export function journeyRisk(s:State){const j=s.journey;if(!j)return 0;const d=content[j.id],p=s.people[j.candidate];return p?.trait===d.trait?d.reduced:d.odds;}
+export function journeyRisk(s:State){const j=s.journey;if(!j)return 0;const d=content[j.id],p=s.people[j.candidate];if(!p)return d.odds;const base=p.trait===d.trait?d.reduced:d.odds;return Math.max(.05,Math.min(.65,base-(p.ability-50)*.002-(p.health-50)*.001));}
 export function journeyEscortCost(s:State){return s.stats.connections>=60?3:6;}
 export function journeyText(id:JourneyId,year=1600){const d=content[id],capital=examCapital(year);return {...d,title:d.title.replaceAll('한양',capital),death:d.death.replaceAll('한양',capital),survived:d.survived.replaceAll('한양',capital)};}
 export const journeyEvents:Event[]=journeyIds.map(id=>({id,title:content[id].title,description:content[id].description,kind:'surprise',min:1394,max:1893,choices:[]}));
@@ -29,7 +29,7 @@ export function prepareJourneyEvent(s:State):Event {
  const j=s.journey!,p=s.people[j.candidate],d=journeyText(j.id,s.year),risk=Math.round(journeyRisk(s)*100),cost=journeyEscortCost(s);
  const choices:Choice[]=[
   {title:d.safe,description:`추가 재산 −${cost} · 이 사건의 사망 위험 없이 도착 후 응시${cost===3?' · 연결 60 혜택':''}`,effects:{wealth:-cost},journeyAction:'escort'},
-  {title:d.risk,description:`추가 비용 없음 · 살아남으면 응시 · 사망하면 응시 취소`,effects:{},journeyAction:'risk',chanceLabel:`${p.name} 사망 확률 ${risk}% · 게임 확률${p.trait===d.trait?` · ${p.trait}으로 ${Math.round(d.odds*100)}% → ${risk}%`:''}`},
+  {title:d.risk,description:`개인 능력 ${Math.round(p.ability)} · 건강 ${Math.round(p.health)}로 돌파 판정 · 추가 비용 없음 · 사망하면 응시 취소`,effects:{},journeyAction:'risk',chanceLabel:`${p.name} 사망 확률 ${risk}% · 게임 확률${p.trait===d.trait?` · ${p.trait} 혜택 반영`:''}`},
   {title:'이번 과거를 포기하고 집으로 돌아간다',description:'추가 비용·사건 사망 위험 없음 · 이미 쓴 준비비 8은 돌아오지 않음',effects:{},journeyAction:'return'},
  ];
  return {...journeyEvents.find(e=>e.id===j.id)!,title:d.title,description:`${withParticle(p.name,'은/는')} ${p.region}에서 ${examCapital(s.year)}으로 과거를 보러 가던 중입니다. ${d.description}`,choices};

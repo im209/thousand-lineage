@@ -27,6 +27,7 @@
 - `src/game-panels.tsx`: 가족·선택 결과·후계자 비교
 - `src/journeys.ts`, `src/journey-scene.tsx`: 과거 지원으로만 열리는 길 위 사건. 응시자 ID를 고정하고 준비비는 한 번만 차감한다. `journey`가 있으면 다른 진로·과업 변경을 잠근다. 성격별 사망 확률과 연결 60의 안전 비용 혜택을 화면과 같은 함수에서 계산한다.
 - `src/family-events.ts`, `src/korean.ts`: 선택적 인물 ID 기반 가족 사건 메타데이터와 한국어 조사. 이전 v1 저장은 문장 매칭 대체 경로로 지원한다.
+- `src/ability-checks.ts`, `src/result-reveal.*`: 과거길 강행·과거시험의 실제 판정 시점 인물/수치/확률/결과를 보고서에 보존한다. 결과 연출은 저장된 결과만 읽고 난수나 선택을 재실행하지 않는다. 연출 건너뛰기·동작 줄이기를 지원하며, 새로고침으로 복원한 결과는 정적으로 보여준다. 일반 선택은 실제 즉시 변화만 연출하고 가짜 성공 판정을 만들지 않는다.
 - `src/surprises.ts`: 돌발 사건 8종(역병·흉년·화재·도적/사기·풍년/호황·귀인·쌍둥이·가출). 판정은 시드+턴 해시(`surpriseRoll`)로 해 기본 난수 흐름을 건드리지 않는다. 엔진의 `startSurprise`/`applySurpriseAction`이 실제 효과를 적용한다
 - `src/society.ts`, `src/chronicles.ts`, `src/projects.ts`: 신분·정치, 생활사, 장기 과업
 - `src/endings.ts`, `src/chronicle-panels.tsx`: 결말 판정과 발견형 도감
