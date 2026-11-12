@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {create,choose,continueStory,currentEvent,validate,selectProject,selectSocialFocus,type State,type Person} from './engine';
-import {beginExamJourney,journeyIds,journeyRisk,JOURNEY_CHANCE,type JourneyId} from './journeys';
+import {beginExamJourney,journeyIds,journeyRisk,JOURNEY_CHANCE,examCapital,type JourneyId} from './journeys';
 import {surpriseRoll,eligibleSurprises} from './surprises';
 import {decodeSave} from './save';
 import {familyMemories,reportHeadline} from './family-memory';
@@ -26,6 +26,18 @@ function fatal(id:JourneyId='journey-tiger'):State {
 }
 
 describe('exam-road surprises',()=>{
+ it('uses the contemporary capital in the event, arrival and death records',()=>{
+  for(const [year,capital] of [[1393,'개경'],[1394,'한양'],[1398,'한양'],[1399,'개경'],[1404,'개경'],[1405,'한양']] as const)expect(examCapital(year)).toBe(capital);
+  for(const year of [1399,1404,1405]){
+   const s=fatal();s.year=year;s.people[s.head].born=year-30;s.journey!.startedYear=year;
+   while(surpriseRoll(s,22)>=journeyRisk(s))s.seed++;
+   const capital=examCapital(year),other=capital==='개경'?'한양':'개경';
+   expect(currentEvent(s).description).toContain(capital);expect(currentEvent(s).title).not.toContain(other);
+   const death=choose(s,1);expect(death.people[s.head].life.at(-1)?.text).toContain(capital);
+   expect(death.report!.outcome).not.toContain(other);
+   const safe=choose(s,0);expect(safe.report!.entries.find(l=>l.kind==='journey'&&l.text.includes('도착'))?.text).toContain(capital);
+  }
+ });
  it('only interrupts an eligible exam after onboarding and charges preparation once',()=>{
   let s=fixture(1);while(!beginExamJourney(s,s.people[s.head]))s=fixture(s.seed+1);
   const out=choose(s,1);expect(out.year).toBe(s.year);expect(out.rng).toBe(s.rng);

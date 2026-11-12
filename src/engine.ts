@@ -2,7 +2,7 @@ import {clans,events,regions,jobFor,type Stat,type Event} from './data';
 import {decisionFeedback} from './choice-feedback';
 import {withParticle} from './korean';
 import type {FamilyEvent,LogEntry,DeathCause} from './family-events';
-import {beginExamJourney,prepareJourneyEvent,journeyRisk,journeyText,type JourneyState,type JourneyAction} from './journeys';
+import {beginExamJourney,prepareJourneyEvent,journeyRisk,journeyText,examCapital,type JourneyState,type JourneyAction} from './journeys';
 import type {ChallengeBenchmark} from './share-links';
 import {projects,projectState,projectComplete,projectMatches,projectChoice,type ProjectId,type ProjectState} from './projects';
 import {societyState,examCandidate,randomStartingStanding,initializeSociety,societyAnnual,retireOffice,nextSocietyEvent,prepareSocialEvent,wrapAlternateHistory,socialLockReason,applySocialAction,type StartingStanding,type Society} from './society';
@@ -52,8 +52,8 @@ function marry(s:State,p:Person){const c=pick(s,clans.filter(c=>c.id!==p.clan));
 function die(s:State,p:Person,cause?:DeathCause){
  if(!p.alive)return;
  p.alive=false;p.died=s.year;
- const text=cause?`${p.name}, ${journeyText(`journey-${cause}`).death}`:`${p.name}, ${s.year-p.born}세에 생을 마치다.`;
- p.life.push({year:s.year,text:cause?journeyText(`journey-${cause}`).death:'생을 마침'});
+ const text=cause?`${p.name}, ${journeyText(`journey-${cause}`,s.year).death}`:`${p.name}, ${s.year-p.born}세에 생을 마치다.`;
+ p.life.push({year:s.year,text:cause?journeyText(`journey-${cause}`,s.year).death:'생을 마침'});
  log(s,text,'family',{type:'farewell',people:[p.id],...(cause?{cause}:{})});
  const heirs=p.children.map(id=>s.people[id]).filter(c=>c.alive);
  if(heirs.length){const share=p.estate/heirs.length;heirs.forEach(h=>h.estate+=share)}else s.stats.wealth=clamp(s.stats.wealth+p.estate*.1);p.estate=0;
@@ -95,7 +95,7 @@ function applyJourneyAction(s:State,action:JourneyAction):boolean{
  }else if(action==='risk'&&surpriseRoll(s,22)<journeyRisk(s)){
   die(s,p,trip.id.slice('journey-'.length) as DeathCause);retireOffice(s);checkSuccession(s);delete s.journey;return true;
  }else{
-  const text=action==='escort'?'위험을 피해 한양에 무사히 도착했습니다.':journeyText(trip.id).survived;
+  const text=action==='escort'?`위험을 피해 ${examCapital(s.year)}에 무사히 도착했습니다.`:journeyText(trip.id,s.year).survived;
   p.life.push({year:s.year,text});log(s,`${p.name}, ${text}`,'journey');
   applySocialAction(s,'exam',()=>rand(s),p.id);
  }
@@ -136,7 +136,7 @@ export function choose(state:State,index:number):State {
  let startingJourney=false,journeyDeath=false;
  if(c.socialAction==='exam'){
   const trip=beginExamJourney(s,examCandidate(s)!);
-  if(trip){s.journey=trip;startingJourney=true;log(s,`${withParticle(s.people[trip.candidate].name,'은/는')} 과거를 보러 한양으로 떠났습니다. ${journeyText(trip.id).title}.`,'journey');}
+  if(trip){s.journey=trip;startingJourney=true;log(s,`${withParticle(s.people[trip.candidate].name,'은/는')} 과거를 보러 ${examCapital(s.year)}으로 떠났습니다. ${journeyText(trip.id,s.year).title}.`,'journey');}
   else applySocialAction(s,c.socialAction,()=>rand(s));
  }else if(c.socialAction)applySocialAction(s,c.socialAction,()=>rand(s));
  if(c.journeyAction)journeyDeath=applyJourneyAction(s,c.journeyAction);

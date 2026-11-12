@@ -1,6 +1,6 @@
 import type {State} from './engine';
 import {PixelAvatar} from './pixel-avatar';
-import {journeyRisk} from './journeys';
+import {journeyRisk,examCapital} from './journeys';
 
 export function JourneyScene({s}:{s:State}){
  const trip=s.journey;if(!trip)return null;
@@ -17,7 +17,7 @@ export function JourneyScene({s}:{s:State}){
    <div className="journey-traveler"><PixelAvatar person={person} size={48}/></div>
    <span className="journey-scene-label">{tiger?'고갯길':flood?'불어난 나루':'외진 산길'}</span>
   </div>
-  <div className="journey-person"><div><span>한양으로 향하는 사람</span><strong>{person.name}</strong><small>{s.year-person.born}세 · {person.trait} · {person.id===s.head?'가문의 현재 대표':'가문이 지원하는 응시자'}</small></div><div className="journey-stakes"><span>홀로 강행할 때</span><b>사망 {Math.round(journeyRisk(s)*100)}%</b><small>실제 통계가 아닌 게임 확률</small></div></div>
+  <div className="journey-person"><div><span>{examCapital(s.year)}으로 향하는 사람</span><strong>{person.name}</strong><small>{s.year-person.born}세 · {person.trait} · {person.id===s.head?'가문의 현재 대표':'가문이 지원하는 응시자'}</small></div><div className="journey-stakes"><span>홀로 강행할 때</span><b>사망 {Math.round(journeyRisk(s)*100)}%</b><small>실제 통계가 아닌 게임 확률</small></div></div>
   <p className="journey-note">과거 준비비 8은 이미 사용했습니다. 지금은 이 사람의 길을 결정합니다.</p>
  </section>;
 }
