@@ -4,6 +4,8 @@ import {projects} from './projects';
 import {chronicles} from './chronicles';
 import {validBenchmark} from './share-links';
 import {validSurprise} from './surprises';
+import {validJourney} from './journeys';
+import {validFamilyEvent} from './family-events';
 const record=(v:unknown):v is Record<string,any>=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const finite=(v:unknown)=>typeof v==='number'&&Number.isFinite(v);
 const strings=(v:unknown):v is string[]=>Array.isArray(v)&&v.every(x=>typeof x==='string');
@@ -15,7 +17,7 @@ export function decodeSave(raw:string|null):State|null{
  if(!s.legacies.every((l:unknown)=>record(l)&&typeof l.key==='string'&&finite(l.generation)))return null;
  if(!Object.keys(labels).every(k=>finite(s.stats[k])&&s.stats[k]>=0&&s.stats[k]<=100))return null;
  const entries=(list:unknown)=>Array.isArray(list)&&list.every(l=>record(l)&&finite(l.year)&&typeof l.text==='string');
- if(!entries(s.log)||!s.log.every((l:any)=>typeof l.kind==='string'))return null;
+ if(!entries(s.log)||!s.log.every((l:any)=>typeof l.kind==='string'&&validFamilyEvent(l.family,s.people)))return null;
  for(const [id,p] of Object.entries(s.people)){if(!record(p)||p.id!==id||typeof p.name!=='string'||typeof p.surname!=='string'||!clans[p.clan]||!['여','남'].includes(p.sex)||typeof p.alive!=='boolean'||typeof p.lineage!=='boolean')return null;
  if(!finite(p.born)||p.born>s.year||!(p.died===null||finite(p.died))||!finite(p.generation)||p.generation<1||!finite(p.health)||!finite(p.education)||!finite(p.estate)||!finite(p.ability))return null;
  if(!['parents','children','spouses','adoptiveParents'].every(k=>strings(p[k])&&p[k].every((key:string)=>!!s.people[key]))||!entries(p.life))return null;
@@ -24,13 +26,14 @@ export function decodeSave(raw:string|null):State|null{
  if(s.year-p.born<18)p.job='미성년';
  }
  if(s.report){const r=s.report;if(!record(r)||!finite(r.from)||!finite(r.to)||r.to!==s.year||typeof r.title!=='string'||typeof r.decision!=='string'||!record(r.changes)||!record(r.immediate)||!entries(r.entries)||!['borrowed','debtBefore','debtAfter'].every(k=>finite(r[k])))return null;if(![r.changes,r.immediate].every(obj=>Object.entries(obj).every(([k,v])=>k in labels&&finite(v))))return null;}
+ if(s.report&&!s.report.entries.every((l:any)=>typeof l.kind==='string'&&validFamilyEvent(l.family,s.people)))return null;
  if(s.report?.outcome!==undefined&&(typeof s.report.outcome!=='string'||s.report.outcome.length>2000))return null;
  if(s.representativeCount!==undefined&&(!Number.isInteger(s.representativeCount)||s.representativeCount<1))return null;
  if(s.endless!==undefined&&typeof s.endless!=='boolean')return null;
  if(s.challenge!==undefined&&!validBenchmark(s.challenge))return null;
  if(s.runId!==undefined&&(typeof s.runId!=='string'||s.runId.length<1||s.runId.length>120))return null;
  if(s.introPending!==undefined&&typeof s.introPending!=='boolean')return null;
- if(!validSurprise(s,s.surprise))return null;
+ if(!validSurprise(s,s.surprise)||!validJourney(s,s.journey))return null;
  if(s.introPending&&(s.year!==1392||s.turn!==0||s.phase!=='play'||s.report||s.head!==s.founder||s.event!=='h1392'))return null;
  if(s.chronicles!==undefined){
   const c=s.chronicles,arcIds=chronicles.map(a=>a.id),outcomes=chronicles.flatMap(a=>a.outcomes.map(o=>o.id));

@@ -46,7 +46,7 @@ export function chronicleAvailability(s:State,id:ArcId):string|null{
  return null;
 }
 export function selectChronicle(state:State,id:ArcId):State{
- if(state.introPending||state.phase!=='play'||state.report||chronicleAvailability(state,id))return state;
+ if(state.introPending||state.journey||state.phase!=='play'||state.report||chronicleAvailability(state,id))return state;
  const s=structuredClone(state);s.chronicles=structuredClone(chronicleState(s));s.chronicles.selected=id;
  if(s.chronicles.active)s.chronicles.active.dueTurn=Math.min(s.chronicles.active.dueTurn,s.turn);
  return s;

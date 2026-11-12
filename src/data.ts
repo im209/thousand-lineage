@@ -2,6 +2,7 @@ import {lifeEvents} from './life-events';
 import {societyEvents} from './society';
 import {chronicleEvents} from './chronicles';
 import {surpriseEvents} from './surprises';
+import {journeyEvents} from './journeys';
 import census from './clan-census.json';
 export const clanSource='https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&tbl_id=DT_1IN15SD';
 export const clanCoverage={year:census.year,surnameCount:census.surnameCount,namedCount:census.namedCount};
@@ -37,13 +38,13 @@ export function searchClans(query:string){
  return clans.filter(c=>`${c.label}${c.hanja}`.normalize('NFKC').replace(/\s/g,'').includes(q));
 }
 export const labels:Record<Stat,string>={wealth:'재산',stability:'생계 안정',status:'사회적 영향력',education:'교육·지식',health:'생활환경',reputation:'명성',connections:'사회적 연결',cohesion:'가족 결속'};
-export type Choice={title:string;description:string;effects:Partial<Record<Stat,number>>;legacy?:string;move?:boolean;job?:'trade'|'study';adopt?:boolean;personalEducation?:number;target?:string;unlock?:import('./projects').ProjectId;debtRelief?:number;socialAction?:import('./society').SocialAction;chronicleAction?:import('./chronicles').ChronicleAction;lockedReason?:string;chanceLabel?:string;surpriseAction?:import('./surprises').SurpriseAction};
+export type Choice={title:string;description:string;effects:Partial<Record<Stat,number>>;legacy?:string;move?:boolean;job?:'trade'|'study';adopt?:boolean;personalEducation?:number;target?:string;unlock?:import('./projects').ProjectId;debtRelief?:number;socialAction?:import('./society').SocialAction;chronicleAction?:import('./chronicles').ChronicleAction;lockedReason?:string;chanceLabel?:string;surpriseAction?:import('./surprises').SurpriseAction;journeyAction?:import('./journeys').JourneyAction};
 export type Event={id:string;title:string;description:string;min:number;max:number;year?:number;source?:string;kind:'history'|'life'|'legacy'|'arcade'|'society'|'alternate'|'chronicle'|'surprise';requires?:string;choices:Choice[]};
 const choices:Choice[]=[{title:'가족의 생활을 먼저 지킨다',description:'생계 +8 · 결속 +5 · 재산 −4',effects:{stability:8,cohesion:5,wealth:-4},legacy:'care'},{title:'배움에 미래를 건다',description:'교육 +12 · 재산 −8 · 후대 교육 기회',effects:{education:12,wealth:-8},legacy:'learning',job:'study'},{title:'새로운 생업을 개척한다',description:'재산 +8 · 생계 −5 · 상업 경험을 전승',effects:{wealth:8,stability:-5,connections:4},legacy:'trade',job:'trade'}];
 const war:Choice[]=[{title:'가족과 함께 피난한다',description:'거주지 이동 · 재산 −15 · 건강 +8',effects:{wealth:-15,health:8,cohesion:5},move:true,legacy:'migration'},{title:'고향에서 생계를 지킨다',description:'재산 +4 · 지역에 따라 생활환경 손실',effects:{wealth:4,health:-12,stability:-10},legacy:'land'},{title:'이웃과 구호를 함께한다',description:'재산 −8 · 연결 +14 · 명성 +8',effects:{wealth:-8,connections:14,reputation:8},legacy:'community'}];
 export const events:Event[]=[
  ...societyEvents,
- ...chronicleEvents,...surpriseEvents,
+ ...chronicleEvents,...surpriseEvents,...journeyEvents,
  {id:'h1894',year:1894,min:1894,max:1894,title:'신분의 경계가 사라지는 전환',description:'갑오개혁의 신분제 폐지를 반영합니다. 옛 신분·과거·관직 경로는 끝나고 새로운 교육과 생업의 길이 열립니다. 사회적 차별이 즉시 사라졌다는 뜻은 아닙니다.',kind:'history',source:'https://contents.history.go.kr/front/hm/view.do?levelId=hm_118_0020',choices:[{title:'새 교육으로 다음 세대를 준비한다',description:'재산 −6 · 교육 +10',effects:{wealth:-6,education:10},socialAction:'modern-study'},{title:'새로운 생업의 기회를 찾는다',description:'재산 +8 · 연결 +5',effects:{wealth:8,connections:5},socialAction:'civic'},{title:'이웃과 변화의 길을 함께한다',description:'명성 +8 · 연결 +10 · 재산 −4',effects:{reputation:8,connections:10,wealth:-4},socialAction:'civic'}]},
  {id:'h1950',year:1950,min:1950,max:1950,title:'전쟁, 가족의 안부를 묻다',description:'6·25 전쟁이 시작되었습니다. 살던 곳과 생활의 기반이 흔들리는 가운데 가족의 안전을 결정합니다.',kind:'history',source:'https://theme.archives.go.kr/next/625/background/overview.do',choices:war},
  {id:'h1953',year:1953,min:1953,max:1953,title:'멈춘 포성 뒤의 삶',description:'정전협정이 체결되었습니다. 남겨진 삶의 터전을 다시 세워야 합니다.',kind:'history',source:'https://theme.archives.go.kr/next/625/background/overview.do',choices},

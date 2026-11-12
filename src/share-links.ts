@@ -3,7 +3,7 @@ import type {StartingStanding,State} from './engine';
 
 // Bump when initial-life or simulation rules change. Old links remain readable,
 // but must not silently claim to offer the same rules after an update.
-export const CHALLENGE_RULES='family-20261106-3';
+export const CHALLENGE_RULES='family-20261113-1';
 export type ChallengeBenchmark={rules:string;years:number;generations:number};
 export type FamilyChallenge=ChallengeBenchmark&{version:1;seed:number;clan:number;origin:StartingStanding};
 export type ChallengeRead={kind:'none'}|{kind:'invalid'}|{kind:'ready';data:FamilyChallenge;compatible:boolean};

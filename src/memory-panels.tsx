@@ -1,6 +1,6 @@
 import type {Person, State} from './engine';
 import {PixelAvatar} from './pixel-avatar';
-import {featuredMemory} from './family-memory';
+import {featuredMemory,reportHeadline} from './family-memory';
 
 const memoryLabels = {birth:'새 이름이 기록되었습니다', marriage:'두 사람의 이야기가 만났습니다', farewell:'한 사람의 삶을 기억합니다', growth:'스스로의 길을 시작합니다'};
 
@@ -11,7 +11,7 @@ export function MemorySpotlight({s,onPerson}:{s:State;onPerson:(p:Person)=>void}
     <div className="memory-portraits">{memory.people.map(p => <button key={p.id} onClick={() => onPerson(p)} aria-label={`${p.name}의 생애 보기`}>
       <PixelAvatar person={p} size={64}/><span>{p.name}</span>
     </button>)}</div>
-    <div className="memory-copy"><span className="memory-label">{memory.year}년 · {memoryLabels[memory.kind]}</span><h3>{memory.text}</h3>
+    <div className="memory-copy"><span className="memory-label">{memory.year}년 · {memoryLabels[memory.kind]}</span><h3>{reportHeadline(s)===memory.text?memory.people.map(p=>p.name).join(' · '):memory.text}</h3>
       <p>{memory.kind==='birth'?'이 작은 이름도 가문의 연대기에 남았습니다.':memory.kind==='marriage'?'서로 다른 가문에서 온 두 사람의 인연이 기록에 남았습니다.':memory.kind==='farewell'?'함께한 시간은 가족의 기록에 남습니다.':'가족의 품에서 자라, 스스로의 길을 시작했던 순간입니다.'}</p>
       <small>초상을 누르면 이 사람의 기록을 볼 수 있어요.</small>
     </div>
