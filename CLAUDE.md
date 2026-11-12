@@ -19,8 +19,9 @@
 - `src/main.tsx`, `src/play-flow.*`: 화면과 초반 진행 안내
 - `src/growth-guide.*`, `src/choice-feedback.ts`: 현재 목표·스탯 혜택·선택 결과의 설명
 - `src/share-links.ts`, `src/challenge-landing.tsx`, `src/result-share.tsx`: 도전 링크 검증·미리보기·결과 비교·네이티브 공유·이미지 생성
-- `src/pixel.css`: 도트 게임풍 테마. 모든 CSS 중 마지막에 불러와 이전 레이어(style→modern→bright→기능별 CSS)를 덮는다. 각진 모서리, 3px 잉크 테두리, 딱 떨어지는 그림자, 고정 팔레트(`--px-*` 변수). 제목·숫자·버튼만 갈무리 폰트, 본문은 시스템 글꼴
-- `src/pixel-scene.tsx`: 첫 화면의 도트 풍경(초가집·감나무·세 식구). 96×64 격자에 절차적으로 그려 `<rect>`로 출력하며 이미지 파일이 없다
+- `src/pixel.css`, `src/heirloom.css`: 도트 게임풍 테마와 세부 표현. 이전 레이어(style→modern→bright→기능별 CSS) 뒤에 이 순서로 불러온다. 각진 모서리, 잉크 테두리, 딱 떨어지는 그림자, 고정 팔레트(`--px-*` 변수). 제목·숫자·버튼만 갈무리 폰트, 본문은 시스템 글꼴
+- `src/pixel-village.tsx`: 첫 화면의 자체 도트 풍경(논·개울·초가집·감나무·장독대·가족). 192×112 격자를 `<rect>`로 출력하며 이미지 파일과 게임 난수를 사용하지 않는다
+- `src/family-memory.ts`, `src/memory-panels.tsx`: 실제 턴 기록의 혼인·출생·성년·사망에 인물 초상을 연결한다. 기존 로그는 이름 기반이므로 동명이인으로 모호하면 초상을 추정하지 않는다. 생애 열기로 시간이 흐르거나 저장이 바뀌면 안 된다
 - `src/fonts/`: 갈무리11 Bold(woff2)와 SIL OFL 1.1 라이선스 원문
 - `src/pixel-avatar.tsx`, `docs/AVATAR-SOURCES.md`: 자체 한복 도트 초상과 고정 인물 시드. 원격 아바타 API에 의존하지 않음
 - `src/game-panels.tsx`: 가족·선택 결과·후계자 비교

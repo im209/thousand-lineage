@@ -1,0 +1,116 @@
+/* Editorial polish within the existing bright pixel system. No simulation rules
+   or saved-state layout depend on this presentation layer. */
+:root{--px-paper:#f5f0e2;--px-panel:#fffdf6;--px-ink:#343c35;--px-ink-soft:#596254;--px-muted:#6c7163;--px-red:#a94d35;--px-teal:#386a56;--px-teal-dark:#28513f;--px-teal-soft:#e4ecda;--px-gold:#d7b56c;--px-gold-soft:#f2e7c9;--px-green:#426c43}
+body{background-image:none!important}
+header{padding-top:16px!important;padding-bottom:16px!important}
+.brand{font-size:22px!important}.brand small{margin-top:5px}
+nav button{min-height:44px}.version{padding:10px 13px!important}
+.landing{max-width:1240px!important;grid-template-columns:1fr 1.12fr!important;gap:44px!important;padding-top:64px!important;padding-bottom:34px!important;align-items:center}
+.intro>.eyebrow{background:none!important;border:0!important;padding:0!important;letter-spacing:1px!important;color:var(--px-red)!important;margin:0 0 22px!important}
+.intro>.eyebrow::before{content:'◆';font-size:9px;margin-right:10px}
+.intro h1{font-size:clamp(32px,3.8vw,52px)!important;line-height:1.48!important;margin:0 0 24px!important;word-break:keep-all}
+.intro h1 em{font-style:normal}
+.landing .lead{font-size:14px!important;line-height:2!important;margin:0 0 24px!important;word-break:keep-all}
+.landing .lead b{background:none;color:var(--px-ink-soft)!important;font-weight:500}
+.landing .actions{margin:0!important;gap:18px}
+.landing .actions .primary{padding:18px 22px!important;font-size:15px!important}
+.landing .tiny{margin-top:22px;font-size:11px!important}
+.hero-scene.village-frame{border:var(--px-line);background:var(--px-panel);box-shadow:7px 7px 0 #d1c8ae!important;margin:0!important;min-width:0;transform:translateY(5px)}
+.village-frame-top{display:flex;justify-content:space-between;align-items:center;padding:13px 17px;border-bottom:var(--px-thin);font-family:var(--px-font);font-size:11px;color:var(--px-ink-soft);background:var(--px-panel)}
+.village-frame-top>span:last-child{color:var(--px-red);font-size:14px}
+.pixel-village{display:block;width:100%;height:auto;image-rendering:pixelated;background:#d6e9df}
+.village-frame-bottom{display:flex;align-items:center;gap:13px;padding:17px;border-top:var(--px-thin);background:var(--px-panel-2)}
+.village-frame-bottom b{display:block;font-family:var(--px-font);font-size:12px;font-weight:400;line-height:1.7}
+.village-frame-bottom p{font-size:11px;margin:5px 0 0;line-height:1.6}
+.village-seal{flex-shrink:0;display:grid;place-items:center;width:36px;height:40px;background:var(--px-red);color:#fff;border:2px solid var(--px-ink);font-family:serif;font-size:24px}
+.village-spark{margin-left:auto;color:var(--px-red);font-size:22px}
+.village-cloud{animation:village-drift 14s ease-in-out infinite alternate}.village-birds{animation:village-flight 8s steps(12) infinite alternate;transform-origin:80px 18px}
+@keyframes village-drift{to{transform:translateX(7px)}}
+@keyframes village-flight{to{transform:translate(5px,-2px)}}
+.landing .how-to-play{margin-top:8px;border-top:2px solid #c8c3b1!important;padding:28px 0 0;gap:24px}
+.how-to-play li>b{background:transparent!important;box-shadow:none!important;border:0!important;color:var(--px-red)!important;font-size:21px!important;width:28px;height:30px}
+.how-to-play strong{font-size:13px!important;margin-bottom:8px}.how-to-play span{font-size:11px!important}
+footer{border-top:1px solid #c8c3b1!important;margin-top:24px!important;padding-top:24px!important}
+
+/* Less competing decoration, more space around the current decision. */
+.game-heading{align-items:end}.game-heading .eyebrow{font-size:11px!important}
+.game-heading h1{font-size:46px!important;margin-top:12px!important}
+.game-heading h1>span{background:var(--px-panel-2)!important;font-size:11px!important;padding:7px 9px!important}
+.generation{font-size:12px}.generation b{font-size:30px!important}
+.timeline-progress{height:8px!important;border-width:1px!important}
+.timeline-progress i{background:var(--px-teal)!important}
+.focused-tabs{border-bottom:1px solid #c8c3b1!important}
+.focused-tabs>button{min-height:42px;font-size:12px!important}
+.first-choice-guide{box-shadow:none!important;background:#edf0e2!important;border:1px solid #b3bda5!important;padding:13px 16px}
+.guide-portrait{display:grid;place-items:center;flex-shrink:0;min-width:46px;min-height:46px;border:1px solid #a4b196;background:var(--px-panel);padding:2px}
+.guide-person{min-width:0}.guide-person strong{font-size:14px!important}
+.guide-family{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
+.guide-family button{display:flex;align-items:center;gap:5px;text-align:left;min-height:44px;padding:3px}
+.guide-family button:hover,.guide-portrait:hover{background:var(--px-gold-soft)}
+.guide-family button span{font-size:11px;line-height:1.6}.guide-family button small{display:block;font-size:9px;color:var(--px-ink-soft)}
+.guide-family-more{font-size:10px;color:var(--px-ink-soft)}
+.event{position:relative;padding:30px!important;box-shadow:5px 5px 0 #d1c8ae!important}
+.event>.eyebrow{font-size:11px!important;background:var(--px-panel-2)!important;padding:6px 9px!important}
+.event h2{font-size:28px!important;line-height:1.55!important;word-break:keep-all;overflow-wrap:anywhere}
+.event-description{font-size:15px!important;line-height:1.9!important;max-width:62ch;color:var(--px-ink-soft)!important}
+.ink-divider{border-top:1px solid #d6cfba!important;margin:22px 0!important}
+.question{font-size:13px!important;margin-bottom:15px!important}
+.choice{padding:18px 16px!important;margin-top:12px!important;box-shadow:3px 3px 0 #d4cbb6!important;border-width:2px!important;gap:14px!important;min-height:84px}
+.choice strong{font-size:15px!important;line-height:1.7!important}.choice small{font-size:12px!important;line-height:1.8!important;margin-top:5px!important}
+.choice-index{width:32px!important;height:32px!important;min-width:32px;font-size:12px!important}
+.choice:hover:not(:disabled){border-color:var(--px-teal)!important;background:#f1f4e8!important;box-shadow:4px 4px 0 var(--px-teal)!important}
+.choice:focus-visible{background:#f1f4e8!important}
+.event>.tiny{line-height:1.8!important;font-size:11px!important;margin-top:18px}
+.growth-guide,.recent{border:1px solid #b8bba9!important;box-shadow:none!important}
+.recent p{line-height:1.9!important}.recent .eyebrow{font-size:10px!important}
+
+/* A turn result reads as a family album before showing its bookkeeping. */
+.turn-result .result-year{font-size:36px;letter-spacing:-1px;margin:14px 0}
+.turn-result .result-headline{font-size:24px!important;line-height:1.65!important}
+.decision-recap{background:var(--px-panel-2)!important;border:0!important;border-left:3px solid var(--px-gold)!important;font-size:12px!important;padding:12px 14px!important}
+.memory-spotlight{display:flex;align-items:center;gap:22px;margin:24px 0 26px;padding:22px;border:2px solid #a5b497;background:#edf1e3;position:relative}
+.memory-farewell{background:#eeece4;border-color:#a8ada0}.memory-marriage{background:#f6ead9;border-color:#ccb68c}
+.memory-portraits{display:flex;gap:8px;flex-shrink:0;align-self:center}
+.memory-portraits button{display:flex;flex-direction:column;align-items:center;gap:9px;padding:7px 4px;min-width:68px}
+.memory-portraits button:hover{background:#fffdf6}.memory-portraits button span{font-family:var(--px-font);font-size:11px}
+.memory-label{display:block;font-family:var(--px-font);font-size:10px;line-height:1.8;color:var(--px-teal-dark)}
+.memory-copy h3{font-size:15px!important;line-height:1.8;margin:10px 0 6px;word-break:keep-all;overflow-wrap:anywhere}
+.memory-copy p{font-size:12px;line-height:1.9;margin:0}.memory-copy>small{display:block;font-size:10px;color:var(--px-muted);margin-top:10px}
+.family-time-heading{font-size:13px;margin:24px 0 12px}
+.turn-highlights{border-left:2px solid #c5c9b4;padding-left:18px;margin-left:5px}
+.turn-highlights article{position:relative;border-top:0!important;border-bottom:1px solid #e0ddce;padding:14px 0!important;gap:12px!important}
+.turn-highlights article::before{content:'';position:absolute;left:-24px;top:20px;width:10px;height:10px;background:var(--px-panel);border:2px solid #879478}
+.turn-highlights article>span{font-size:9px!important;padding:5px 7px!important;min-width:48px;text-align:center;border-width:1px!important;align-self:start}
+.turn-highlights article p{font-size:13px!important;line-height:1.9!important;word-break:keep-all;overflow-wrap:anywhere;color:var(--px-ink-soft)!important}
+.turn-highlights article small{font-size:10px;color:var(--px-muted)}
+.immediate-effects{margin-top:24px}.immediate-effects>span{border:1px solid #d2cfbc!important;font-size:11px!important}
+.immediate-label{font-size:10px!important}.result-stats-heading h3{font-size:13px}
+.delta-grid>div{border:1px solid #d2cfbc!important}.delta-grid strong{font-size:22px!important}
+.result-stats-heading{border-top:1px solid #c8c3b1!important}.turn-result .continue-button{font-size:15px!important}
+.representative-memory{display:flex;align-items:center;gap:20px;padding:20px;margin:24px 0;background:#efeee5;border-top:2px solid #9ba58f;border-bottom:1px solid #c7c9b9}
+.memorial-portrait{flex-shrink:0;padding:6px;background:var(--px-panel);border:2px solid #9ba58f}
+.representative-memory h3{font-size:19px;margin:7px 0}.representative-memory p{font-size:12px;line-height:1.8;margin:5px 0}.representative-memory .text-button{font-size:11px;padding:8px 0;min-height:36px}
+.heir-list{gap:14px!important}.heir-card{border-width:2px!important}.heir-pick{padding:18px!important;min-height:90px}.heir-card.selected{border-color:var(--px-teal)!important;background:#e9efdc!important;box-shadow:3px 3px 0 var(--px-teal)!important}
+.heir-metrics{font-size:11px!important;border-top:1px solid #d3d6c5;padding:10px 15px!important}.heir-metrics button{min-height:36px}
+.succession .continue-button{position:static!important;width:100%!important;margin-top:22px;left:auto!important;bottom:auto!important}
+.succession{padding-bottom:30px!important}
+.modal{max-height:85dvh;overflow-y:auto}.modal .close{min-width:64px;min-height:44px}.modal p{line-height:1.9}
+.founder-intro{box-shadow:5px 5px 0 #d1c8ae!important}.founder-person{border-width:2px!important}.founder-portrait{background:#e5ebd5!important}.assigned-background,.founder-goal{border-width:2px!important}
+
+@media(max-width:1000px) and (min-width:761px){.landing{gap:28px!important;padding-left:32px!important;padding-right:32px!important}.intro h1{font-size:36px!important}.landing .lead{font-size:12px!important}.guide-family button span{display:none}}
+@media(max-width:760px){
+ header{padding:12px 16px!important}.brand{font-size:18px!important}.brand small{font-size:9px!important}header nav{gap:6px}header nav button{font-size:10px!important;padding:5px!important}header .seal{font-size:15px!important}.version{display:none}
+ .landing{display:flex!important;flex-direction:column;align-items:stretch;padding:32px 22px 20px!important;gap:28px!important}
+ .intro h1{font-size:34px!important;line-height:1.45!important;margin-bottom:18px!important}.intro>.eyebrow{font-size:10px!important;margin-bottom:18px!important}
+ .landing .lead{font-size:12px!important;line-height:1.95!important;margin-bottom:22px!important}.landing .actions{display:flex;flex-wrap:wrap;gap:16px!important}.landing .actions .primary{font-size:14px!important;padding:17px 20px!important;width:100%}.landing .tiny{font-size:9px!important;margin:18px 0 0}
+ .hero-scene.village-frame{transform:none;box-shadow:4px 4px 0 #d1c8ae!important}.village-frame-top{padding:10px 12px;font-size:9px}.village-frame-bottom{padding:12px;gap:10px}.village-frame-bottom b{font-size:10px}.village-frame-bottom p{font-size:9px}.village-spark{display:none}.village-seal{width:30px;height:34px;font-size:21px}
+ .landing .how-to-play{display:grid;grid-template-columns:1fr;gap:20px;margin:0;padding-top:24px}.how-to-play li{gap:12px}.how-to-play strong{font-size:12px!important;margin-bottom:4px}.landing .record-shelf{width:100%}
+ .game-heading h1{font-size:34px!important}.game-heading h1>span{font-size:9px!important;margin-left:9px!important}.game-heading .eyebrow{font-size:10px!important}.generation{font-size:10px}.generation b{font-size:25px!important}.focused-game .generation small{font-size:9px;max-width:140px;word-break:keep-all}
+ .first-choice-guide{padding:10px!important;gap:9px;flex-wrap:wrap}.guide-person{flex:1}.guide-person strong{font-size:12px!important}.guide-person p{font-size:10px!important}.guide-family{width:100%;border-top:1px solid #cbd1bb;padding-top:8px;gap:9px}.guide-family button{flex:1;min-width:0;padding:0}.guide-family button span{font-size:9px}.guide-family button small{font-size:8px}.guide-family-more{font-size:9px}
+ .event{padding:20px 16px!important}.event h2{font-size:22px!important;line-height:1.55!important;margin:14px 0!important}.event-description{font-size:13px!important;line-height:1.8!important}.event>.eyebrow{font-size:9px!important}.ink-divider{margin:16px 0!important}.question{font-size:12px!important}.choice{padding:15px 11px!important;gap:10px!important;min-height:80px}.choice strong{font-size:13px!important}.choice small{font-size:11px!important}.choice-index{width:28px!important;height:28px!important;min-width:28px;font-size:10px!important}.choice>span:last-child{font-size:15px}
+ .turn-result .result-year{font-size:29px}.turn-result .result-headline{font-size:20px!important}.memory-spotlight{padding:16px 12px;gap:10px;flex-direction:column;align-items:stretch;margin:20px 0}.memory-portraits{align-self:start}.memory-portraits button{flex-direction:row;min-width:0;gap:5px;padding:0}.memory-portraits svg{width:45px;height:45px}.memory-portraits button span{font-size:10px}.memory-copy h3{font-size:13px!important}.memory-copy p{font-size:11px}.memory-label{font-size:9px}.memory-copy>small{font-size:9px}.turn-highlights{padding-left:14px}.turn-highlights article::before{left:-20px}.turn-highlights article p{font-size:12px!important}.result-stats-heading{align-items:start}.result-stats-heading>span{font-size:9px}.delta-grid{gap:7px!important}.delta-grid strong{font-size:20px!important}
+ .representative-memory{padding:15px 10px;gap:12px}.memorial-portrait svg{width:56px;height:56px}.representative-memory h3{font-size:16px}.representative-memory p{font-size:10px}.heir-pick{padding:13px!important}.heir-pick strong{font-size:14px!important}.heir-metrics{gap:8px!important;flex-wrap:wrap}.succession{padding-bottom:22px!important}
+ footer{margin-top:20px!important}
+}
+@media(max-width:360px){.intro h1{font-size:30px!important}.landing{padding-left:18px!important;padding-right:18px!important}.guide-family button span{font-size:8px}.guide-family svg{width:26px;height:26px}.game-heading h1>span{font-size:8px!important;padding:5px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
