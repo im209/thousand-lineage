@@ -1,0 +1,10 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+package-lock.json
+*.md
+docs/
+public/
+src/clan-census.json
+src/fonts/
