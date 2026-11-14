@@ -3,6 +3,7 @@ import {examChance} from './society';
 import {clans,events,regions,jobFor,type Stat,type Event} from './data';
 import {decisionFeedback} from './choice-feedback';
 import {withParticle} from './korean';
+import {givenName} from './names';
 import type {FamilyEvent,LogEntry,DeathCause} from './family-events';
 import {beginExamJourney,prepareJourneyEvent,journeyRisk,journeyText,examCapital,type JourneyState,type JourneyAction} from './journeys';
 import type {ChallengeBenchmark} from './share-links';
@@ -46,7 +47,8 @@ function advanceProject(s:State,c:import('./data').Choice,countChoice=true){
  }
  log(s,`${project.title} 완성! ${detail}`,'project');
 }
-function person(s:State,born:number,generation:number,clan:number,sex?:'여'|'남',lineage=false):Person {const c=clans[clan];return {id:`p${Object.keys(s.people).length+1}`,name:c.surname+pick(s,born<1900?['덕수','정희','영수','순이','성준','복례','정원','명수','옥희','도윤']:['서연','민준','지우','하윤','서준','수현','지민','도현']),surname:c.surname,clan,sex:sex??pick(s,['여','남']),born,died:null,parents:[],adoptiveParents:[],spouses:[],children:[],generation,job:s.year-born<18?'미성년':jobFor(s.year,s.stats.education>60,false),education:s.stats.education,health:55+Math.floor(rand(s)*40),region:s.moves.at(-1)!,trait:pick(s,['신중함','다정함','진취적','끈기 있음']),ability:30+Math.floor(rand(s)*60),estate:s.year-born<18?0:5+Math.floor(rand(s)*10),alive:true,lineage,life:[]}}
+// Random draw order (name, sex, health, trait, ability, estate) must stay fixed: same-seed replays depend on it.
+function person(s:State,born:number,generation:number,clan:number,sex?:'여'|'남',lineage=false):Person {const c=clans[clan];const nameRoll=rand(s),chosenSex=sex??pick(s,['여','남'] as const);const taken=new Set(Object.values(s.people).filter(p=>p.alive||born-p.born<60).map(p=>p.name));return {id:`p${Object.keys(s.people).length+1}`,name:givenName(nameRoll,c.surname,born,chosenSex,taken),surname:c.surname,clan,sex:chosenSex,born,died:null,parents:[],adoptiveParents:[],spouses:[],children:[],generation,job:s.year-born<18?'미성년':jobFor(s.year,s.stats.education>60,false),education:s.stats.education,health:55+Math.floor(rand(s)*40),region:s.moves.at(-1)!,trait:pick(s,['신중함','다정함','진취적','끈기 있음']),ability:30+Math.floor(rand(s)*60),estate:s.year-born<18?0:5+Math.floor(rand(s)*10),alive:true,lineage,life:[]}}
 function add(s:State,p:Person){s.people[p.id]=p;return p}
 export function create(seed:number,clan=0,origin:StartingStanding=randomStartingStanding(seed)):State {const s:State={representativeCount:1,version:1,seed:seed>>>0,rng:seed>>>0,year:1392,clan,people:{},head:'',founder:'',stats:{wealth:40,stability:50,status:25,education:25,health:65,reputation:30,connections:35,cohesion:65},debt:0,phase:'play',event:'h1392',seen:[],log:[],legacies:[],peak:{year:1392,wealth:40},moves:['경상도'],endReason:'',turn:0};s.moves=[pick(s,regions)];s.stats.wealth=25+Math.floor(rand(s)*40);s.stats.education=15+Math.floor(rand(s)*35);const f=add(s,person(s,1392-18-Math.floor(rand(s)*9),1,clan,undefined,true));s.head=s.founder=f.id;f.job=pick(s,['농민','상인','수공업자','학인']);initializeSociety(s,origin);s.society!.focus='livelihood';s.peak.wealth=s.stats.wealth;log(s,`${clans[clan].label} ${f.name}, 가문의 첫 장을 열다.`);return s}
 export function candidates(s:State){return Object.values(s.people).filter(p=>p.lineage&&p.alive&&p.id!==s.head).sort((a,b)=>Number(s.year-b.born>=18)-Number(s.year-a.born>=18)||b.education-a.education||b.health-a.health)}
@@ -74,7 +76,6 @@ function startSurprise(s:State,until:number){
  if(picked.id==='surprise-twins'&&picked.target){
   const p=s.people[picked.target],sp=p.spouses.map(id=>s.people[id]).find(x=>x.alive)!,father=p.sex==='남'?p:sp;
   const twins=[0,1].map(()=>{const child=add(s,person(s,s.year,p.generation+1,father.clan,undefined,true));child.parents=[p.id,sp.id];child.region=p.region;child.education=clamp(s.stats.education*.5+p.education*.5);p.children.push(child.id);sp.children.push(child.id);child.life.push({year:s.year,text:p.name+'와 '+sp.name+'의 쌍둥이로 태어남'});return child});
-  for(let i=0;i<5&&twins[1].name===twins[0].name;i++)twins[1].name=person(s,s.year,1,father.clan).name;
   log(s,withParticle(twins[0].name,'과/와')+' '+twins[1].name+', 쌍둥이로 태어나다.','family',{type:'birth',people:twins.map(p=>p.id)});
  }
  log(s,'뜻밖의 일 · '+prepareSurpriseEvent(s,events.find(e=>e.id===picked.id)!).title,'surprise');
