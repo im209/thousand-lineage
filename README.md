@@ -144,7 +144,8 @@ Playwright: 1440px 데스크톱과 390px 모바일에서 검색 더 보기·한�
 
 - `src/pixel-village.tsx`, `src/heirloom.css`: 자체 도트 풍경과 밝은 도트 UI의 세부 표현
 - `src/family-memory.ts`, `src/memory-panels.tsx`: 기존 기록에서 식별한 가족 사건과 생애 연결
-- `src/engine.ts`: 난수·인물·가계·시간·사건·계승·엔딩
+- `src/engine.ts`: 게임 규칙의 공개 창구. 규칙은 `src/core/`(상태·인물·한 해 진행·사건·선택·계승)로 나뉨
+- `src/names.ts`: 출생 연도·성별별 이름 목록
 - `src/data.ts`: 검증 조합·출처·역사/생활/세대 사건·시대·직업
 - `src/clan-census.json`, `scripts/import-clans.mjs`: 공개 성씨·본관 데이터와 재생성 스크립트
 - `src/store.ts`, `src/save.ts`: 게임 상태, 저장 구조 검사와 백업
@@ -154,7 +155,8 @@ Playwright: 1440px 데스크톱과 390px 모바일에서 검색 더 보기·한�
 - `src/society.ts`, `src/society-panels.tsx`, `src/society.css`: 출발 신분·관직·정치 분기·근대 전환과 화면
 - `src/chronicles.ts`, `src/chronicle-panels.tsx`, `src/chronicles.css`: 조선 생활사 6갈래·12결과, 두 단계 사건과 결말 도감 화면
 - `src/endings.ts`: 26종 결말의 누적 성취 판정과 조건·힌트
-- `src/main.tsx`, `src/game-panels.tsx`, `src/person-dialog.tsx`, `src/family-tree.tsx`: 화면과 가계도
+- `src/main.tsx`, `src/screens/`, `src/game-panels.tsx`, `src/person-dialog.tsx`, `src/family-tree.tsx`: 앱 껍데기, 화면별 구성요소와 가계도
+- `src/styles.ts`: CSS 불러오는 순서(덮어쓰기 순서)
 - `src/bright.css`: 밝은 디자인과 반응형 레이아웃
 - `src/engine.test.ts`, `e2e/`: 검증
 

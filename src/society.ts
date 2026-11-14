@@ -1,4 +1,5 @@
 import type { State, Person } from './engine';
+import { clamp } from './core/state';
 import type { Choice, Event } from './data';
 export type StartingStanding = 'commoner' | 'specialist' | 'yangban' | 'nobi';
 // A separate seed mix keeps the family's existing RNG stream unchanged.
@@ -85,7 +86,6 @@ export const backgrounds: {
     effect: '재산 −10 · 교육 −8 · 생업 부담 연 −0.35 · 면천 필요',
   },
 ];
-const clamp = (n: number) => Math.max(0, Math.min(100, n));
 export function newSociety(origin: StartingStanding = 'commoner', year = 1392): Society {
   return {
     origin,

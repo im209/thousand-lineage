@@ -1,110 +1,35 @@
-import { HistoryNotes } from './history-notes';
+// App shell: header, which screen is showing, the person dialog, and the footer.
+// Each screen lives in ./screens; game rules live in ./engine (→ ./core).
+import './styles';
 import React, { useState, useCallback, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { motion } from 'motion/react';
-import '@xyflow/react/dist/style.css';
 import { useGame } from './store';
-import { clans, labels, era, clanSource, clanCoverage, searchClans, historySource } from './data';
-import {
-  currentEvent,
-  summary,
-  choiceCost,
-  choiceAvailable,
-  projectMatches,
-  projectState,
-  projectProgress,
-  projects,
-  turnYears,
-  representativeNumber,
-  canContinueFuture,
-  societyState,
-  choiceLockReason,
-  type Person,
-} from './engine';
-import {
-  Avatar,
-  QuickStats,
-  TurnResult,
-  HeirSelection,
-  FamilyStrip,
-  HeroScene,
-} from './game-panels';
-import { FamilyTree } from './family-tree';
+import { societyState, type Person } from './engine';
 import { PersonDialog } from './person-dialog';
-import './style.css';
-import './modern.css';
-import './bright.css';
-import './progression.css';
-import './society.css';
-import './chronicles.css';
-import './founder-intro.css';
-import './founder-compact.css';
-import './play-flow.css';
-import './growth-guide.css';
-import './sharing.css';
-import { ResultShare } from './result-share';
 import { ChallengeLanding } from './challenge-landing';
-import {
-  readChallenge,
-  randomClanIndex,
-  CHALLENGE_RULES,
-  type FamilyChallenge,
-} from './share-links';
-import { ActiveGoal, GrowthGuide } from './growth-guide';
-import { StoryStage, FirstChoiceGuide } from './play-flow';
+import { readChallenge, CHALLENGE_RULES, type FamilyChallenge } from './share-links';
 import { FounderIntro } from './founder-intro';
-import { ChroniclePanel, EndingCatalog, EarnedEndings } from './chronicle-panels';
-import { BackgroundFate, SocietyPanel } from './society-panels';
-import { endings } from './endings';
-import { recordedEndingFor } from './records';
-import { RecordShelf, FamilyOutlook } from './progression-panels';
-import './pixel.css';
-import './heirloom.css';
-import { JourneyScene } from './journey-scene';
-import './journeys.css';
-function download(name: string, body: Blob) {
-  const url = URL.createObjectURL(body);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
+import { HomeScreen } from './screens/home-screen';
+import { SetupScreen, useClanPicker } from './screens/setup-screen';
+import { GameScreen, type GameTab } from './screens/game-screen';
+import { AboutScreen } from './screens/about-screen';
+
+type Screen = 'home' | 'setup' | 'game' | 'about' | 'challenge';
+
 function App() {
-  const {
-    game: g,
-    start,
-    choose,
-    succeed,
-    continueStory,
-    continueFuture,
-    beginStory,
-    selectProject,
-    selectSocialFocus,
-    selectChronicle,
-    error,
-    saved,
-    records,
-    recordError,
-  } = useGame();
+  const { game: s, start, beginStory, error, saved, records, recordError } = useGame();
   const [invite, setInvite] = useState(() => readChallenge(location.hash));
-  const [screen, setScreen] = useState(() =>
-    invite.kind === 'none' ? (g ? 'game' : 'home') : 'challenge',
+  const [screen, setScreen] = useState<Screen>(() =>
+    invite.kind === 'none' ? (s ? 'game' : 'home') : 'challenge',
   );
-  const [randomPicked, setRandomPicked] = useState(false);
-  const [tab, setTab] = useState('story');
+  const [tab, setTab] = useState<GameTab>('story');
   const [overview, setOverview] = useState(false);
-  const [search, setSearch] = useState('');
-  const [clan, setClan] = useState(-1);
-  const [limit, setLimit] = useState(40);
-  const matches = searchClans(search);
   const [person, setPerson] = useState<Person | null>(null);
   const [notice, setNotice] = useState('');
   const [animateResult, setAnimateResult] = useState(false);
-  const s = g;
-  const h = s?.people[s.head];
-  const result = s ? summary(s) : null;
+  const picker = useClanPicker();
   const closePerson = useCallback(() => setPerson(null), []);
+
   useEffect(() => {
     const receive = () => {
       const next = readChallenge(location.hash);
@@ -120,9 +45,15 @@ function App() {
     addEventListener('hashchange', receive);
     return () => removeEventListener('hashchange', receive);
   }, []);
+
   const clearInvite = () => {
     history.replaceState(null, '', location.pathname + location.search);
     setInvite({ kind: 'none' });
+  };
+  const showStory = () => {
+    setScreen('game');
+    setTab('story');
+    setOverview(false);
   };
   const startChallenge = (data: FamilyChallenge) => {
     if (data.rules !== CHALLENGE_RULES) return;
@@ -134,25 +65,20 @@ function App() {
     clearInvite();
     setPerson(null);
     setNotice('');
-    setScreen('game');
-    setTab('story');
-    setOverview(false);
+    showStory();
     window.scrollTo(0, 0);
   };
   const newGame = () => {
-    if (clan < 0) return;
-    start(crypto.getRandomValues(new Uint32Array(1))[0], clan);
-    setScreen('game');
-    setTab('story');
-    setOverview(false);
+    if (picker.clan < 0) return;
+    start(crypto.getRandomValues(new Uint32Array(1))[0], picker.clan);
+    showStory();
   };
   const replay = () => {
     if (!s) return;
     start(s.seed, s.clan, societyState(s).origin, s.challenge);
-    setScreen('game');
-    setTab('story');
-    setOverview(false);
+    showStory();
   };
+
   return (
     <>
       <header>
@@ -188,11 +114,11 @@ function App() {
       {screen === 'challenge' && (
         <ChallengeLanding
           invite={invite}
-          game={g}
+          game={s}
           onStart={startChallenge}
           onReturn={() => {
             clearInvite();
-            setScreen(g ? 'game' : 'home');
+            setScreen(s ? 'game' : 'home');
           }}
           onNew={() => {
             clearInvite();
@@ -201,169 +127,15 @@ function App() {
         />
       )}
       {screen === 'home' && (
-        <main className="landing">
-          <div className="intro">
-            <p className="eyebrow">1392년, 당신의 첫 번째 봄</p>
-            <h1>
-              작은 선택 하나,
-              <br />
-              오래 이어질
-              <br />
-              <em>우리의 이야기.</em>
-            </h1>
-            <p className="lead">
-              누군가는 땅을 일구고, 누군가는 글을 배웁니다.
-              <br />
-              서로를 만나 가족이 되고, 다음 사람에게 삶을 건넵니다.
-              <br />
-              <b>당신의 가문은 어떤 이야기로 남을까요?</b>
-            </p>
-            <div className="actions">
-              <button className="primary" onClick={() => setScreen('setup')}>
-                새로운 가문 시작하기 <span>↗</span>
-              </button>
-              {s && <button onClick={() => setScreen('game')}>기록 이어가기 →</button>}
-            </div>
-            <p className="tiny">설치 없이 플레이 · 자동 저장 · 가상의 가족 이야기</p>
-          </div>
-          <HeroScene />
-          <ol className="how-to-play" aria-label="플레이 방법">
-            <li>
-              <b>1</b>
-              <span>
-                <strong>성씨를 고른다</strong>내 성씨·본관, 또는 랜덤 가문
-              </span>
-            </li>
-            <li>
-              <b>2</b>
-              <span>
-                <strong>시대마다 하나를 선택한다</strong>생업·배움·혼인으로 가족의 삶이 달라져요
-              </span>
-            </li>
-            <li>
-              <b>3</b>
-              <span>
-                <strong>대가 끊기지 않게 지킨다</strong>후손이 2026년까지 살아남으면 성공
-              </span>
-            </li>
-          </ol>
-          <RecordShelf records={records} error={recordError} />
-        </main>
+        <HomeScreen
+          hasGame={!!s}
+          records={records}
+          recordError={recordError}
+          onSetup={() => setScreen('setup')}
+          onContinue={() => setScreen('game')}
+        />
       )}
-      {screen === 'setup' && (
-        <main className="setup">
-          <p className="eyebrow">새로운 이야기</p>
-          <h1>
-            당신의 가문을
-            <br />
-            찾아보세요.
-          </h1>
-          <p className="muted">내 성씨를 입력해 보세요. 잘 모르겠다면 운명에 맡겨도 돼요.</p>
-          <label className="search-label" htmlFor="clan-search">
-            성씨 · 본관
-          </label>
-          <input
-            id="clan-search"
-            autoFocus
-            autoComplete="off"
-            aria-label="성씨 본관 검색"
-            placeholder="예: 김, 김해, 전주 이씨"
-            value={search}
-            onChange={e => {
-              setRandomPicked(false);
-              setSearch(e.target.value);
-              setClan(-1);
-              setLimit(40);
-            }}
-          />
-          {search.trim() && (
-            <div className="search-results" aria-label="본관 검색 결과">
-              {matches.slice(0, limit).map(c => (
-                <button
-                  key={c.id}
-                  onClick={() => {
-                    setRandomPicked(false);
-                    setClan(c.id);
-                    setSearch('');
-                    requestAnimationFrame(() =>
-                      document
-                        .querySelector<HTMLElement>('.setup>.primary')
-                        ?.scrollIntoView({ block: 'center' }),
-                    );
-                  }}
-                >
-                  <span>
-                    <strong>{c.label}</strong>
-                    <small>{c.hanja}</small>
-                  </span>
-                  <span>선택 →</span>
-                </button>
-              ))}
-              {!matches.length && (
-                <p role="status">
-                  공개 자료에서 찾지 못했습니다. 성씨나 본관을 짧게 입력해 보세요.
-                </p>
-              )}
-              <p role="status">
-                검색 결과 {matches.length.toLocaleString()}개 · {Math.min(limit, matches.length)}개
-                표시
-              </p>
-              {matches.length > limit && (
-                <button className="load-more" onClick={() => setLimit(limit + 40)}>
-                  40개 더 보기 ↓
-                </button>
-              )}
-            </div>
-          )}
-          <div className="random-clan">
-            <button
-              onClick={() => {
-                setClan(randomClanIndex(clans.length));
-                setSearch('');
-                setRandomPicked(true);
-              }}
-            >
-              운명에 맡기기 · 랜덤 가문 ↻
-            </button>
-          </div>
-          {clan >= 0 && (
-            <div className="selected-clan">
-              <span>
-                <small>선택한 가문</small>
-                <strong>{clans[clan].label}</strong>
-              </span>
-              <button
-                onClick={() => {
-                  setClan(-1);
-                  document.getElementById('clan-search')?.focus();
-                }}
-              >
-                변경
-              </button>
-            </div>
-          )}
-          {clan >= 0 && randomPicked && (
-            <p className="random-clan-note" role="status">
-              운명이 고른 가문은 {clans[clan].label}입니다. 아래에서 확인한 뒤 시작하세요.
-            </p>
-          )}
-          {clan >= 0 && <BackgroundFate />}
-          {clan >= 0 && (
-            <>
-              <p className="setup-hint">다음 화면에서 가문을 시작할 첫 인물을 만나요.</p>
-              <button
-                className="primary"
-                onClick={newGame}
-              >{`${clans[clan].label}의 이야기 시작 →`}</button>
-            </>
-          )}
-          {g && <p className="warning">새 이야기를 시작하면 기존 자동 저장 기록이 교체됩니다.</p>}
-          <p className="tiny">
-            성씨 {clanCoverage.surnameCount}개 · 본관 {clanCoverage.namedCount.toLocaleString()}개
-            (2015 통계청 공개 자료, 5인 이상) · 실제 족보가 아닌 가상의 이야기입니다.
-          </p>
-        </main>
-      )}
+      {screen === 'setup' && <SetupScreen picker={picker} hasGame={!!s} onStart={newGame} />}
       {screen === 'game' && s?.introPending && (
         <FounderIntro
           s={s}
@@ -376,613 +148,25 @@ function App() {
           saved={saved}
         />
       )}
-      {screen === 'game' && s && !s.introPending && h && result && (
-        <main className={`game ${tab === 'story' && !overview ? 'focused-game' : ''}`}>
-          <div className="game-heading">
-            <div>
-              <p className="eyebrow">{clans[s.clan].label}에서 시작한 가문의 기록</p>
-              <h1>
-                {s.year}
-                <small>년</small>
-                <span>
-                  {s.year > 2026
-                    ? '가상의 미래'
-                    : societyState(s).alternate
-                      ? '대체역사'
-                      : era(s.year)}
-                </span>
-              </h1>
-            </div>
-            <div className="generation">
-              <b>{representativeNumber(s)}</b>번째 가문 대표
-              <small>
-                창시자의 {h.generation}세대 · {result.years}년의 기록
-              </small>
-            </div>
-          </div>
-          <div className="timeline-progress">
-            <i style={{ width: `${Math.min(100, ((s.year - 1392) / 634) * 100)}%` }} />
-          </div>
-          <div className="tabs focused-tabs">
-            <button className={tab === 'story' ? 'active' : ''} onClick={() => setTab('story')}>
-              이야기
-            </button>
-            <button
-              className="overview-toggle"
-              aria-expanded={overview}
-              aria-controls="family-navigation"
-              onClick={() => {
-                setOverview(!overview);
-                if (overview) setTab('story');
-              }}
-            >
-              가문 살펴보기 {overview ? '−' : '+'}
-            </button>
-            <div id="family-navigation" className="family-navigation" hidden={!overview}>
-              {[
-                ['society', '신분·권력'],
-                ['lives', '조선의 삶'],
-                ['endings', '결말 도감'],
-                ['tree', '가계도'],
-                ['chronicle', '연대기'],
-              ].map(([id, label]) => (
-                <button key={id} className={tab === id ? 'active' : ''} onClick={() => setTab(id)}>
-                  {label}
-                </button>
-              ))}
-            </div>
-            <span className={saved ? 'save-state' : 'save-state unsaved'}>
-              {saved ? '● 자동 저장됨' : '◌ 저장 상태 확인 필요'}
-            </span>
-          </div>
-          {error && (
-            <p className="save-warning" role="alert">
-              {error}
-            </p>
-          )}
-          {s.endless && (
-            <div className="future-banner">
-              <strong>아직 쓰이지 않은 미래</strong>
-              <span>
-                2026년 이후는 창작입니다. 연도 제한 없이, 후손이 이어지는 동안 계속됩니다.
-              </span>
-            </div>
-          )}
-          {societyState(s).alternate && (
-            <div className="alternate-banner">
-              대체역사 분기 · 이후 실제 연표는 참고 배경이며, 가문의 정치적 행보는 창작입니다.
-            </div>
-          )}
-          {tab === 'story' && overview && (
-            <>
-              <QuickStats s={s} />
-              <FamilyStrip s={s} onPerson={setPerson} />
-            </>
-          )}
-          {tab === 'story' && (
-            <div className="game-columns">
-              {overview && (
-                <aside>
-                  <p className="eyebrow">
-                    {h.alive ? '지금, 가문을 이끄는 사람' : '이야기를 남긴 이전 대표'}
-                  </p>
-                  <button className="head-card" onClick={() => setPerson(h)}>
-                    <div className="portrait">
-                      <Avatar person={h} size={76} />
-                    </div>
-                    <h2>
-                      {h.alive ? '' : '故 '}
-                      {h.name}
-                    </h2>
-                    <p>
-                      {h.alive ? `${h.born}년생 · ${s.year - h.born}세` : `${h.born}–${h.died}년`} ·{' '}
-                      {h.sex}
-                    </p>
-                    <div className="tags">
-                      <span>{h.job}</span>
-                      <span>{h.region}</span>
-                      <span>{h.trait}</span>
-                    </div>
-                  </button>
-                  <div className="lineage-note">
-                    <b>시작한 가문 · {clans[s.clan].label}</b>현재 대표 · {clans[h.clan].label}
-                    <br />
-                    {h.id === s.founder
-                      ? '이 이야기의 첫 인물입니다.'
-                      : h.clan === s.clan
-                        ? '창시자와 같은 성씨·본관의 후손입니다.'
-                        : '성씨는 달라도 창시자의 계보를 잇는 후손입니다.'}
-                  </div>
-                  <div className="stats">
-                    {Object.entries(labels).map(([key, label]) => (
-                      <div key={key}>
-                        <span>{label}</span>
-                        <b>{Math.round(s.stats[key as keyof typeof labels])}</b>
-                        <div className="bar">
-                          <i style={{ width: `${s.stats[key as keyof typeof labels]}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="tiny">
-                    0–100의 게임 지표입니다.
-                    <br />
-                    실제 화폐나 인구 통계가 아닙니다.
-                  </p>
-                </aside>
-              )}
-              <section className="story-content">
-                <StoryStage s={s}>
-                  <FirstChoiceGuide s={s} onPerson={setPerson} />
-                  <FamilyOutlook s={s} />
-
-                  {s.report && (
-                    <TurnResult
-                      s={s}
-                      animate={animateResult}
-                      onPerson={setPerson}
-                      onContinue={() => {
-                        setAnimateResult(false);
-                        setOverview(false);
-                        continueStory();
-                      }}
-                    />
-                  )}
-                  {!s.report && s.phase === 'play' && (
-                    <motion.div
-                      key={`${s.event}-${s.turn}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`event ${s.journey ? 'journey-event' : currentEvent(s).kind === 'surprise' ? 'surprise-event' : ''}`}
-                    >
-                      {currentEvent(s).kind === 'surprise' && !s.journey && (
-                        <div className="surprise-alert" aria-hidden="true">
-                          !
-                        </div>
-                      )}
-                      <p className="eyebrow">
-                        {s.journey
-                          ? '과거길의 돌발 사건'
-                          : currentEvent(s).kind === 'surprise'
-                            ? '돌발 사건'
-                            : currentEvent(s).kind === 'history'
-                              ? '시대의 전환'
-                              : currentEvent(s).kind === 'chronicle'
-                                ? '조선의 삶'
-                                : currentEvent(s).kind === 'society'
-                                  ? '신분과 관직'
-                                  : currentEvent(s).kind === 'alternate'
-                                    ? '대체역사 분기'
-                                    : '가족의 일상'}{' '}
-                        · {s.year}년
-                      </p>
-                      <h2>{currentEvent(s).title}</h2>
-                      <p className="event-description">{currentEvent(s).description}</p>
-                      {s.journey && <JourneyScene s={s} />}
-                      <ActiveGoal s={s} />
-                      <div className="ink-divider">◆</div>
-                      <p className="question">
-                        {currentEvent(s).kind === 'surprise'
-                          ? '지금 바로 대처해야 합니다. 어떻게 할까요?'
-                          : '당신의 가족은 어떤 길을 택할까요?'}
-                      </p>
-                      {currentEvent(s).choices.map((c, i) => (
-                        <button
-                          className="choice"
-                          key={i}
-                          disabled={!choiceAvailable(s, i)}
-                          onClick={() => {
-                            setAnimateResult(true);
-                            setOverview(false);
-                            choose(i);
-                          }}
-                        >
-                          <span className="choice-index">{String(i + 1).padStart(2, '0')}</span>
-                          <span>
-                            <strong>{c.title}</strong>
-                            <small>{c.description}</small>
-                            {c.chanceLabel && (
-                              <small className="chance-label">{c.chanceLabel}</small>
-                            )}
-                            {(c.socialAction || c.chronicleAction) && choiceLockReason(s, i) && (
-                              <small className="lock-reason">잠김 · {choiceLockReason(s, i)}</small>
-                            )}
-                            {c.unlock && (
-                              <small className="unlock-hint">
-                                {choiceAvailable(s, i)
-                                  ? '✦ 유산으로 열린 선택'
-                                  : `잠김 · ${projects.find(p => p.id === c.unlock)?.title} 완성 필요`}
-                              </small>
-                            )}
-                            {projectMatches(s, c) && choiceAvailable(s, i) && (
-                              <small className="project-hint">
-                                {projectProgress(s, projectState(s).active!) < 3
-                                  ? '가문 과업 진행 +1'
-                                  : '과업 선택 완료 · 능력 조건을 채워주세요'}
-                              </small>
-                            )}
-                            {choiceAvailable(s, i) && choiceCost(s, i) > s.stats.wealth && (
-                              <small className="borrow-label">
-                                부족액 {(choiceCost(s, i) - s.stats.wealth).toFixed(1)}점은 부채로
-                                조달 · 연 1%
-                              </small>
-                            )}
-                          </span>
-                          <span>→</span>
-                        </button>
-                      ))}
-                      <p className="tiny">
-                        {s.journey ? (
-                          '사건을 먼저 해결합니다. 길 위에서 사망하면 시간이 더 흐르지 않으며, 생존 시 최대 3년을 진행합니다.'
-                        ) : (
-                          <>
-                            이번 선택 후{' '}
-                            {turnYears(s).min === turnYears(s).max
-                              ? turnYears(s).min
-                              : `${turnYears(s).min}–${turnYears(s).max}`}
-                            년을 진행합니다. 역사 사건과 계승 시점에는 멈춥니다.
-                            {s.turn >= 3 && (
-                              <>
-                                <br />
-                                출생·혼인·사망은 가족의 나이와 상태에 따른 게임 확률로 결정됩니다.
-                                재산이 부족하면 표시된 금액을 빌립니다.
-                              </>
-                            )}
-                          </>
-                        )}
-                      </p>
-                    </motion.div>
-                  )}
-                  {!s.report && s.phase === 'succession' && (
-                    <HeirSelection
-                      s={s}
-                      onSelect={id => {
-                        setOverview(false);
-                        succeed(id);
-                      }}
-                      onPerson={setPerson}
-                    />
-                  )}
-                  {!s.report && s.phase === 'ended' && (
-                    <div className="event ending">
-                      <p className="eyebrow">終章 · {recordedEndingFor(s, records).title}</p>
-                      <h2>
-                        당신의 가문은
-                        <br />
-                        <em>{result.years}년</em>을 이어왔습니다.
-                      </h2>
-                      <span className="ending-badge">{endings.length}가지 가문 결말 중 하나</span>
-                      <p className="ending-description">
-                        {recordedEndingFor(s, records).description}
-                      </p>
-                      <EarnedEndings s={s} records={records} />
-                      <p>
-                        {result.living
-                          ? '세상이 달라져도, 후손들의 삶은 계속됩니다.'
-                          : '남겨진 이름과 이야기를 이곳에 기록합니다.'}
-                      </p>
-                      <div className="result-grid">
-                        <div>
-                          <b>{result.generations}대</b>계보 세대
-                        </div>
-                        <div>
-                          <b>{result.people}명</b>기록된 인물
-                        </div>
-                        <div>
-                          <b>{result.living}명</b>생존 후손
-                        </div>
-                        <div>
-                          <b>{result.original}명</b>같은 성씨·본관의 생존 후손
-                        </div>
-                      </div>
-                      <p>
-                        최고 재산 지표: {s.peak.year}년 · {Math.round(s.peak.wealth)}
-                        <br />
-                        거주 기록: {s.moves.join(' → ')}
-                      </p>
-                      <button
-                        className="ending-gallery-link"
-                        onClick={() => {
-                          setOverview(true);
-                          setTab('endings');
-                        }}
-                      >
-                        발견한 결말 도감 보기 ↗
-                      </button>
-                      {canContinueFuture(s) && (
-                        <div className="future-continuation">
-                          <p>
-                            여기서 끝내지 않아도 괜찮아요.
-                            <br />
-                            지금까지의 결말은 도감에 남고, 같은 가족의 미래가 이어집니다.
-                          </p>
-                          <button
-                            className="primary"
-                            onClick={() => {
-                              setOverview(false);
-                              continueFuture();
-                            }}
-                          >
-                            이 가문으로 미래까지 이어가기 →
-                          </button>
-                          <small>연도 제한 없음 · 2026년 이후는 가상의 미래</small>
-                        </div>
-                      )}
-                      <RecordShelf records={records} error={recordError} compact />
-                      <ResultShare s={s} />
-                      <div className="replay-actions">
-                        <button onClick={replay}>같은 운명, 다른 선택으로 재도전 ↻</button>
-                      </div>
-                      <p className="replay-help">
-                        같은 가문·출발 신분·난수 시드로 시작합니다. 선택에 따라 이후 인물과 사건은
-                        달라질 수 있습니다.
-                      </p>
-                      <div className="actions">
-                        <button className="primary" onClick={() => setScreen('setup')}>
-                          새로운 이야기 →
-                        </button>
-                      </div>
-                      <p className="tiny">
-                        실제 가문의 역사나 족보가 아닌 가상 시뮬레이션의 결과입니다.
-                      </p>
-                    </div>
-                  )}
-                </StoryStage>
-                {s.phase === 'play' && !s.report && !s.journey && (
-                  <GrowthGuide
-                    s={s}
-                    onSelect={id => {
-                      selectProject(id);
-                      const stage = document.querySelector<HTMLElement>('.story-stage');
-                      stage?.focus({ preventScroll: true });
-                      stage?.scrollIntoView({ block: 'start' });
-                    }}
-                    onDirections={() => {
-                      setOverview(true);
-                      setTab('society');
-                    }}
-                    onLives={() => {
-                      setOverview(true);
-                      setTab('lives');
-                    }}
-                  />
-                )}
-                {s.turn > 0 && !s.report && (
-                  <div className="recent">
-                    <div className="section-top">
-                      <p className="eyebrow">방금 기록된 이야기</p>
-                      <button
-                        onClick={() => {
-                          setOverview(true);
-                          setTab('chronicle');
-                        }}
-                      >
-                        전체 연대기 ↗
-                      </button>
-                    </div>
-                    {s.log
-                      .slice(-3)
-                      .reverse()
-                      .map((l, i) => (
-                        <p key={i}>
-                          <b>{l.year}</b>
-                          {l.text}
-                        </p>
-                      ))}
-                  </div>
-                )}
-              </section>
-            </div>
-          )}
-          {tab === 'society' && (
-            <SocietyPanel s={s} onFocus={selectSocialFocus} onReturn={() => setTab('story')} />
-          )}
-          {tab === 'lives' && (
-            <ChroniclePanel s={s} onSelect={selectChronicle} onReturn={() => setTab('story')} />
-          )}
-          {tab === 'endings' && <EndingCatalog records={records} s={s} error={recordError} />}
-          {tab === 'tree' && <FamilyTree s={s} onPerson={setPerson} />}
-          {tab === 'chronicle' && (
-            <section className="chronicle">
-              <div className="section-top">
-                <div>
-                  <p className="eyebrow">THE FAMILY CHRONICLE</p>
-                  <h2>우리 가족이 지나온 시간</h2>
-                </div>
-                <button
-                  onClick={() =>
-                    download(
-                      '천년가문-연대기.json',
-                      new Blob([JSON.stringify(s, null, 2)], { type: 'application/json' }),
-                    )
-                  }
-                >
-                  기록 내보내기 ↓
-                </button>
-              </div>
-              {s.log
-                .slice()
-                .reverse()
-                .map((l, i) => (
-                  <article key={i}>
-                    <time>{l.year}</time>
-                    <p>
-                      {l.text}
-                      <small>
-                        {l.kind === 'history'
-                          ? '실제 역사 배경 · 가족의 대응은 허구'
-                          : l.kind === 'alternate'
-                            ? '대체역사 · 창작 사건'
-                            : l.kind === 'chronicle'
-                              ? '조선의 삶 · 사료에서 착안한 창작 사건'
-                              : l.kind === 'society'
-                                ? '신분·관직 · 제도를 단순화한 창작 사건'
-                                : l.kind === 'surprise' || l.kind === 'surprise-result'
-                                  ? '돌발 사건 · 가상 가족의 기록'
-                                  : '가상 가족의 기록'}
-                      </small>
-                    </p>
-                  </article>
-                ))}
-            </section>
-          )}
-        </main>
+      {screen === 'game' && s && !s.introPending && (
+        <GameScreen
+          s={s}
+          records={records}
+          recordError={recordError}
+          error={error}
+          saved={saved}
+          tab={tab}
+          setTab={setTab}
+          overview={overview}
+          setOverview={setOverview}
+          animateResult={animateResult}
+          setAnimateResult={setAnimateResult}
+          onPerson={setPerson}
+          onReplay={replay}
+          onNewStory={() => setScreen('setup')}
+        />
       )}
-      {screen === 'about' && (
-        <main className="about">
-          <p className="eyebrow">게임 안내 · 자료의 경계</p>
-          <h1>
-            역사 속에 쓰는
-            <br />
-            가상의 가족 이야기.
-          </h1>
-          <h2>플레이 방법</h2>
-          <p>
-            가문을 고르면 창시자의 이름·나이·성별·신분과 출발 능력치를 먼저 확인합니다. 직접 ‘이
-            인물로 시작하기’를 눌러야 첫 사건으로 넘어가며, 소개 화면에서는 시간이 흐르지 않습니다.
-            이후 매 시기의 생활 방향을 선택하세요. 가족은 해마다 나이를 먹고 혼인과 출생, 사망을
-            겪습니다. 대표가 사망하면 생존 후손을 선택합니다. 계승 가능한 후손이 없으면 단절되며,
-            2026년까지 이어지면 생존 결말을 기록합니다. 그 화면에서 ‘이 가문으로 미래까지
-            이어가기’를 누르면 연도 상한 없이 계속할 수 있습니다. 2026년 이후는 실제 역사가 아닌
-            가상의 미래입니다.
-          </p>
-          <h2>가문의 목표와 재도전</h2>
-          <p>
-            먼저 이야기 속 선택지 중 하나를 고르고, 가족에게 생긴 일을 확인한 뒤 다음 이야기로
-            넘어가세요. 가계도와 상세 상태는 ‘가문 살펴보기’에서 확인합니다. 사건 아래 목표 카드에서
-            추천 과업을 시작하거나 ‘다른 목표 고르기’를 펼쳐 배움·상업·돌봄 과업 중 하나를 고를 수
-            있습니다. 해당 과업에 맞는 선택 3회와 표시된 능력 조건을 채우면 보상을 받고 특별 선택이
-            열립니다. 과업을 바꿔도 이미 쌓은 진행은 남습니다. 배움은 교육 55, 상업은 연결 55,
-            돌봄은 결속 65가 필요합니다. 보상은 과업당 한 번만 지급되며 가문이 이어지는 동안 해금이
-            유지됩니다.
-          </p>
-          <p>
-            일상 선택은 초반 세 번에 5년, 이후 10–15년이 흐릅니다. 네 번째 선택부터는 시간이 흐르는
-            도중 돌림병·흉년·화재·도적 같은 위기나 풍년·귀인·쌍둥이 같은 뜻밖의 일이 끼어들 수
-            있습니다. 돌발 사건에 대처하면 원래 흐르기로 한 남은 기간만 지나가며, 위험한 선택지에는
-            확률이 표시됩니다. 일반 돌발 사건은 대표를 직접 사망시키지 않습니다. 다만 과거길에서
-            호랑이·물난리·산적을 만났을 때 위험한 강행을 고르면, 표시된 게임 확률에 따라 실제
-            응시자(대표 포함)가 사망할 수 있습니다. 안전한 대처나 귀환도 선택할 수 있습니다.
-            신분·정치와 조선의 삶 경로는 3년씩 진행합니다. 과업과 가족 상태에 따라 생활 사건의 등장
-            비중이 달라집니다. 엔딩에 최고 생존연수와 세대, 완성한 유산을 이 브라우저의 기록장에
-            남깁니다. 같은 조건 재도전은 가문·시드를 유지하고, 과업과 능력치는 처음부터 시작합니다.
-            브라우저 데이터를 삭제하면 기록장도 사라집니다.
-          </p>
-          <h2>조선의 삶과 26가지 결말</h2>
-          <p>
-            조선의 삶 화면에서 서책·배움, 구휼·의술, 장시·운송, 전란·복구, 분재·민원, 수공업의 여섯
-            이야기를 고릅니다. 먼저 자원을 들여 준비하고 후속 결정으로 완수합니다. 두 갈래의 결과는
-            각각 다시 준비해 얻을 수 있으며, 완수한 성취는 대표가 바뀌어도 남습니다. 장시는 1500년
-            이후, 전란·복구는 1592–1660년, 그 밖의 조선 경로는 1893년까지 시작·완수할 수 있습니다.
-          </p>
-          <p>
-            26종의 대표 결말은 가문이 걸어온 삶에 따라 결정됩니다. 2026년의 생존 기록이나 계보 단절
-            시 대표 결말 하나가 도감에 공개됩니다. 미래로 계속하면 앞서 발견한 결말은 보존되고, 이후
-            단절 시 별도의 기록이 남습니다. 아직 만나지 않은 결말의 이름과 내용은 비밀로 남고,
-            발견한 기록은 새 가문에서도 다시 볼 수 있습니다.
-          </p>
-          <h2>신분과 권력</h2>
-          <p>
-            상민·기술 실무층·양반·노비 출발 배경은 새 가문을 시작할 때 각각 25% 확률로 배정되며
-            성씨·본관과 무관합니다. 이 확률은 다양한 출발을 위한 게임 규칙이며 역사적 인구 비율이
-            아닙니다. 이미 저장된 신분과 같은 운명 재도전의 출발 신분은 유지됩니다. 신분·권력
-            화면에서 사회적 위치와 관직 경력을 따로 확인하고, 신분 상승 또는 정치 진출 방향을
-            선택합니다. 과거 합격 뒤에도 관직과 지역 기반을 갖춰야 양반 가문으로 인정받습니다. 여성
-            대표는 가문 내 적격 응시자를 지원할 수 있습니다.
-          </p>
-          <p>
-            1894년에는 신분제·과거제 폐지를 반영해 옛 신분 경로를 닫고 근대 교육·직업·시민사회로
-            전환합니다. 정변·새 왕조는 창작 대체역사이며 실패 뒤 유배와 재기 기회가 있습니다. 이
-            분기의 이후 실제 연표는 참고 배경으로 다루고, 1894년 근대 전환은 공통 게임 규칙으로
-            유지합니다. 법적 신분·사회 계층·개인 경력을 가문 단위로 요약하며 신분 상속과 세부 응시
-            규정은 완전히 재현하지 않습니다.
-          </p>
-          <p>
-            <a href="https://encykorea.aks.ac.kr/Article/E0035521" target="_blank" rel="noreferrer">
-              양반의 형성
-            </a>{' '}
-            ·{' '}
-            <a
-              href="https://contents.history.go.kr/front/hm/view.do?levelId=hm_090_0060"
-              target="_blank"
-              rel="noreferrer"
-            >
-              과거 응시 규정
-            </a>{' '}
-            ·{' '}
-            <a
-              href="https://contents.history.go.kr/front/hm/view.do?levelId=hm_118_0020"
-              target="_blank"
-              rel="noreferrer"
-            >
-              갑오개혁 의안
-            </a>
-          </p>
-          <HistoryNotes />
-          <h2>인물 아이콘</h2>
-          <p>
-            작은 점눈과 파스텔 한복으로 그린 천년가문의 자체 도트 캐릭터입니다. 인물마다 머리와 옷
-            색이 정해지며 재접속해도 같은 모습을 유지합니다.
-          </p>
-          <h2>확인한 자료</h2>
-          <p>
-            <a href={clanSource} target="_blank" rel="noreferrer">
-              KOSIS · 2015 성씨·본관별 인구(5인 이상) — 전국
-            </a>
-            의 공개 CSV 전체를 반영했습니다. 한자를 구분한 성씨 {clanCoverage.surnameCount}개,
-            이름이 공개된 본관 {clanCoverage.namedCount.toLocaleString()}개 조합입니다. 본관명이
-            공개되지 않은 성씨는 ‘본관 미공개’로 선택합니다. 기타·불상 집계는 실제 본관으로 취급하지
-            않습니다. 원문의 한자를 식별할 수 없는 경우 ‘한자 미표기’로 표시합니다. 조회일
-            2026.11.03.
-          </p>
-          <p>
-            이 목록은 현재 가족관계등록부의 전체 성씨 목록이 아닙니다. 소수·비공개 항목과 이후 생긴
-            성씨는 빠질 수 있습니다. 현대 통계에 실렸다는 사실이 1392년에도 존재했다는 뜻은 아니며,
-            게임의 혼인 확률은 실제 인구 비율을 재현하지 않습니다.
-          </p>
-          <p>
-            <a href={historySource} target="_blank" rel="noreferrer">
-              국사편찬위원회 우리역사넷 · 정치사 연표
-            </a>
-            로 주요 사건의 연도를 확인했습니다. 개별 가족의 행동과 사건 효과는 창작입니다.
-          </p>
-          <details>
-            <summary>기존 저장 호환용 30개 조합의 보조 출처</summary>
-            {clans.slice(0, 30).map(c => (
-              <p key={c.id}>
-                <a href={c.source} target="_blank" rel="noreferrer">
-                  {c.label} ({c.hanja}) · 근거 자료 ↗
-                </a>
-              </p>
-            ))}
-          </details>
-          <h2>시뮬레이션 규칙</h2>
-          <p>
-            성씨는 능력·신분·재산에 영향을 주지 않습니다. 모든 성별의 후손을 보존하며, 부친의 성씨를
-            따르는 단순화된 모델과 최초 성씨·본관의 지속을 별도로 집계합니다. 확률, 작명, 혼인 연령,
-            균등 상속은 게임 설계값이며 역사적 관습의 완전한 재현이 아닙니다.
-          </p>
-          <p>
-            게임 내 부채는 해마다 1% 증가하며 재산 15점을 초과하는 부분의 8%를 자동 상환에
-            사용합니다. 이는 시대별 실제 이자율이 아닌 게임 규칙입니다. 미성년 대표는 가족 공동
-            돌봄으로 운영되며 계승 시 생계 5점, 결속 3점의 부담이 있습니다. 사별 후 재혼은 게임의
-            단순화된 규칙으로 허용됩니다. 개인 사망 확률은 연령과 생활환경에 따라 달라집니다. 출생은
-            부모의 생존·나이·건강, 가족 결속과 출산 간격과 전체 생존 가족 규모에 영향을 받으며
-            보장되지 않습니다. 선택의 교육·이주·상업·돌봄·공동체 유산은 2–5세대 뒤 후속 사건으로
-            연결됩니다.
-          </p>
-          <h2>v0.1의 범위</h2>
-          <p>
-            백엔드 없는 브라우저 자동 저장 방식입니다. 브라우저 데이터를 삭제하면 저장도 사라집니다.
-            양자 계승과 세부 역사 상속 계산은 아직 구현하지 않았습니다. 분재·민원 사건은
-            추가되었지만 개인 재산의 기본 분배 계산은 균등 상속을 유지합니다. 대표는 창시자의 생존
-            후손 중 선택하며, 혈연 세대와 대표 순번은 별도로 기록합니다.
-          </p>
-          <button className="primary" onClick={() => setScreen(s ? 'game' : 'home')}>
-            이야기로 돌아가기 →
-          </button>
-        </main>
-      )}
+      {screen === 'about' && <AboutScreen onBack={() => setScreen(s ? 'game' : 'home')} />}
       <footer>
         <span>
           千年家門 <b>천년가문</b>
@@ -1008,6 +192,7 @@ function App() {
     </>
   );
 }
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

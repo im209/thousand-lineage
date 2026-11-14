@@ -9,17 +9,22 @@
 - 빌드: `npm run build`
 - 엔진·저장 테스트: `npm test`
 - 브라우저: 최초 `npx playwright install chromium`, 이후 `npm run test:e2e`
+- 코드 모양 맞추기: `npm run format` (Prettier, 설정은 `.prettierrc.json`). 확인만 할 때 `npm run format:check`
 - Windows PowerShell 실행 정책 문제가 있으면 `npm.cmd`와 `npx.cmd`를 사용한다.
 - `main` push 후 GitHub Actions가 검사·빌드하고 GitHub Pages에 배포한다. 최초 Settings → Pages → Source: GitHub Actions 설정이 필요하다.
 
 ## 코드 위치
 
-- `src/engine.ts`: 난수·시간 진행·가족·계승·선택·결과
+- `src/engine.ts`: 게임 규칙의 공개 창구. 화면·저장·테스트·e2e는 여기서만 가져온다. 실제 규칙은 `src/core/`에 관심사별로 있다
+  - `core/state.ts` 상태 타입·시드 난수(`rand`)·`clamp`·`log` / `core/people.ts` 인물 생성·혼인·출생·사망·후계 후보·가계 검사 / `core/annual.ts` 한 해 진행(사망·성년·출생·살림) / `core/events.ts` 다음 사건·현재 사건·선택 비용과 잠금 / `core/event-variants.ts` 가족 상황에 맞춘 사건 변형 / `core/actions.ts` 과업 보상·돌발·과거시험·과거길 / `core/choose.ts` 선택 처리와 시간 경과 / `core/lifecycle.ts` 새 가문·계승·미래 계속
+  - 난수 호출 순서도 규칙이다. 같은 시드 재도전이 같아야 하므로 `rand`를 부르는 순서를 바꾸면 `CHALLENGE_RULES`를 갱신한다
+- `src/main.tsx`: 앱 껍데기(머리글·화면 전환·인물 창). 화면은 `src/screens/`(첫 화면·가문 고르기·게임·사건 카드·결말 카드·연대기·안내)
+- `src/styles.ts`: 모든 CSS를 불러오는 유일한 곳. 순서가 곧 덮어쓰기 순서다
 - `src/store.ts`, `src/save.ts`, `src/records.ts`: 자동 저장·검사·백업·회차 기록
-- `src/main.tsx`, `src/play-flow.*`: 화면과 초반 진행 안내
+- `src/play-flow.*`: 초반 진행 안내
 - `src/growth-guide.*`, `src/choice-feedback.ts`: 현재 목표·스탯 혜택·선택 결과의 설명
 - `src/share-links.ts`, `src/challenge-landing.tsx`, `src/result-share.tsx`: 도전 링크 검증·미리보기·결과 비교·네이티브 공유·이미지 생성
-- `src/pixel.css`, `src/heirloom.css`: 도트 게임풍 테마와 세부 표현. 이전 레이어(style→modern→bright→기능별 CSS) 뒤에 이 순서로 불러온다. 각진 모서리, 잉크 테두리, 딱 떨어지는 그림자, 고정 팔레트(`--px-*` 변수). 제목·숫자·버튼만 갈무리 폰트, 본문은 시스템 글꼴
+- `src/pixel.css`, `src/heirloom.css`: 도트 게임풍 테마와 세부 표현. 이전 레이어(style→modern→bright→기능별 CSS) 뒤에 이 순서로 불러온다(`src/styles.ts`). 각진 모서리, 잉크 테두리, 딱 떨어지는 그림자, 고정 팔레트(`--px-*` 변수). 제목·숫자·버튼만 갈무리 폰트, 본문은 시스템 글꼴
 - `src/pixel-village.tsx`: 첫 화면의 자체 도트 풍경(논·개울·초가집·감나무·장독대·가족). 192×112 격자를 `<rect>`로 출력하며 이미지 파일과 게임 난수를 사용하지 않는다
 - `src/family-memory.ts`, `src/memory-panels.tsx`: 실제 턴 기록의 혼인·출생·성년·사망에 인물 초상을 연결한다. 기존 로그는 이름 기반이므로 동명이인으로 모호하면 초상을 추정하지 않는다. 생애 열기로 시간이 흐르거나 저장이 바뀌면 안 된다
 - `src/fonts/`: 갈무리11 Bold(woff2)와 SIL OFL 1.1 라이선스 원문
