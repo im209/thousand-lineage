@@ -56,6 +56,8 @@ export type State = {
   endless?: boolean;
   challenge?: ChallengeBenchmark;
   introPending?: boolean;
+  /** Set when an era just closed: the year it closed. The era summary shows until dismissed. */
+  chapterEnd?: number;
   chronicles?: ChronicleState;
   society?: Society;
   runId?: string;

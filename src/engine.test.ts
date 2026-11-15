@@ -41,7 +41,7 @@ describe('genealogy simulation', () => {
       expect(s.year).toBeLessThanOrEqual(2026);
       expect(summary(s).people).toBe(Object.keys(s.people).length);
     }
-  }, 120000);
+  }, 600000);
   it('preserves RNG across JSON save and reload', () => {
     const a = continueStory(choose(create(42), 0));
     expect(a.phase).toBe('play');
@@ -56,7 +56,7 @@ describe('genealogy simulation', () => {
     const ends = Array.from({ length: 100 }, (_, i) => play(i + 1));
     expect(ends.some(s => s.year === 2026)).toBe(true);
     expect(ends.some(s => s.year < 2026)).toBe(true);
-  }, 120000);
+  }, 600000);
   it('never progresses an ending or accepts invalid succession', () => {
     const s = play(7);
     expect(choose(s, 0)).toEqual(s);

@@ -15,6 +15,7 @@ import {
   takeExam,
 } from './actions';
 import { annual } from './annual';
+import { chapterEnding, closesChapter } from './chapters';
 import {
   choiceAvailable,
   choiceCost,
@@ -132,6 +133,11 @@ function passYears(s: State, e: Event, c: Choice, stopNow: boolean) {
       : 0;
   while (s.year < until && s.phase === 'play') {
     annual(s);
+    if ((s.phase as State['phase']) !== 'ended' && closesChapter(s.year)) {
+      s.chapterEnd = s.year;
+      log(s, `${chapterEnding(s.year)!.title}가 저물다.`, 'chapter');
+      break;
+    }
     if (events.some(e => e.year === s.year && !s.seen.includes(e.id))) break;
     if (s.year === interruptAt && s.phase === 'play' && startSurprise(s, until)) break;
   }
@@ -160,6 +166,7 @@ export function choose(state: State, index: number): State {
     state.introPending ||
     state.phase !== 'play' ||
     state.report ||
+    state.chapterEnd ||
     !choiceAvailable(state, index)
   )
     return state;

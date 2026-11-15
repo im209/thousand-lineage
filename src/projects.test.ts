@@ -162,11 +162,11 @@ describe('family projects', () => {
     expect(turnYears(s)).toEqual({ min: 5, max: 5 });
     s = choose(s, 0);
     expect(s.report!.to - s.report!.from).toBe(5);
-    expect(turnYears({ ...s, event: 'life0', turn: 3 })).toEqual({ min: 10, max: 15 });
+    expect(turnYears({ ...s, event: 'life0', turn: 3 })).toEqual({ min: 5, max: 5 });
     const old = create(42);
     old.year = 1589;
     old.people[old.head].born = 1565;
-    old.turn = 4;
+    old.turn = 2; // before the 4th choice, so no surprise can interrupt
     old.event = 'life0';
     const next = continueStory(choose(old, 0));
     expect(next.year).toBe(1592);

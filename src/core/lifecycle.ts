@@ -64,11 +64,12 @@ export function beginStory(state: State): State {
   return { ...state, introPending: false };
 }
 
-/** Closes the result screen and shows the next event. */
+/** Closes the result screen; if an era just closed, the next call closes its summary. */
 export function continueStory(state: State): State {
-  if (!state.report) return state;
+  if (!state.report && !state.chapterEnd) return state;
   const s = structuredClone(state);
-  delete s.report;
+  if (s.report) delete s.report;
+  else delete s.chapterEnd;
   return s;
 }
 
@@ -95,7 +96,12 @@ export function representativeNumber(s: State) {
 
 /** A minor heir costs 생계 −5 · 결속 −3; the heir's own education and health blend into the family's. */
 export function succeed(state: State, id: string): State {
-  if (state.report || state.phase !== 'succession' || !candidates(state).some(p => p.id === id))
+  if (
+    state.report ||
+    state.chapterEnd ||
+    state.phase !== 'succession' ||
+    !candidates(state).some(p => p.id === id)
+  )
     return state;
   const s = structuredClone(state);
   s.representativeCount = representativeNumber(state) + 1;

@@ -8,6 +8,7 @@
 //   core/event-variants.ts  static events adapted to this family
 //   core/actions.ts         project rewards, surprises, exams, exam journeys
 //   core/choose.ts          resolving a choice and passing the years
+//   core/chapters.ts        eras: the story pauses with a summary at each era boundary
 //   core/lifecycle.ts       new family, succession, future continuation
 export type { Person, TurnReport, State } from './core/state';
 export { rand, log } from './core/state';
@@ -20,6 +21,8 @@ export {
   choiceAvailable,
 } from './core/events';
 export { choose } from './core/choose';
+export { chapters, chapterOf, chapterEnding, chapterSummary, closesChapter } from './core/chapters';
+export type { Chapter } from './core/chapters';
 export {
   create,
   beginStory,

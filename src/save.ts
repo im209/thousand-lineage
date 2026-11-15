@@ -1,6 +1,6 @@
 import { validChecks } from './ability-checks';
 import { events, clans, labels } from './data';
-import { validate, type State } from './engine';
+import { closesChapter, validate, type State } from './engine';
 import { projects } from './projects';
 import { chronicles } from './chronicles';
 import { validBenchmark } from './share-links';
@@ -144,6 +144,8 @@ export function decodeSave(raw: string | null): State | null {
     )
       return null;
     if (s.introPending !== undefined && typeof s.introPending !== 'boolean') return null;
+    if (s.chapterEnd !== undefined && (s.chapterEnd !== s.year || !closesChapter(s.year)))
+      return null;
     if (!validSurprise(s, s.surprise) || !validJourney(s, s.journey)) return null;
     if (
       s.introPending &&

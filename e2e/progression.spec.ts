@@ -83,7 +83,7 @@ test('project selection persists, marks matching choices, and first three turns 
     if (turn === 0) expect(after.projects.progress.learning).toBe(1);
     await page.locator('.continue-button').click();
   }
-  await expect(page.locator('.event')).toContainText('이번 선택 후 10–15년을 진행합니다');
+  await expect(page.locator('.event')).toContainText('이번 선택 후 5년을 진행합니다');
   await noOverflow(page);
   expect(errors).toEqual([]);
 });

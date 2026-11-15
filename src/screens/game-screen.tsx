@@ -1,6 +1,13 @@
 import { EndingCatalog, ChroniclePanel } from '../chronicle-panels';
 import { clans, era, labels } from '../data';
-import { representativeNumber, societyState, summary, type Person, type State } from '../engine';
+import {
+  chapterOf,
+  representativeNumber,
+  societyState,
+  summary,
+  type Person,
+  type State,
+} from '../engine';
 import { FamilyTree } from '../family-tree';
 import { Avatar, FamilyStrip, HeirSelection, QuickStats, TurnResult } from '../game-panels';
 import { GrowthGuide } from '../growth-guide';
@@ -9,6 +16,7 @@ import { FamilyOutlook } from '../progression-panels';
 import type { RunRecords } from '../records';
 import { SocietyPanel } from '../society-panels';
 import { useGame } from '../store';
+import { ChapterCard } from './chapter-card';
 import { ChronicleLog, RecentLog } from './chronicle-log';
 import { EndingCard } from './ending-card';
 import { EventCard } from './event-card';
@@ -117,6 +125,8 @@ export function GameScreen({
   } = useGame();
   const h = s.people[s.head];
   const result = summary(s);
+  // An era summary takes over the stage until it is dismissed.
+  const idle = !s.report && !s.chapterEnd;
   const openTab = (next: GameTab) => {
     setOverview(true);
     setTab(next);
@@ -130,7 +140,11 @@ export function GameScreen({
             {s.year}
             <small>년</small>
             <span>
-              {s.year > 2026 ? '가상의 미래' : societyState(s).alternate ? '대체역사' : era(s.year)}
+              {s.year > 2026
+                ? '가상의 미래'
+                : societyState(s).alternate
+                  ? '대체역사'
+                  : (chapterOf(s.year)?.title ?? era(s.year))}
             </span>
           </h1>
         </div>
@@ -212,7 +226,16 @@ export function GameScreen({
                   }}
                 />
               )}
-              {!s.report && s.phase === 'play' && (
+              {!s.report && s.chapterEnd && (
+                <ChapterCard
+                  s={s}
+                  onContinue={() => {
+                    setOverview(false);
+                    continueStory();
+                  }}
+                />
+              )}
+              {idle && s.phase === 'play' && (
                 <EventCard
                   s={s}
                   onChoose={i => {
@@ -222,7 +245,7 @@ export function GameScreen({
                   }}
                 />
               )}
-              {!s.report && s.phase === 'succession' && (
+              {idle && s.phase === 'succession' && (
                 <HeirSelection
                   s={s}
                   onSelect={id => {
@@ -232,7 +255,7 @@ export function GameScreen({
                   onPerson={onPerson}
                 />
               )}
-              {!s.report && s.phase === 'ended' && (
+              {idle && s.phase === 'ended' && (
                 <EndingCard
                   s={s}
                   records={records}
@@ -247,7 +270,7 @@ export function GameScreen({
                 />
               )}
             </StoryStage>
-            {s.phase === 'play' && !s.report && !s.journey && (
+            {s.phase === 'play' && idle && !s.journey && (
               <GrowthGuide
                 s={s}
                 onSelect={id => {
@@ -260,9 +283,7 @@ export function GameScreen({
                 onLives={() => openTab('lives')}
               />
             )}
-            {s.turn > 0 && !s.report && (
-              <RecentLog s={s} onOpenChronicle={() => openTab('chronicle')} />
-            )}
+            {s.turn > 0 && idle && <RecentLog s={s} onOpenChronicle={() => openTab('chronicle')} />}
           </section>
         </div>
       )}

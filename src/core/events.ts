@@ -17,6 +17,9 @@ const MODERN_ERA = 1894;
 /** Debt at or above this level brings the debt-recovery event (life8). */
 export const DEBT_RECOVERY_LEVEL = 25;
 
+/** Years an everyday choice advances. Short turns give each family head 8–10 decisions. */
+export const TURN_YEARS = 5;
+
 /** How many years one choice advances. */
 export function turnYears(s: State) {
   if (s.journey) return { min: 3, max: 3 };
@@ -25,7 +28,7 @@ export function turnYears(s: State) {
     return { min: r, max: r };
   }
   if (/^(social-|chronicle-)/.test(s.event)) return { min: 3, max: 3 };
-  return s.turn < 3 ? { min: 5, max: 5 } : { min: 10, max: 15 };
+  return { min: TURN_YEARS, max: TURN_YEARS };
 }
 
 export const needsDebtRecovery = (s: State) =>
