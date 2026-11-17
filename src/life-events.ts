@@ -89,6 +89,22 @@ export const lifeEvents: Event[] = (
           { wealth: -5, education: 10 },
           { legacy: 'learning' },
         ),
+        option(
+          '큰 판에 밑천을 건다',
+          '성공하면 재산 +20 · 실패하면 재산 −12',
+          {},
+          {
+            gamble: {
+              label: '큰 거래',
+              base: 0.5,
+              stat: 'connections',
+              win: { wealth: 20 },
+              lose: { wealth: -12 },
+              winText: '큰 거래가 맞아떨어져 곳간이 불어났습니다.',
+              loseText: '거래가 틀어져 밑천을 크게 잃었습니다.',
+            },
+          },
+        ),
       ],
     },
     {
@@ -177,6 +193,22 @@ export const lifeEvents: Event[] = (
           stability: -7,
           cohesion: -4,
         }),
+        option(
+          '산에 들어 약초와 사냥으로 메운다',
+          '성공하면 재산 +10 · 생계 +6 · 실패하면 생활환경 −8',
+          {},
+          {
+            gamble: {
+              label: '산에서 구한 살림',
+              base: 0.55,
+              stat: 'health',
+              win: { wealth: 10, stability: 6 },
+              lose: { health: -8 },
+              winText: '산이 내어 준 것으로 모자란 살림을 메웠습니다.',
+              loseText: '빈손으로 돌아왔고 몸만 상했습니다.',
+            },
+          },
+        ),
       ],
     },
     {
@@ -275,6 +307,22 @@ export const lifeEvents: Event[] = (
           stability: 5,
           education: 3,
         }),
+        option(
+          '묵은 땅을 일궈 본다',
+          '성공하면 생계 +16 · 실패하면 재산 −8',
+          {},
+          {
+            gamble: {
+              label: '묵은 땅 개간',
+              base: 0.5,
+              stat: 'stability',
+              win: { stability: 16 },
+              lose: { wealth: -8 },
+              winText: '돌밭이 논이 되었습니다. 식구가 먹을 땅이 늘었습니다.',
+              loseText: '품만 들이고 땅은 끝내 살아나지 않았습니다.',
+            },
+          },
+        ),
       ],
     },
     {
@@ -324,6 +372,22 @@ export const lifeEvents: Event[] = (
           { wealth: -5, education: 10 },
           { legacy: 'learning', job: 'study' },
         ),
+        option(
+          '빚을 내 크게 벌인다',
+          '성공하면 재산 +22 · 실패하면 재산 −15',
+          {},
+          {
+            gamble: {
+              label: '크게 벌인 장사',
+              base: 0.45,
+              stat: 'connections',
+              win: { wealth: 22 },
+              lose: { wealth: -15 },
+              winText: '가게 앞에 줄이 섰습니다. 벌인 판이 통했습니다.',
+              loseText: '손님이 들지 않아 가게 문을 닫았습니다.',
+            },
+          },
+        ),
       ],
     },
     {
@@ -343,6 +407,22 @@ export const lifeEvents: Event[] = (
           connections: -2,
         }),
         option('한 치도 물러서지 않는다', '재산 +8 · 연결 −7', { wealth: 8, connections: -7 }),
+        option(
+          '관아에 송사를 건다',
+          '성공하면 재산 +10 · 명성 +6 · 실패하면 재산 −8 · 명성 −5',
+          {},
+          {
+            gamble: {
+              label: '관아의 판결',
+              base: 0.45,
+              stat: 'reputation',
+              win: { wealth: 10, reputation: 6 },
+              lose: { wealth: -8, reputation: -5 },
+              winText: '관아가 우리 손을 들어 주었습니다.',
+              loseText: '송사에 지고 비용과 체면을 함께 잃었습니다.',
+            },
+          },
+        ),
       ],
     },
   ] as (Omit<Event, 'min' | 'max' | 'kind'> & { min?: number; max?: number })[]

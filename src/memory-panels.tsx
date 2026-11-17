@@ -1,4 +1,5 @@
 import { lifeOf, type Person, type State } from './engine';
+import { LifeShare } from './life-share';
 import { PixelAvatar } from './pixel-avatar';
 import { featuredMemory, reportHeadline } from './family-memory';
 
@@ -83,6 +84,7 @@ export function RepresentativeMemory({ s, onPerson }: { s: State; onPerson: (p: 
         <button className="text-button" onClick={() => onPerson(p)}>
           함께한 삶 돌아보기 ↗
         </button>
+        {life && <LifeShare s={s} life={life} />}
       </div>
     </div>
   );

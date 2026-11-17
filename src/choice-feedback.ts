@@ -78,11 +78,42 @@ const stories: Record<string, string[]> = {
     '살림을 줄이는 부담을 감수하고 빚 일부를 줄였습니다.',
     '빚 조정 대신 당장의 생계와 생활환경을 챙겼습니다.',
   ],
+  life9: [
+    '먼 친척 식구를 받아들여 한 지붕 아래 살게 되었습니다.',
+    '양식을 들려 보내며 친척의 앞길을 빌었습니다.',
+    '어려운 형편에 친척을 돌려보냈습니다.',
+  ],
+  life10: [
+    '일을 줄이고 어른의 곁을 지켰습니다.',
+    '귀한 약재를 구해 정성껏 달였습니다.',
+    '밀린 일을 해내느라 어른 곁을 비웠습니다.',
+  ],
+  life12: [
+    '살림을 털어 논을 장만했습니다.',
+    '소작을 얻어 부칠 땅을 늘렸습니다.',
+    '씨앗과 연장을 새로 장만했습니다.',
+  ],
+  life13: ['자식을 도시 학교로 떠나보냈습니다.', '', '고향 집과 땅을 지키기로 했습니다.'],
+  life14: [
+    '꼬박꼬박 월급을 받는 일자리를 얻었습니다.',
+    '작은 가게의 문을 열었습니다.',
+    '낮에는 일하고 밤에는 배웠습니다.',
+  ],
+  life15: [
+    '먼저 찾아가 술 한 잔으로 마음을 풀었습니다.',
+    '마을 어른의 판가름을 따르기로 했습니다.',
+    '한 치도 물러서지 않고 제 몫을 지켰습니다.',
+  ],
+  'stage-marriage': ['', '', '', '혼인은 인연에 맡기고 일에 힘썼습니다.'],
 };
 
 // Describe the chosen action, without attributing random births or survival to it.
 export function decisionFeedback(event: Event, choice: Choice, index: number): string {
   if (choice.unlock) return '완성한 가문의 유산을 활용해 이번 일을 해결했습니다.';
+  if (event.id === 'stage-heir')
+    return choice.target
+      ? choice.title.replace('가르친다', '가르치기 시작했습니다.')
+      : '뒤를 이을 사람을 좀 더 지켜보기로 했습니다.';
   if (stories[event.id]?.[index]) return stories[event.id][index];
   if (choice.move) return '살던 곳을 떠나 가족의 새 터전을 마련했습니다.';
   if (choice.legacy === 'learning')

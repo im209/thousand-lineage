@@ -1,4 +1,5 @@
 import { lifeEvents } from './life-events';
+import { stageEvents } from './stage-events';
 import { societyEvents } from './society';
 import { chronicleEvents } from './chronicles';
 import { surpriseEvents } from './surprises';
@@ -132,6 +133,19 @@ export type Choice = {
   chanceLabel?: string;
   surpriseAction?: import('./surprises').SurpriseAction;
   journeyAction?: import('./journeys').JourneyAction;
+  /** Marries the head (or `target`) now; `match` shapes the spouse. */
+  marry?: { target?: string; match: 'wealthy' | 'warm' | 'learned' | 'plain' };
+  gamble?: Gamble;
+};
+/** A risky choice: `base` odds shifted by a family stat, with separate win and loss effects. */
+export type Gamble = {
+  label: string;
+  base: number;
+  stat: Stat;
+  win: Partial<Record<Stat, number>>;
+  lose: Partial<Record<Stat, number>>;
+  winText: string;
+  loseText: string;
 };
 export type Event = {
   id: string;
@@ -201,6 +215,7 @@ export const events: Event[] = [
   ...chronicleEvents,
   ...surpriseEvents,
   ...journeyEvents,
+  ...stageEvents,
   {
     id: 'h1894',
     year: 1894,

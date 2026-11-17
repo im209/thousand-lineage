@@ -988,3 +988,22 @@ footer {
   color: var(--px-muted);
   font-weight: normal;
 }
+/* Share or save one remembered life. */
+.life-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.life-share button {
+  padding: 8px 12px;
+  border: var(--px-thin);
+  background: var(--px-panel);
+  box-shadow: var(--px-shadow-sm);
+  font-family: var(--px-font, inherit);
+  cursor: pointer;
+}
+.life-share small {
+  flex-basis: 100%;
+  color: var(--px-muted);
+}

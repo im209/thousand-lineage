@@ -114,6 +114,7 @@ export function marry(s: State, p: Person) {
     people: [p.id, spouse.id],
   });
   s.stats.connections = clamp(s.stats.connections + 2);
+  return spouse;
 }
 
 /** Death splits personal estate among living children; with none, a tenth returns to the family. */

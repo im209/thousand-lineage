@@ -11,6 +11,7 @@ import {
   wrapAlternateHistory,
 } from '../society';
 import { familyEvent } from './event-variants';
+import { eventFits, stageEventId } from './stages';
 import { isMinor, livingLineage, pick, type State } from './state';
 
 const MODERN_ERA = 1894;
@@ -59,11 +60,14 @@ export function nextEvent(s: State): Event {
       s.legacies.some(l => l.key === e.requires && g - l.generation >= 2 && g - l.generation <= 5),
   );
   if (legacy) return legacy;
+  const stage = stageEventId(s);
+  if (stage) return events.find(e => e.id === stage)!;
   const hasChild = livingLineage(s).some(p => isMinor(s, p));
   const pool = events.filter(
     e =>
       /^life\d+$/.test(e.id) &&
       e.id !== 'life8' && // debt recovery has its own trigger
+      eventFits(s, e.id) &&
       e.min <= s.year &&
       e.max >= s.year &&
       (e.id !== 'life2' || hasChild) &&

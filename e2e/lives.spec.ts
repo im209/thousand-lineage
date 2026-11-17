@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 test('a head who dies is remembered on the succession screen', async ({ page }, info) => {
@@ -35,5 +36,22 @@ test('a head who dies is remembered on the succession screen', async ({ page }, 
     .first()
     .click();
   await expect(page.getByRole('dialog').locator('.life-title')).toHaveText(title);
+  await expect(page.locator('.life-share button')).toHaveCount(2);
+  // The share card is drawn on the device: check it is a real PNG of the expected size.
+  const card = await page.evaluate(async () => {
+    const [share, engine] = await Promise.all([
+      import('/src/life-share.tsx' as string),
+      import('/src/engine.ts' as string),
+    ]);
+    const s = JSON.parse(localStorage.getItem('thousand-lineage-v1')!);
+    const blob: Blob = await share.lifeImage(s, engine.lifeOf(s, s.head));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    return { type: blob.type, base64: btoa(String.fromCharCode(...bytes)) };
+  });
+  expect(card.type).toBe('image/png');
+  const png = Buffer.from(card.base64, 'base64');
+  expect(png.readUInt32BE(16)).toBe(1080);
+  expect(png.length).toBeGreaterThan(5000);
+  fs.writeFileSync(`test-results/${info.project.name}-life-card.png`, png);
   expect(errors).toEqual([]);
 });

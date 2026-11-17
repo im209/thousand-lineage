@@ -15,6 +15,8 @@ import {
   takeExam,
 } from './actions';
 import { annual } from './annual';
+import { resolveGamble } from './gamble';
+import { livingSpouse, marry } from './people';
 import { achievedSoFar, closeLife, noteChoice, startTenure } from './lives';
 import { chapterEnding, closesChapter } from './chapters';
 import {
@@ -94,6 +96,16 @@ function applyChoiceActions(s: State, c: Choice) {
   if (c.journeyAction) journeyDeath = applyJourneyAction(s, c.journeyAction, checks);
   if (c.chronicleAction) applyChronicleAction(s, c.chronicleAction);
   if (c.surpriseAction) applySurpriseAction(s, c.surpriseAction);
+  if (c.gamble) resolveGamble(s, c.gamble, checks);
+  if (c.marry) {
+    const p = s.people[c.marry.target ?? s.head];
+    if (p?.alive && !livingSpouse(s, p)) {
+      const spouse = marry(s, p);
+      if (c.marry.match === 'warm') spouse.health = clamp(spouse.health + 10);
+      if (c.marry.match === 'learned') spouse.education = clamp(spouse.education + 15);
+      if (c.marry.match === 'wealthy') spouse.estate += 10;
+    }
+  }
   if (c.debtRelief) {
     const forgiven = Math.min(s.debt, s.debt * Math.max(0, Math.min(1, c.debtRelief)));
     s.debt = Math.max(0, s.debt - forgiven);
@@ -151,6 +163,10 @@ function outcomeText(s: State, e: Event, c: Choice, index: number, logStart: num
     l => l.family?.type === 'farewell' && (l.family.people.includes(s.head) || l.family.cause),
   );
   if (deathEntry) return deathEntry.text;
+  const wedding = c.marry && entries.find(l => l.family?.type === 'marriage');
+  if (wedding) return wedding.text;
+  const gamble = c.gamble && entries.find(l => l.kind === 'gamble');
+  if (gamble) return gamble.text;
   const actionEntries = entries.filter(l => l.text !== e.title + ' — ' + c.title);
   const actionEntry =
     (c.journeyAction ? actionEntries.find(l => l.kind === 'society') : undefined) ??

@@ -98,16 +98,16 @@ describe('family projects', () => {
   it('gates the fourth choice in the engine and unlocks both applicable events', () => {
     const s = stoppedFixture();
     s.event = 'life3';
-    expect(currentEvent(s).choices).toHaveLength(4);
-    expect(choiceAvailable(s, 3)).toBe(false);
-    expect(choose(s, 3)).toBe(s);
+    expect(currentEvent(s).choices).toHaveLength(5);
+    expect(choiceAvailable(s, 4)).toBe(false);
+    expect(choose(s, 4)).toBe(s);
     s.projects = {
       active: null,
       progress: { learning: 0, trade: 3, care: 0 },
       completed: ['trade'],
     };
-    expect(choiceAvailable(s, 3)).toBe(true);
-    expect(choose(s, 3).report!.immediate.wealth).toBe(9);
+    expect(choiceAvailable(s, 4)).toBe(true);
+    expect(choose(s, 4).report!.immediate.wealth).toBe(9);
     s.event = 'life0';
     expect(choiceAvailable(s, 3)).toBe(true);
     expect(choiceAvailable(s, 4)).toBe(false);

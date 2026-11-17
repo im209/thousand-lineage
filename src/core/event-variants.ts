@@ -3,6 +3,9 @@
 import { events, type Event, type Stat } from '../data';
 import { projectChoice } from '../projects';
 import { prepareSurpriseEvent } from '../surprises';
+import { gambleLabel } from './gamble';
+import { relation } from './people';
+import { adultHeirs, elder, marriageable } from './stages';
 import { isMinor, livingLineage, type State } from './state';
 
 type Variant = (s: State, e: Event) => Event;
@@ -114,7 +117,72 @@ const inheritedLegacy: Variant = (_s, e) => ({
   ],
 });
 
+const matches = ['wealthy', 'warm', 'plain'] as const;
+/** Marriage talks are about a real unmarried descendant; every choice marries them. */
+const marriageTalks: Variant = (s, e) => {
+  const p = marriageable(s);
+  if (!p) return e;
+  return {
+    ...e,
+    title: `${p.name}의 혼삿말`,
+    description: `${p.name}(${s.year - p.born}세)의 혼처를 두고 말이 오갑니다. 어느 집과 인연을 맺느냐에 따라 살림과 체면이 달라집니다.`,
+    choices: e.choices.map((c, i) => ({
+      ...c,
+      marry: { target: p.id, match: matches[i] ?? 'plain' },
+    })),
+  };
+};
+
+const eldersWinter: Variant = (s, e) => {
+  const p = elder(s);
+  if (!p) return e;
+  return {
+    ...e,
+    title: `${p.name}의 겨울`,
+    description: `${p.name}(${s.year - p.born}세)의 기력이 눈에 띄게 줄었습니다. 곁을 지킬 손과 약값, 밀린 일 사이에서 정해야 합니다.`,
+  };
+};
+
+const ownMarriage: Variant = (s, e) => ({
+  ...e,
+  description: `${s.people[s.head].name}, ${s.year - s.people[s.head].born}세. ${e.description}`,
+});
+
+/** Grooming an heir: the choices are the real adult candidates. */
+const groomHeir: Variant = (s, e) => ({
+  ...e,
+  choices: [
+    ...adultHeirs(s).map(p => ({
+      title: `${p.name}에게 살림을 가르친다`,
+      description: `${relation(s, p.id)} · ${s.year - p.born}세 · 재산 −4 · ${p.name} 교육 +10`,
+      effects: { wealth: -4 },
+      target: p.id,
+      personalEducation: 10,
+    })),
+    {
+      title: '아직 정하지 않고 두루 살핀다',
+      description: '결속 +4',
+      effects: { cohesion: 4 },
+    },
+  ],
+});
+
+/** Shows the real odds on risky choices. */
+const withOdds = (s: State, e: Event): Event =>
+  e.choices.some(c => c.gamble)
+    ? {
+        ...e,
+        choices: e.choices.map(c =>
+          c.gamble ? { ...c, chanceLabel: gambleLabel(s, c.gamble) } : c,
+        ),
+      }
+    : e;
+
 const variantsById: Record<string, Variant> = {
+  life11: marriageTalks,
+  life10: eldersWinter,
+  'stage-marriage': ownMarriage,
+  'stage-heir': groomHeir,
   life8: debtRecovery,
   life2: childEducation,
   life3: trustedTrade,
@@ -130,5 +198,5 @@ export function familyEvent(s: State): Event {
   const special = projectChoice(base.id);
   const e = special ? { ...base, choices: [...base.choices, special] } : base;
   if (e.kind === 'legacy') return inheritedLegacy(s, e);
-  return variantsById[e.id]?.(s, e) ?? e;
+  return withOdds(s, variantsById[e.id]?.(s, e) ?? e);
 }
