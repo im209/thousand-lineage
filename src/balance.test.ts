@@ -6,15 +6,15 @@ describe('balance rules', () => {
   it('lets a high stat slip when it is not tended, but leaves modest stats alone', () => {
     const s = create(42, 0, 'commoner');
     s.stats.reputation = 95;
-    s.stats.status = 30;
-    // h1392, first choice: touches neither reputation nor status
+    s.stats.education = 30;
+    // h1392, first choice: touches neither reputation nor education
     expect(currentEvent(s).choices[0].effects.reputation).toBeUndefined();
     const next = choose(s, 0);
     const years = next.year - s.year;
     expect(years).toBe(5);
     expect(next.stats.reputation).toBeLessThan(95);
-    expect(next.stats.reputation).toBeGreaterThan(95 - 60 * 0.015 * years - 0.01);
-    expect(next.stats.status).toBe(30);
+    expect(next.stats.reputation).toBeGreaterThan(95 - 60 * 0.025 * years - 0.01);
+    expect(next.stats.education).toBe(30);
   });
   it('has enough everyday events that an era does not repeat the same few', () => {
     const everyday = events.filter(e => /^life\d+$/.test(e.id) && e.id !== 'life8');

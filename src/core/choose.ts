@@ -14,7 +14,8 @@ import {
   startSurprise,
   takeExam,
 } from './actions';
-import { annual } from './annual';
+import { mergeEffects } from '../stats';
+import { annual, household } from './annual';
 import { resolveGamble } from './gamble';
 import { livingSpouse, marry } from './people';
 import { achievedSoFar, closeLife, noteChoice, startTenure } from './lives';
@@ -36,7 +37,7 @@ const statDelta = (before: Record<Stat, number>, s: State) => {
 };
 
 function applyEffects(s: State, e: Event, c: Choice) {
-  for (const [key, value] of Object.entries(c.effects)) {
+  for (const [key, value] of Object.entries(mergeEffects(c.effects))) {
     const k = key as Stat;
     const multiplier = value < 0 ? warLossMultiplier(s, e.id) : 1;
     s.stats[k] = clamp(s.stats[k] + value * multiplier);
@@ -218,7 +219,7 @@ export function choose(state: State, index: number): State {
   advanceProject(s, c);
   const immediate = statDelta(before, s);
 
-  s.ledger = { repaid: 0, upkeep: 0 };
+  s.ledger = { repaid: 0, upkeep: 0, income: 0, food: 0 };
   passYears(s, e, c, startingJourney || journeyDeath);
   const ledger = s.ledger;
   delete s.ledger;
@@ -230,12 +231,8 @@ export function choose(state: State, index: number): State {
     const pending = s.surprise as SurpriseState | undefined;
     s.event = s.journey ? s.journey.id : pending ? pending.id : nextEvent(s).id;
   }
-  if (before.connections < 60 && s.stats.connections >= 60)
-    log(
-      s,
-      '사회적 연결 60 달성! 거래 확장 사건의 큰 거래 비용이 재산 8에서 3으로 줄어듭니다.',
-      'benefit',
-    );
+  if (before.reputation < 60 && s.stats.reputation >= 60)
+    log(s, '평판 60 달성! 거래를 넓힐 때 드는 밑천이 8섬에서 3섬으로 줄어듭니다.', 'benefit');
 
   s.report = {
     ...(checks.length ? { checks } : {}),
@@ -249,6 +246,9 @@ export function choose(state: State, index: number): State {
     borrowed,
     repaid: ledger.repaid,
     upkeep: ledger.upkeep,
+    income: ledger.income,
+    food: ledger.food,
+    mouths: household(s).length,
     debtBefore,
     debtAfter: s.debt,
     entries: s.log.slice(logStart),

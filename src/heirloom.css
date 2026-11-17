@@ -1007,3 +1007,16 @@ footer {
   flex-basis: 100%;
   color: var(--px-muted);
 }
+/* Budget cues: balance after a choice, and what each stat is doing. */
+.balance-preview {
+  display: block;
+  color: var(--px-teal-dark);
+  font-family: var(--px-font, inherit);
+}
+.stat-meaning {
+  display: block;
+  margin-top: 4px;
+  color: var(--px-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}

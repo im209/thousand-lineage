@@ -187,7 +187,7 @@ export function FamilyOutlook({ s }: { s: State }) {
   else if (s.debt >= 25)
     text = `부채 ${s.debt.toFixed(1)}점이 살림을 압박하고 있습니다. 빚을 정리하는 사건에서 자원 일부를 희생해 부담을 줄일 수 있습니다.`;
   else if (s.stats.health < 35)
-    text = '생활환경이 나빠졌습니다. 집과 돌봄에 투자하면 가족의 생존 환경을 개선할 수 있습니다.';
+    text = '살림이 기울었습니다. 집과 돌봄에 힘을 쓰면 가족을 잃을 위험이 줄어듭니다.';
   if (!text) return null;
   return (
     <p className="family-outlook">

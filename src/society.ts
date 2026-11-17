@@ -1,5 +1,6 @@
 import type { State, Person } from './engine';
 import { clamp } from './core/state';
+import { mergeEffects, type Effects } from './stats';
 import type { Choice, Event } from './data';
 export type StartingStanding = 'commoner' | 'specialist' | 'yangban' | 'nobi';
 // A separate seed mix keeps the family's existing RNG stream unchanged.
@@ -153,7 +154,7 @@ export function initializeSociety(s: State, origin: StartingStanding) {
         : origin === 'nobi'
           ? { wealth: -10, education: -8, status: -15 }
           : {};
-  for (const [k, v] of Object.entries(a))
+  for (const [k, v] of Object.entries(mergeEffects(a)))
     s.stats[k as keyof State['stats']] = clamp(s.stats[k as keyof State['stats']] + v!);
   const p = s.people[s.head];
   p.education = s.stats.education;
@@ -200,14 +201,7 @@ export function coupChance(s: State) {
   const a = societyState(s);
   return Math.max(
     0.1,
-    Math.min(
-      0.8,
-      0.12 +
-        a.support * 0.005 +
-        s.stats.connections * 0.002 +
-        s.stats.reputation * 0.001 -
-        a.risk * 0.003,
-    ),
+    Math.min(0.8, 0.12 + a.support * 0.005 + s.stats.reputation * 0.003 - a.risk * 0.003),
   );
 }
 function write(s: State, text: string, kind = 'society') {
@@ -274,7 +268,7 @@ export function socialLockReason(s: State, c: Choice): string | null {
     return '유배 이후 생활 기반을 먼저 회복해야 합니다.';
   if (action === 'free') {
     if (a.standing !== 'nobi') return '면천이 필요한 신분이 아닙니다.';
-    if (s.stats.wealth < 25 || s.stats.connections < 40) return '재산 25 · 연결 40 필요';
+    if (s.stats.wealth < 25 || s.stats.reputation < 40) return '재산 25 · 평판 40 필요';
   }
   if (action === 'exam') {
     if (!['commoner', 'yangban'].includes(a.standing))
@@ -299,7 +293,7 @@ export function socialLockReason(s: State, c: Choice): string | null {
     action === 'appointment' &&
     (!a.examPassed || a.office !== 'none' || s.stats.reputation < 40 || !officePerson(s))
   )
-    return '생존한 75세 미만 성인 합격자 · 명성 40 · 관직 없음 필요';
+    return '생존한 75세 미만 성인 합격자 · 평판 40 · 관직 없음 필요';
   if (
     action === 'recognize' &&
     (a.standing !== 'commoner' ||
@@ -307,19 +301,19 @@ export function socialLockReason(s: State, c: Choice): string | null {
       a.office === 'none' ||
       a.recognition < 2 ||
       s.stats.reputation < 55 ||
-      s.stats.connections < 50 ||
+      s.stats.reputation < 50 ||
       s.stats.education < 55)
   )
-    return '상민 가문 · 과거 합격 · 관직 · 신뢰 활동 2회 · 명성 55 · 연결 50 · 교육 55 필요';
+    return '상민 가문 · 과거 합격 · 관직 · 신뢰 활동 2회 · 평판 55 · 교육 55 필요';
   if (
     action === 'court' &&
     (!['local', 'technical'].includes(a.office) ||
       !officePerson(s) ||
       s.stats.reputation < 65 ||
-      s.stats.connections < 65 ||
+      s.stats.reputation < 65 ||
       s.stats.wealth < 12)
   )
-    return '생존한 75세 미만 성인 관원 · 명성 65 · 연결 65 · 재산 12 필요';
+    return '생존한 75세 미만 성인 관원 · 평판 65 · 재산 12 필요';
   if (
     action === 'organize' &&
     (a.office !== 'court' || s.stats.wealth < 10 || a.political !== 'quiet')
@@ -329,16 +323,16 @@ export function socialLockReason(s: State, c: Choice): string | null {
     ['kingmaker', 'founder'].includes(action) &&
     (a.office !== 'court' ||
       a.support < (action === 'founder' ? 75 : 60) ||
-      s.stats.connections < 65 ||
+      s.stats.reputation < 65 ||
       s.stats.wealth < (action === 'founder' ? 20 : 15) ||
       a.political !== 'quiet')
   )
-    return `조정 요직 · 지지 ${action === 'founder' ? 75 : 60} · 연결 65 · 재산 ${action === 'founder' ? 20 : 15} 필요`;
+    return `조정 요직 · 지지 ${action === 'founder' ? 75 : 60} · 평판 65 · 재산 ${action === 'founder' ? 20 : 15} 필요`;
   if (
     action === 'restore' &&
-    (a.political !== 'exile' || s.stats.wealth < 12 || s.stats.connections < 30)
+    (a.political !== 'exile' || s.stats.wealth < 12 || s.stats.reputation < 30)
   )
-    return '유배 상태 · 재산 12 · 연결 30 필요';
+    return '유배 상태 · 재산 12 · 평판 30 필요';
   return null;
 }
 export function applySocialAction(
@@ -390,7 +384,7 @@ export function applySocialAction(
       a.examPassed = true;
       a.examPerson = p.id;
       grant(a, 'exam');
-      s.stats.status = clamp(s.stats.status + 10);
+      s.stats.reputation = clamp(s.stats.reputation + 10);
       write(
         s,
         `${p.name}, 과거 합격! 관직 진출의 기회가 열렸습니다. 합격만으로 가문의 신분이 바뀌지는 않습니다.`,
@@ -443,8 +437,7 @@ export function applySocialAction(
     if (random() < chance) {
       a.political = action;
       grant(a, action);
-      s.stats.status = clamp(s.stats.status + 25);
-      s.stats.reputation = clamp(s.stats.reputation + 10);
+      s.stats.reputation = clamp(s.stats.reputation + 25);
       write(
         s,
         action === 'founder'
@@ -460,9 +453,7 @@ export function applySocialAction(
       a.support = 0;
       a.risk = 0;
       s.stats.wealth *= 0.35;
-      s.stats.connections = Math.max(15, s.stats.connections - 25);
-      s.stats.reputation = clamp(s.stats.reputation - 25);
-      s.stats.status = clamp(s.stats.status - 25);
+      s.stats.reputation = Math.max(10, s.stats.reputation - 30);
       write(
         s,
         '대체역사: 정변에 실패해 재산을 몰수당하고 유배되었습니다. 가족은 생존하며 생업을 재건하고 복귀할 길을 찾습니다.',
@@ -517,7 +508,7 @@ export const societyEvents: Event[] = [
     description:
       '예속된 신분을 벗어나기 위해 재산과 사람들의 도움이 필요합니다. 시대·지역마다 달랐던 면천을 단순화한 가상 사건입니다.',
     choices: [
-      choice('자원을 모아 면천을 청한다', '재산 −25 · 연결 40 필요', { wealth: -25 }, 'free'),
+      choice('자원을 모아 면천을 청한다', '재산 −25 · 평판 40 필요', { wealth: -25 }, 'free'),
       choice(
         '일하며 밑천과 인연을 모은다',
         '재산 +8 · 연결 +8 · 생계 −3',
@@ -546,7 +537,7 @@ export const societyEvents: Event[] = [
       choice('가족의 과거 응시를 지원한다', '재산 −8 · 가문 교육 45 필요', { wealth: -8 }, 'exam'),
       choice(
         '합격과 평판을 바탕으로 관직을 구한다',
-        '명성 40 필요 · 연결 +5',
+        '평판 40 필요 · 연결 +5',
         { connections: 5 },
         'appointment',
       ),
@@ -584,7 +575,7 @@ export const societyEvents: Event[] = [
       ),
       choice(
         '경험을 쌓아 조정의 요직을 구한다',
-        '재산 −12 · 명성 65 · 연결 65 필요',
+        '재산 −12 · 평판 65 필요',
         { wealth: -12 },
         'court',
       ),
@@ -599,7 +590,7 @@ export const societyEvents: Event[] = [
   {
     id: 'social-court',
     title: '조정으로 향하는 가문의 길',
-    description: '관직의 경험과 가문의 신뢰를 바탕으로 영향력을 넓힙니다.',
+    description: '관직의 경험과 가문의 신뢰를 바탕으로 평판을 넓힙니다.',
     choices: [
       choice(
         '학업과 사람들의 신뢰를 다진다',
@@ -607,12 +598,7 @@ export const societyEvents: Event[] = [
         { wealth: -5, education: 8, reputation: 8, connections: 8 },
         'study',
       ),
-      choice(
-        '조정의 요직에 도전한다',
-        '재산 −12 · 명성 65 · 연결 65 필요',
-        { wealth: -12 },
-        'court',
-      ),
+      choice('조정의 요직에 도전한다', '재산 −12 · 평판 65 필요', { wealth: -12 }, 'court'),
       choice(
         '양반 가문으로 인정받을 기반을 다진다',
         '관직과 학업·향촌 활동 필요 · 영향력 +12',
@@ -641,13 +627,13 @@ export const societyEvents: Event[] = [
       ),
       choice(
         '새 권력을 세우는 공신에 도전한다',
-        '재산 −15 · 지지 60 · 연결 65 필요',
+        '재산 −15 · 지지 60 · 평판 65 필요',
         { wealth: -15 },
         'kingmaker',
       ),
       choice(
         '새 왕조를 세우는 도전에 나선다',
-        '재산 −20 · 지지 75 · 연결 65 필요 · 성공률 추가 −10%p',
+        '재산 −20 · 지지 75 · 평판 65 필요 · 성공률 추가 −10%p',
         { wealth: -20 },
         'founder',
       ),
@@ -673,7 +659,7 @@ export const societyEvents: Event[] = [
       ),
       choice(
         '자원을 들여 복귀를 청한다',
-        '재산 −12 · 연결 30 필요 · 유배 종료',
+        '재산 −12 · 평판 30 필요 · 유배 종료',
         { wealth: -12 },
         'restore',
       ),

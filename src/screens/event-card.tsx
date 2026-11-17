@@ -80,6 +80,18 @@ export function EventCard({ s, onChoose }: { s: State; onChoose: (index: number)
                     : '과업 선택 완료 · 능력 조건을 채워주세요'}
                 </small>
               )}
+              {available && !!c.effects.wealth && cost <= s.stats.wealth && (
+                <small className="balance-preview">
+                  재산 {Math.round(s.stats.wealth)} →{' '}
+                  {Math.round(
+                    Math.min(
+                      100,
+                      s.stats.wealth + (c.effects.wealth > 0 ? c.effects.wealth : -cost),
+                    ),
+                  )}
+                  섬
+                </small>
+              )}
               {available && cost > s.stats.wealth && (
                 <small className="borrow-label">
                   가진 재산 {s.stats.wealth.toFixed(1)} · 모자란{' '}

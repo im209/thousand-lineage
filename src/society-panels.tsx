@@ -96,7 +96,7 @@ export function SocietyPanel({
       id: 'politics' as const,
       title: modern ? '시민사회 참여' : '조정과 권력 다툼',
       text: modern
-        ? '법적 신분 대신 사회적 영향력을 쌓습니다.'
+        ? '법적 신분 대신 평판을 쌓습니다.'
         : '조정에 진출하고 지지와 위험을 관리합니다.',
     },
     {
@@ -146,9 +146,9 @@ export function SocietyPanel({
           <strong>{officeLabel(s)}</strong>
         </div>
         <div>
-          <small>사회적 영향력</small>
+          <small>평판</small>
           <strong>
-            {Math.round(s.stats.status)} <i>/ 100</i>
+            {Math.round(s.stats.reputation)} <i>/ 100</i>
           </strong>
         </div>
       </div>

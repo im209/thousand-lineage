@@ -13,10 +13,7 @@ function fixture(year = 1600): State {
     wealth: 90,
     education: 80,
     health: 100,
-    stability: 80,
-    reputation: 60,
-    status: 30,
-    connections: 70,
+    reputation: 70,
     cohesion: 80,
   };
   s.event = 'life0';

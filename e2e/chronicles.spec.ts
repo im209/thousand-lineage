@@ -38,12 +38,12 @@ async function install(page: Page, mode: Mode = 'fresh') {
         const weights: any = {
           wealth: state.stats.wealth < 35 ? 2.8 : 1,
           health: state.stats.health < 55 ? 3 : 1.2,
-          stability: state.stats.stability < 45 ? 2 : 1,
+          health: state.stats.health < 45 ? 2 : 1,
           cohesion: state.stats.cohesion < 65 ? 2.2 : 1,
           education: state.stats.education < 60 ? 1.4 : 0.3,
-          connections: state.stats.connections < 60 ? 1.2 : 0.3,
+          reputation: state.stats.reputation < 60 ? 1.2 : 0.3,
           reputation: state.stats.reputation < 55 ? 0.9 : 0.2,
-          status: 0.1,
+          reputation: 0.1,
         };
         return e
           .currentEvent(state)

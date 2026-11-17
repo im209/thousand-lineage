@@ -15,6 +15,7 @@ import { StoryStage, FirstChoiceGuide } from '../play-flow';
 import { FamilyOutlook } from '../progression-panels';
 import type { RunRecords } from '../records';
 import { SocietyPanel } from '../society-panels';
+import { statMeaning } from '../stat-meaning';
 import { useGame } from '../store';
 import { ChapterCard } from './chapter-card';
 import { ChronicleLog, RecentLog } from './chronicle-log';
@@ -67,15 +68,19 @@ function HeadAside({ s, onPerson }: { s: State; onPerson: (p: Person) => void })
         {Object.entries(labels).map(([key, label]) => (
           <div key={key}>
             <span>{label}</span>
-            <b>{Math.round(s.stats[key as keyof typeof labels])}</b>
+            <b>
+              {Math.round(s.stats[key as keyof typeof labels])}
+              {key === 'wealth' ? '섬' : ''}
+            </b>
             <div className="bar">
               <i style={{ width: `${s.stats[key as keyof typeof labels]}%` }} />
             </div>
+            <small className="stat-meaning">{statMeaning(s, key as keyof typeof labels)}</small>
           </div>
         ))}
       </div>
       <p className="tiny">
-        0–100의 게임 지표입니다.
+        재산은 쌀 섬으로 세고(최대 100섬), 나머지는 0–100입니다.
         <br />
         실제 화폐나 인구 통계가 아닙니다.
       </p>

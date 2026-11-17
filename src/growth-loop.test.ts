@@ -57,16 +57,16 @@ describe('a readable growth loop', () => {
   });
   it('makes crossing the trade threshold observable and applies the promised cost reduction', () => {
     const s = create(1, 0, 'commoner');
-    s.stats.connections = 59;
+    s.stats.reputation = 59;
     s.event = 'life1';
     const next = choose(s, 0);
-    expect(next.report!.entries.some(e => e.kind === 'benefit' && e.text.includes('8에서 3'))).toBe(
-      true,
-    );
+    expect(
+      next.report!.entries.some(e => e.kind === 'benefit' && e.text.includes('8섬에서 3섬')),
+    ).toBe(true);
     const ready = continueStory(next);
     ready.event = 'life3';
     expect(choiceCost(ready, 0)).toBe(3);
-    const below = { ...ready, stats: { ...ready.stats, connections: 59.9 } };
+    const below = { ...ready, stats: { ...ready.stats, reputation: 59.9 } };
     expect(choiceCost(below, 0)).toBe(8);
     expect(choose(ready, 0).report!.entries.filter(e => e.kind === 'benefit')).toHaveLength(0);
   });
@@ -78,22 +78,17 @@ describe('a readable growth loop', () => {
       decodeSave(JSON.stringify({ ...next, report: { ...next.report, outcome: 42 } })),
     ).toBeNull();
   });
-  it('grants an already prepared goal when family life raises its remaining stat condition, without counting twice', () => {
-    let reached = false;
-    for (let seed = 1; seed <= 20; seed++) {
-      const s = selectProject(create(seed, 0, 'commoner'), 'trade');
-      s.projects!.progress.trade = 3;
-      s.stats.connections = 54.9; // a marriage (+2) must outweigh a few years of upkeep
-      const next = choose(s, 0);
-      if (next.phase !== 'ended' && next.stats.connections >= 55) {
-        reached = true;
-        expect(next.projects!.completed).toContain('trade');
-        expect(next.projects!.progress.trade).toBe(3);
-        expect(next.report!.entries.filter(e => e.kind === 'project')).toHaveLength(1);
-        expect(next.report!.entries.filter(e => e.kind === 'project-progress')).toHaveLength(0);
-        expect(next.peak.wealth).toBeGreaterThanOrEqual(next.stats.wealth);
-      }
-    }
-    expect(reached).toBe(true);
+  it('grants an already prepared goal when another choice raises its remaining stat condition, without counting twice', () => {
+    const s = selectProject(create(1, 0, 'commoner'), 'trade');
+    s.projects!.progress.trade = 3;
+    s.stats.reputation = 50;
+    s.event = 'life1'; // helping neighbours raises 평판 but is not a trade choice
+    s.turn = 2;
+    const next = choose(s, 0);
+    expect(next.projects!.completed).toContain('trade');
+    expect(next.projects!.progress.trade).toBe(3);
+    expect(next.report!.entries.filter(e => e.kind === 'project')).toHaveLength(1);
+    expect(next.report!.entries.filter(e => e.kind === 'project-progress')).toHaveLength(0);
+    expect(next.peak.wealth).toBeGreaterThanOrEqual(next.stats.wealth);
   });
 });

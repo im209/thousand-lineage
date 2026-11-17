@@ -12,11 +12,23 @@ const record = (v: unknown): v is Record<string, any> =>
 const finite = (v: unknown) => typeof v === 'number' && Number.isFinite(v);
 const strings = (v: unknown): v is string[] =>
   Array.isArray(v) && v.every(x => typeof x === 'string');
+/** Saves made with eight stats: 생계+생활환경 → 살림, 연결+명성 → 평판 (영향력 had no effect). */
+function foldOldStats(stats: Record<string, unknown>) {
+  if (!('stability' in stats) && !('connections' in stats)) return;
+  const n = (v: unknown, fallback: number) =>
+    typeof v === 'number' && Number.isFinite(v) ? v : fallback;
+  stats.health = (n(stats.health, 50) + n(stats.stability, 50)) / 2;
+  stats.reputation = (n(stats.reputation, 30) + n(stats.connections, 30)) / 2;
+  delete stats.stability;
+  delete stats.connections;
+  delete stats.status;
+}
 export function decodeSave(raw: string | null): State | null {
   try {
     const s: unknown = JSON.parse(raw ?? 'null');
     if (!record(s) || s.version !== 1 || !record(s.people) || !record(s.stats) || !record(s.peak))
       return null;
+    foldOldStats(s.stats);
     if (
       !Number.isSafeInteger(s.year) ||
       s.year < 1392 ||

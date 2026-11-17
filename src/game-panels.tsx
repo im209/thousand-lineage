@@ -72,7 +72,7 @@ export function QuickStats({ s }: { s: State }) {
         <p>{s.debt > 0 ? `부채 ${s.debt.toFixed(1)}점` : '새 선택의 밑천'}</p>
       </div>
       <div className="metric health">
-        <span>✦ 생활환경</span>
+        <span>✦ 살림</span>
         <strong>
           {Math.round(s.stats.health)}
           <small>/ 100</small>
@@ -109,12 +109,16 @@ function WealthBreakdown({ r }: { r: NonNullable<State['report']> }) {
     choice = r.immediate.wealth ?? 0,
     repaid = r.repaid ?? 0,
     upkeep = r.upkeep ?? 0,
-    rest = total - choice + repaid + upkeep;
+    income = r.income ?? 0,
+    food = r.food ?? 0,
+    rest = total - choice + repaid + upkeep - income + food;
   const parts = [
     ['이번 선택', choice],
+    ['생업 벌이', income],
+    [`식구 ${r.mouths ?? ''}명 먹는 데`, -food],
     ['빚 갚음', -repaid],
     [upkeep >= 0 ? '신분에 따른 부담' : '관직 수입', -upkeep],
-    ['그동안의 살림', rest],
+    ['그 밖', rest],
   ].filter(([, v]) => Math.abs(v as number) >= 0.05) as [string, number][];
   const debtChanged = r.borrowed > 0 || r.debtBefore > 0 || r.debtAfter > 0;
   if (Math.abs(total) < 0.5 && !debtChanged) return null;
@@ -122,7 +126,7 @@ function WealthBreakdown({ r }: { r: NonNullable<State['report']> }) {
     <div className="debt-note wealth-breakdown">
       {parts.length > 0 && (
         <p>
-          <b>재산 {signed(total)}</b> ={' '}
+          <b>재산 {signed(total)}섬</b> ={' '}
           {parts.map(([label, v]) => `${label} ${signed(v)}`).join(' · ')}
         </p>
       )}
@@ -432,11 +436,11 @@ export function HeirSelection({
           <b>{withParticle(chosen.name, '이/가')} 대표가 되면</b>
           <p>
             가문 교육 {Math.round(s.stats.education)} →{' '}
-            {Math.round(s.stats.education * 0.6 + chosen.education * 0.4)} · 생활환경{' '}
+            {Math.round(s.stats.education * 0.6 + chosen.education * 0.4)} · 살림{' '}
             {Math.round(s.stats.health)} → {Math.round(s.stats.health * 0.7 + chosen.health * 0.3)}
             <br />
             {s.year - chosen.born < 18
-              ? '어려서 클 때까지 가족이 대신 꾸립니다 · 생계 −5 · 결속 −3'
+              ? '어려서 클 때까지 가족이 대신 꾸립니다 · 살림 −5'
               : '바로 집안일을 맡습니다.'}
           </p>
         </div>

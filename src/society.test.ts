@@ -29,12 +29,9 @@ function fixture(seed = 42, origin: StartingStanding = 'commoner') {
   s.stats = {
     wealth: 80,
     education: 80,
-    status: 50,
-    connections: 80,
     reputation: 80,
     cohesion: 80,
     health: 80,
-    stability: 80,
   };
   s.event = 'social-career';
   return s;
@@ -149,7 +146,7 @@ describe('social progression and alternate history', () => {
         expect(next.people[s.head].alive).toBe(true);
         const recovery = continueStory(next);
         recovery.stats.wealth = 30;
-        recovery.stats.connections = 40;
+        recovery.stats.reputation = 40;
         const restored = choose(recovery, 1);
         expect(restored.society!.political).toBe('quiet');
         expect(restored.society!.office).toBe('none');
@@ -201,7 +198,7 @@ describe('social progression and alternate history', () => {
     const next = choose(s, 0);
     expect(next.report!.to - next.report!.from).toBe(3);
     delete s.society;
-    s.stats.status = 100;
+    s.stats.reputation = 100;
     const old = decodeSave(JSON.stringify(s))!;
     expect(old).not.toBeNull();
     expect(societyState(old).standing).toBe('commoner');
@@ -299,7 +296,7 @@ describe('social progression and alternate history', () => {
     expect(next.society!.office).toBe('local');
     next.society!.recognition = 2;
     next.stats.education = 80;
-    next.stats.connections = 80;
+    next.stats.reputation = 80;
     next.stats.reputation = 80;
     next = choose(next, 2);
     expect(next.society!.standing).toBe('yangban');
@@ -335,7 +332,7 @@ describe('social progression and alternate history', () => {
         s.event = id;
         s.stats.wealth = 0;
         s.stats.education = 0;
-        s.stats.connections = 0;
+        s.stats.reputation = 0;
         s.stats.reputation = 0;
         expect(currentEvent(s).choices.some((_, i) => choiceAvailable(s, i))).toBe(true);
       }

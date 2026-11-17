@@ -22,16 +22,7 @@ export function create(
     people: {},
     head: '',
     founder: '',
-    stats: {
-      wealth: 40,
-      stability: 50,
-      status: 25,
-      education: 25,
-      health: 65,
-      reputation: 30,
-      connections: 35,
-      cohesion: 65,
-    },
+    stats: { wealth: 40, health: 60, cohesion: 65, education: 25, reputation: 32 },
     debt: 0,
     phase: 'play',
     event: 'h1392',
@@ -96,7 +87,7 @@ export function representativeNumber(s: State) {
   return s.representativeCount ?? 1 + s.log.filter(l => l.kind === 'succession').length;
 }
 
-/** A minor heir costs 생계 −5 · 결속 −3; the heir's own education and health blend into the family's. */
+/** A minor heir costs 살림 −5; the heir's own education and health blend into the family's. */
 export function succeed(state: State, id: string): State {
   if (
     state.report ||
@@ -112,8 +103,7 @@ export function succeed(state: State, id: string): State {
   const p = s.people[id];
   const minor = isMinor(s, p);
   if (minor) {
-    s.stats.stability = clamp(s.stats.stability - 5);
-    s.stats.cohesion = clamp(s.stats.cohesion - 3);
+    s.stats.health = clamp(s.stats.health - 5);
     p.job = '미성년';
   }
   s.stats.education = clamp(s.stats.education * 0.6 + p.education * 0.4);

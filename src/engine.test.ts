@@ -161,8 +161,9 @@ describe('QA regressions', () => {
     s.phase = 'succession';
     expect(candidates(s)[0].id).toBe('adult');
     const next = succeed(s, 'child');
-    expect(next.stats.stability).toBe(s.stats.stability - 5);
-    expect(next.stats.cohesion).toBe(s.stats.cohesion - 3);
+    // a minor heir costs 살림 5, then the heir's own health blends in
+    expect(next.stats.health).toBeCloseTo((s.stats.health - 5) * 0.7 + s.people.child.health * 0.3);
+    expect(next.stats.cohesion).toBe(s.stats.cohesion);
     expect(next.people.child.job).toBe('미성년');
   });
 });

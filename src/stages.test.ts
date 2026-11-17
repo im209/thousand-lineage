@@ -58,7 +58,7 @@ describe('events about the real family', () => {
 describe('risky choices', () => {
   it('shows the real odds, moved by the family stat, and applies exactly one outcome', () => {
     const s = at('life3');
-    s.stats.connections = 80;
+    s.stats.reputation = 80;
     const event = currentEvent(s);
     const index = event.choices.findIndex(c => c.gamble);
     expect(index).toBeGreaterThanOrEqual(0);
@@ -76,7 +76,7 @@ describe('risky choices', () => {
       [100, '70%'],
     ] as const) {
       const s = at('life3');
-      s.stats.connections = value;
+      s.stats.reputation = value;
       expect(currentEvent(s).choices.find(c => c.gamble)!.chanceLabel).toContain(label);
     }
   });

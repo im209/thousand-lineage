@@ -49,6 +49,10 @@ export type TurnReport = {
   /** Where wealth went while the years passed: debt repaid, status upkeep (minus office income). */
   repaid?: number;
   upkeep?: number;
+  /** Earned from work and eaten by the household over the turn, and how many mouths. */
+  income?: number;
+  food?: number;
+  mouths?: number;
   debtBefore: number;
   debtAfter: number;
   entries: LogEntry[];
@@ -61,7 +65,7 @@ export type State = {
   challenge?: ChallengeBenchmark;
   introPending?: boolean;
   /** Per-turn wealth bookkeeping; only exists while a choice is being resolved. */
-  ledger?: { repaid: number; upkeep: number };
+  ledger?: { repaid: number; upkeep: number; income: number; food: number };
   /** What the current head has chosen and achieved so far. */
   tenure?: Tenure;
   /** Former heads, in order, as the family remembers them. */

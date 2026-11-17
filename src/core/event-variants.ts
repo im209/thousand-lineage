@@ -1,6 +1,6 @@
 // Event data in data.ts is static. These variants adapt an event to the current family
 // (a named child, a trade discount, inherited legacies, a business owner in 1997, ...).
-import { events, type Event, type Stat } from '../data';
+import { events, type Effects, type Event } from '../data';
 import { projectChoice } from '../projects';
 import { prepareSurpriseEvent } from '../surprises';
 import { gambleLabel } from './gamble';
@@ -32,9 +32,9 @@ const childEducation: Variant = (s, e) => {
   };
 };
 
-/** 연결 60 benefit: the big trade deal costs 3 instead of 8. */
+/** 평판 60 benefit: the big trade deal costs 3 instead of 8. */
 const trustedTrade: Variant = (s, e) => {
-  if (s.stats.connections < 60) return e;
+  if (s.stats.reputation < 60) return e;
   return {
     ...e,
     description: '오랫동안 쌓아 온 거래처의 신뢰 덕분에 적은 밑천으로 거래를 넓힐 수 있습니다.',
@@ -42,7 +42,7 @@ const trustedTrade: Variant = (s, e) => {
       i === 0
         ? {
             ...c,
-            description: '연결 60 이상 혜택 · 재산 −3 · 연결 +12',
+            description: '평판 60 이상 혜택',
             effects: { ...c.effects, wealth: -3 },
           }
         : c,
@@ -85,7 +85,7 @@ const businessCrisis: Variant = (s, e) => {
   };
 };
 
-const legacyBonus: Record<string, Partial<Record<Stat, number>>> = {
+const legacyBonus: Record<string, Effects> = {
   learning: { education: 10 },
   migration: { stability: 10 },
   trade: { wealth: 15 },

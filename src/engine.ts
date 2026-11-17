@@ -22,6 +22,14 @@ export {
   choiceAvailable,
 } from './core/events';
 export { choose } from './core/choose';
+export {
+  household,
+  yearlyIncome,
+  yearlyFood,
+  workFactor,
+  mortalityFactor,
+  birthFactor,
+} from './core/annual';
 export { chapters, chapterOf, chapterEnding, chapterSummary, closesChapter } from './core/chapters';
 export type { Chapter } from './core/chapters';
 export { lifeOf, deedTitle, livingHeadTitle } from './core/lives';

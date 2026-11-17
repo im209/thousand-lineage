@@ -63,13 +63,13 @@ test('trade trust reveals a real cost benefit and study advances an existing goa
     const path = '/src/engine.ts';
     const e = await import(path);
     let s = e.create(1, 0, 'commoner');
-    s.stats.connections = 59;
+    s.stats.reputation = 59;
     s.event = 'life1';
     localStorage.setItem('thousand-lineage-v1', JSON.stringify(s));
   });
   await page.reload();
   await page.getByRole('button', { name: /품을 나누며 관계를 쌓는다/ }).click();
-  await expect(page.locator('.benefit-result')).toContainText('8에서 3');
+  await expect(page.locator('.benefit-result')).toContainText('8섬에서 3섬');
   await page.evaluate(async () => {
     const path = '/src/engine.ts';
     const e = await import(path);
@@ -79,7 +79,7 @@ test('trade trust reveals a real cost benefit and study advances an existing goa
   });
   await page.reload();
   await expect(page.getByRole('button', { name: /밑천을 들여 거래를 넓힌다/ })).toContainText(
-    '연결 60 이상 혜택',
+    '평판 60 이상 혜택',
   );
   await expect(page.locator('.trade-benefit.ready')).toContainText('8 → 3');
   await page.evaluate(async () => {

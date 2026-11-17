@@ -38,11 +38,8 @@ function fixture(seed = 42): State {
     wealth: 80,
     education: 80,
     health: 100,
-    stability: 80,
     cohesion: 80,
-    connections: 40,
-    status: 30,
-    reputation: 60,
+    reputation: 45, // below the 평판 60 discount
   };
   return s;
 }
@@ -269,7 +266,7 @@ describe('exam-road surprises', () => {
     const paid = choose(s, 0);
     expect(paid.report!.borrowed).toBe(6);
     expect(paid.report!.debtBefore).toBe(0);
-    s.stats.connections = 60;
+    s.stats.reputation = 60;
     expect(choose(s, 0).report!.borrowed).toBe(3);
   });
 

@@ -53,7 +53,7 @@ const projectRewards: Record<ProjectId, (s: State) => string> = {
       p.life.push({ year: s.year, text: '가문의 돌봄 기반 완성으로 건강 10 증가' });
     }
     s.stats.health = clamp(s.stats.health + 8);
-    return `생존 가족 ${everyone.length}명의 건강 +10, 생활환경 +8. 돌봄 특별 선택을 열었습니다.`;
+    return `생존 가족 ${everyone.length}명의 건강 +10, 살림 +8. 돌봄 특별 선택을 열었습니다.`;
   },
 };
 

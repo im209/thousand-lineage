@@ -1,5 +1,6 @@
 import type { State } from './engine';
-import type { Choice, Event, Stat } from './data';
+import type { Choice, Event } from './data';
+import { describeEffects, labels, mergeEffects, statOf, type Effects } from './stats';
 
 export type ArcId = 'archives' | 'care' | 'trade' | 'war' | 'justice' | 'craft';
 export type OutcomeId =
@@ -30,8 +31,8 @@ export type ChronicleOutcome = {
   id: OutcomeId;
   title: string;
   description: string;
-  effects: Partial<Record<Stat, number>>;
-  requirements?: Partial<Record<Stat, number>>;
+  effects: Effects;
+  requirements?: Effects;
 };
 export type Chronicle = {
   id: ArcId;
@@ -203,22 +204,7 @@ export const chronicles: Chronicle[] = [
     ],
   },
 ];
-const statNames: Record<Stat, string> = {
-  wealth: '재산',
-  stability: '생계',
-  status: '영향력',
-  education: '교육',
-  health: '생활환경',
-  reputation: '명성',
-  connections: '연결',
-  cohesion: '결속',
-};
-const formatEffects = (effects: Partial<Record<Stat, number>>) =>
-  Object.entries(effects)
-    .map(
-      ([key, value]) => `${statNames[key as Stat]} ${value! >= 0 ? '+' : '−'}${Math.abs(value!)}`,
-    )
-    .join(' · ');
+const formatEffects = (effects: Effects) => describeEffects(mergeEffects(effects));
 const arcFor = (id: ArcId) => chronicles.find(c => c.id === id)!;
 const outcomeFor = (id: OutcomeId) => chronicles.flatMap(c => c.outcomes).find(o => o.id === id);
 export function chronicleState(s: Pick<State, 'chronicles'>): ChronicleState {
@@ -366,7 +352,7 @@ export function chronicleLockReason(s: State, choice: Choice): string | null {
   const cost = Math.max(0, -(outcome.effects.wealth ?? 0));
   if (s.stats.wealth < cost) return `마무리할 재산 ${cost} 필요`;
   for (const [stat, value] of Object.entries(outcome.requirements ?? {}))
-    if (s.stats[stat as Stat] < value!) return `${statNames[stat as Stat]} ${value} 필요`;
+    if (s.stats[statOf(stat)] < value!) return `${labels[statOf(stat)]} ${value} 필요`;
   return null;
 }
 export function prepareChronicleEvent(s: State, event: Event): Event {

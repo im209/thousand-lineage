@@ -1,6 +1,6 @@
 // Which event comes next, what it looks like now, and what each choice costs or requires.
 import { chronicleLockReason, nextChronicleEvent, prepareChronicleEvent } from '../chronicles';
-import { events, type Event } from '../data';
+import { events, normalizeChoice, type Event } from '../data';
 import { prepareJourneyEvent } from '../journeys';
 import { projectComplete, projectMatches, projects } from '../projects';
 import {
@@ -71,7 +71,7 @@ export function nextEvent(s: State): Event {
       e.min <= s.year &&
       e.max >= s.year &&
       (e.id !== 'life2' || hasChild) &&
-      (e.id !== 'life7' || s.stats.wealth < 65 || s.stats.stability < 65),
+      (e.id !== 'life7' || s.stats.wealth < 65 || s.stats.health < 65),
   );
   // A head meets each everyday event once; only when all are used does one come back.
   const faced = s.tenure?.head === s.head ? (s.tenure.events ?? []) : [];
@@ -97,7 +97,8 @@ export function currentEvent(s: State): Event {
         : familyEvent(s);
   if (e.kind === 'society' || e.id === 'h1894') e = prepareSocialEvent(s, e);
   if (e.kind === 'chronicle') e = prepareChronicleEvent(s, e);
-  return wrapAlternateHistory(s, e);
+  const shown = wrapAlternateHistory(s, e);
+  return { ...shown, choices: shown.choices.map(normalizeChoice) };
 }
 
 export function choiceCost(s: State, index: number) {

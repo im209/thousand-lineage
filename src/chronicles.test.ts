@@ -22,12 +22,9 @@ function fixture(year = 1600) {
   s.stats = {
     wealth: 90,
     education: 70,
-    status: 50,
-    connections: 70,
-    reputation: 60,
+    reputation: 70,
     cohesion: 70,
     health: 70,
-    stability: 70,
   };
   return s;
 }

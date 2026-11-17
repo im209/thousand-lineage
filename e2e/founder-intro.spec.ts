@@ -45,13 +45,10 @@ test('meet the generated founder before the first decision, with identity preser
     await expect(facts).toContainText(text);
   const labels: Record<string, string> = {
     wealth: '재산',
-    stability: '생계',
-    status: '사회적 영향력',
+    health: '살림',
+    cohesion: '화목',
     education: '교육',
-    health: '생활환경',
-    reputation: '명성',
-    connections: '연결',
-    cohesion: '결속',
+    reputation: '평판',
   };
   await expect(
     intro.getByRole('button', { name: '이 인물로 시작하기 →', exact: true }),

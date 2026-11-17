@@ -113,7 +113,7 @@ export function marry(s: State, p: Person) {
     type: 'marriage',
     people: [p.id, spouse.id],
   });
-  s.stats.connections = clamp(s.stats.connections + 2);
+  s.stats.reputation = clamp(s.stats.reputation + 2);
   return spouse;
 }
 

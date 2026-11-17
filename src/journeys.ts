@@ -70,7 +70,7 @@ export function journeyRisk(s: State) {
   return Math.max(0.05, Math.min(0.65, base - (p.ability - 50) * 0.002 - (p.health - 50) * 0.001));
 }
 export function journeyEscortCost(s: State) {
-  return s.stats.connections >= 60 ? 3 : 6;
+  return s.stats.reputation >= 60 ? 3 : 6;
 }
 export function journeyText(id: JourneyId, year = 1600) {
   const d = content[id],
@@ -101,7 +101,7 @@ export function prepareJourneyEvent(s: State): Event {
   const choices: Choice[] = [
     {
       title: d.safe,
-      description: `추가 재산 −${cost} · 이 사건의 사망 위험 없이 도착 후 응시${cost === 3 ? ' · 연결 60 혜택' : ''}`,
+      description: `추가 재산 −${cost} · 이 사건의 사망 위험 없이 도착 후 응시${cost === 3 ? ' · 평판 60 혜택' : ''}`,
       effects: { wealth: -cost },
       journeyAction: 'escort',
     },

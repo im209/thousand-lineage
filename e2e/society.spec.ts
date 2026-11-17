@@ -23,12 +23,12 @@ async function install(page: Page, kind: Fixture) {
     head.born = 1370;
     s.stats = {
       wealth: 80,
-      stability: 80,
-      status: 50,
+      health: 80,
+      reputation: 50,
       education: 80,
       health: 100,
       reputation: 80,
-      connections: 80,
+      reputation: 80,
       cohesion: 80,
     };
     if (kind === 'exam-locked' || kind === 'exam-family') s.event = 'social-career';

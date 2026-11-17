@@ -112,7 +112,7 @@ test('project reward is visible in the result and survives reload exactly once',
   await page.getByRole('button', { name: /가족의 생활을 먼저 지킨다/ }).click();
   const result = page.getByRole('region', { name: '선택 결과' });
   await expect(result.locator('.project-result')).toContainText('함께 사는 집 완성!');
-  await expect(result.locator('.project-result')).toContainText('생활환경 +8');
+  await expect(result.locator('.project-result')).toContainText('살림 +8');
   const after = await saved(page);
   expect(after.projects.completed).toEqual(['care']);
   expect(after.projects.active).toBeNull();

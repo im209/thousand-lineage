@@ -1,4 +1,5 @@
 import { labels, type Stat } from './data';
+import { statMeaning } from './stat-meaning';
 import { projects, projectState, projectProgress, type ProjectId, type State } from './engine';
 import { ProjectBoard } from './progression-panels';
 
@@ -16,18 +17,6 @@ export function ActiveGoal({ s }: { s: State }) {
     </div>
   );
 }
-
-const statHelp: Record<Stat, string> = {
-  wealth: '선택의 비용을 지불하는 밑천입니다. 여유 재산은 빚의 자동 상환에도 쓰입니다.',
-  stability: '높게 유지하면 해마다 가족의 생활환경이 조금씩 좋아집니다.',
-  health: '같은 나이일 때 가족의 사망 위험을 낮춥니다. 개인 건강과 구별되는 공동 생활환경입니다.',
-  education: '아이에게 물려줄 교육, 성년의 진로, 과거 합격 확률과 연간 재산 변화에 반영됩니다.',
-  connections:
-    '60 이상이면 ‘거래를 넓힐 기회’의 큰 거래 비용이 재산 8에서 3으로 줄어듭니다. 진로의 인맥 조건에도 쓰입니다.',
-  cohesion: '출생 확률에 반영되고, 돌봄 과업의 완성 조건입니다. 혼인과 출생은 확률로 결정됩니다.',
-  reputation: '시험 합격 후 관직을 구하거나 가문이 사회적으로 인정받을 때 필요한 조건입니다.',
-  status: '사회 활동으로 쌓은 영향력의 기록입니다. 점수만으로 신분이나 관직이 바뀌지는 않습니다.',
-};
 
 export function GrowthGuide({
   s,
@@ -84,12 +73,12 @@ export function GrowthGuide({
           <h3>세 가지 유산을 모두 남겼습니다</h3>
         </div>
       )}
-      {(s.turn >= 3 || s.stats.connections >= 60) && (
-        <div className={`trade-benefit ${s.stats.connections >= 60 ? 'ready' : ''}`}>
-          <b>{s.stats.connections >= 60 ? '쌓은 인맥이 혜택으로' : '다음 생활 혜택 · 거래 신뢰'}</b>
+      {(s.turn >= 3 || s.stats.reputation >= 60) && (
+        <div className={`trade-benefit ${s.stats.reputation >= 60 ? 'ready' : ''}`}>
+          <b>{s.stats.reputation >= 60 ? '쌓은 인맥이 혜택으로' : '다음 생활 혜택 · 거래 신뢰'}</b>
           <p>
-            사회적 연결 <strong>{number(s.stats.connections)} / 60</strong> · 조건을 채우면 큰 거래
-            비용 <strong>8 → 3</strong>
+            평판 <strong>{number(s.stats.reputation)} / 60</strong> · 조건을 채우면 큰 거래 비용{' '}
+            <strong>8 → 3</strong>
           </p>
           <small>‘거래를 넓힐 기회’ 사건에서 적용됩니다.</small>
         </div>
@@ -98,12 +87,12 @@ export function GrowthGuide({
         <details className="stat-benefits">
           <summary>스탯은 어디에 쓰이나요?</summary>
           <dl>
-            {(Object.keys(statHelp) as Stat[]).map(stat => (
+            {(Object.keys(labels) as Stat[]).map(stat => (
               <div key={stat}>
                 <dt>
                   {labels[stat]} <b>{number(s.stats[stat])}</b>
                 </dt>
-                <dd>{statHelp[stat]}</dd>
+                <dd>{statMeaning(s, stat)}</dd>
               </div>
             ))}
           </dl>

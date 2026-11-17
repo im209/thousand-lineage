@@ -1,4 +1,14 @@
 import { lifeEvents } from './life-events';
+import {
+  labels,
+  describeEffects,
+  mergeEffects,
+  notesOf,
+  statOf,
+  type Effects,
+  type LegacyStat,
+  type Stat,
+} from './stats';
 import { stageEvents } from './stage-events';
 import { societyEvents } from './society';
 import { chronicleEvents } from './chronicles';
@@ -49,15 +59,7 @@ export const clans = [
     source: censusSource,
   };
 });
-export type Stat =
-  | 'wealth'
-  | 'stability'
-  | 'status'
-  | 'education'
-  | 'health'
-  | 'reputation'
-  | 'connections'
-  | 'cohesion';
+export type { Stat, LegacyStat, Effects } from './stats';
 // Additional attested combinations; source confirms only name and clan, not population.
 const additional = [
   ['한산', '이', '李', 'https://encykorea.aks.ac.kr/Article/E0043502'],
@@ -105,20 +107,11 @@ export function searchClans(query: string) {
   if (!q) return [];
   return clans.filter(c => `${c.label}${c.hanja}`.normalize('NFKC').replace(/\s/g, '').includes(q));
 }
-export const labels: Record<Stat, string> = {
-  wealth: '재산',
-  stability: '생계 안정',
-  status: '사회적 영향력',
-  education: '교육·지식',
-  health: '생활환경',
-  reputation: '명성',
-  connections: '사회적 연결',
-  cohesion: '가족 결속',
-};
+export { labels };
 export type Choice = {
   title: string;
   description: string;
-  effects: Partial<Record<Stat, number>>;
+  effects: Effects;
   legacy?: string;
   move?: boolean;
   job?: 'trade' | 'study';
@@ -141,9 +134,9 @@ export type Choice = {
 export type Gamble = {
   label: string;
   base: number;
-  stat: Stat;
-  win: Partial<Record<Stat, number>>;
-  lose: Partial<Record<Stat, number>>;
+  stat: Stat | LegacyStat;
+  win: Effects;
+  lose: Effects;
   winText: string;
   loseText: string;
 };
@@ -199,7 +192,7 @@ const war: Choice[] = [
   },
   {
     title: '고향에서 생계를 지킨다',
-    description: '재산 +6 · 지역에 따라 생활환경 손실',
+    description: '재산 +6 · 지역에 따라 피해가 커짐',
     effects: { wealth: 6, health: -12, stability: -10 },
     legacy: 'land',
   },
@@ -451,3 +444,30 @@ export function jobFor(y: number, educated: boolean, trade: boolean) {
         ? '농민'
         : '기술직';
 }
+
+/**
+ * Folds a choice into the five stats and rebuilds its description from its effects, keeping
+ * any notes that are not plain stat changes. Safe to apply twice.
+ */
+export function normalizeChoice(c: Choice): Choice {
+  const effects = mergeEffects(c.effects);
+  if (c.gamble) {
+    const gamble = {
+      ...c.gamble,
+      stat: statOf(c.gamble.stat),
+      win: mergeEffects(c.gamble.win),
+      lose: mergeEffects(c.gamble.lose),
+    };
+    return {
+      ...c,
+      effects,
+      gamble,
+      description: `성공하면 ${describeEffects(gamble.win)} · 실패하면 ${describeEffects(gamble.lose)}`,
+    };
+  }
+  const description = [describeEffects(effects), ...notesOf(c.description)]
+    .filter(Boolean)
+    .join(' · ');
+  return { ...c, effects, description: description || c.description };
+}
+for (const event of events) event.choices = event.choices.map(normalizeChoice);

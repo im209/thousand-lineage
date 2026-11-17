@@ -115,7 +115,7 @@ describe('family projects', () => {
   it('repays debt first and gives only the unused portion as wealth', () => {
     const s = selectProject(stoppedFixture(), 'trade');
     s.projects!.progress.trade = 2;
-    s.stats.connections = 60;
+    s.stats.reputation = 60;
     s.stats.wealth = 30;
     s.debt = 5;
     s.event = 'life3';
@@ -176,7 +176,7 @@ describe('family projects', () => {
     for (let seed = 1; seed <= 80; seed++) {
       const s = create(seed);
       s.stats.wealth = 100;
-      s.stats.stability = 100;
+      s.stats.health = 100;
       s.event = 'life0';
       const next = choose(s, 0);
       if (next.phase === 'play') expect(next.event).not.toBe('life7');
