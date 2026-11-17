@@ -3,6 +3,7 @@ import { clans, regions } from '../data';
 import { projectComplete, projectState, projects, type ProjectId } from '../projects';
 import { initializeSociety, randomStartingStanding, type StartingStanding } from '../society';
 import { nextEvent } from './events';
+import { startTenure } from './lives';
 import { add, candidates, person } from './people';
 import { FIRST_YEAR, MILESTONE_YEAR, clamp, isMinor, log, pick, rand, type State } from './state';
 
@@ -50,6 +51,7 @@ export function create(
     person(s, FIRST_YEAR - 18 - Math.floor(rand(s) * 9), 1, clan, undefined, true),
   );
   s.head = s.founder = founder.id;
+  startTenure(s);
   founder.job = pick(s, ['농민', '상인', '수공업자', '학인']);
   initializeSociety(s, origin);
   s.society!.focus = 'livelihood';
@@ -122,6 +124,7 @@ export function succeed(state: State, id: string): State {
     'succession',
   );
   p.life.push({ year: s.year, text: '가문 대표 계승' });
+  startTenure(s);
   s.event = nextEvent(s).id;
   return s;
 }

@@ -1,4 +1,4 @@
-import type { Person, State } from './engine';
+import { lifeOf, type Person, type State } from './engine';
 import { PixelAvatar } from './pixel-avatar';
 import { featuredMemory, reportHeadline } from './family-memory';
 
@@ -50,6 +50,7 @@ export function RepresentativeMemory({ s, onPerson }: { s: State; onPerson: (p: 
   const p = s.people[s.head];
   const children = p.children.map(id => s.people[id]).filter(Boolean);
   const living = children.filter(child => child.alive).length;
+  const life = lifeOf(s, p.id);
   return (
     <div className="representative-memory">
       <button
@@ -62,6 +63,15 @@ export function RepresentativeMemory({ s, onPerson }: { s: State; onPerson: (p: 
       <div>
         <span className="memory-label">이전 장의 주인공</span>
         <h3>{p.name}</h3>
+        {life && <strong className="life-title">{life.title}</strong>}
+        {life && (
+          <p className="life-facts">
+            대표로 {life.to - life.from}년 · 선택 {life.choices}번 · 재산{' '}
+            {life.wealthChange >= 0 ? '+' : '−'}
+            {Math.abs(Math.round(life.wealthChange))}
+            {life.debt >= 1 ? ` · 남긴 빚 ${Math.round(life.debt)}` : ''}
+          </p>
+        )}
         <p>
           {p.born}–{p.died ?? s.year}년 · {p.sex === '여' ? '여성' : '남성'} · {p.job}
         </p>

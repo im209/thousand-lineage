@@ -1,5 +1,5 @@
 import { EarnedEndings } from '../chronicle-panels';
-import { canContinueFuture, summary, type State } from '../engine';
+import { canContinueFuture, livingHeadTitle, summary, type State } from '../engine';
 import { endings } from '../endings';
 import { RecordShelf } from '../progression-panels';
 import { recordedEndingFor, type RunRecords } from '../records';
@@ -25,6 +25,8 @@ export function EndingCard({
 }) {
   const result = summary(s);
   const ending = recordedEndingFor(s, records);
+  const lives = s.lives ?? [];
+  const nowTitle = livingHeadTitle(s);
   return (
     <div className="event ending">
       <p className="eyebrow">終章 · {ending.title}</p>
@@ -60,6 +62,32 @@ export function EndingCard({
         <br />
         거주 기록: {s.moves.join(' → ')}
       </p>
+      {(lives.length > 0 || nowTitle) && (
+        <details className="lives-roll" open={lives.length <= 6}>
+          <summary>이 가문을 이끈 사람들 · {lives.length + (nowTitle ? 1 : 0)}명</summary>
+          <ul className="era-lives">
+            {lives.map(l => (
+              <li key={l.id}>
+                <b>
+                  {s.people[l.id].name}{' '}
+                  <small>
+                    {l.from}–{l.to}
+                  </small>
+                </b>
+                <span>{l.title}</span>
+              </li>
+            ))}
+            {nowTitle && (
+              <li>
+                <b>
+                  {s.people[s.head].name} <small>지금의 대표</small>
+                </b>
+                <span>{nowTitle}</span>
+              </li>
+            )}
+          </ul>
+        </details>
+      )}
       <button className="ending-gallery-link" onClick={onShowEndings}>
         발견한 결말 도감 보기 ↗
       </button>

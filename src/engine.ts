@@ -9,6 +9,7 @@
 //   core/actions.ts         project rewards, surprises, exams, exam journeys
 //   core/choose.ts          resolving a choice and passing the years
 //   core/chapters.ts        eras: the story pauses with a summary at each era boundary
+//   core/lives.ts           what each head did, and how they are remembered when they die
 //   core/lifecycle.ts       new family, succession, future continuation
 export type { Person, TurnReport, State } from './core/state';
 export { rand, log } from './core/state';
@@ -23,6 +24,8 @@ export {
 export { choose } from './core/choose';
 export { chapters, chapterOf, chapterEnding, chapterSummary, closesChapter } from './core/chapters';
 export type { Chapter } from './core/chapters';
+export { lifeOf, deedTitle, livingHeadTitle } from './core/lives';
+export type { Life } from './core/lives';
 export {
   create,
   beginStory,

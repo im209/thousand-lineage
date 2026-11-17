@@ -147,6 +147,17 @@ export function decodeSave(raw: string | null): State | null {
     if (s.chapterEnd !== undefined && (s.chapterEnd !== s.year || !closesChapter(s.year)))
       return null;
     if (!validSurprise(s, s.surprise) || !validJourney(s, s.journey)) return null;
+    if (s.tenure !== undefined && (!record(s.tenure) || !s.people[s.tenure.head])) return null;
+    if (
+      s.lives !== undefined &&
+      !(
+        Array.isArray(s.lives) &&
+        s.lives.every(
+          (l: unknown) => record(l) && typeof l.title === 'string' && !!s.people[l.id as string],
+        )
+      )
+    )
+      return null;
     if (
       s.introPending &&
       (s.year !== 1392 ||

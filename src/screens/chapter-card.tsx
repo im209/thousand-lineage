@@ -7,6 +7,7 @@ export function ChapterCard({ s, onContinue }: { s: State; onContinue: () => voi
   const next = chapterOf(closed.to);
   const result = chapterSummary(s, closed);
   const head = s.people[s.head];
+  const lives = (s.lives ?? []).filter(l => l.to > closed.from && l.to <= closed.to);
   return (
     <div className="event ending chapter-end">
       <p className="eyebrow">
@@ -36,6 +37,16 @@ export function ChapterCard({ s, onContinue }: { s: State; onContinue: () => voi
           <b>{result.living}명</b>살아 있는 후손
         </div>
       </div>
+      {lives.length > 0 && (
+        <ul className="era-lives" aria-label="이 시대를 산 사람들">
+          {lives.map(l => (
+            <li key={l.id}>
+              <b>{s.people[l.id].name}</b>
+              <span>{l.title}</span>
+            </li>
+          ))}
+        </ul>
+      )}
       {next && (
         <p>
           다음 시대 · <b>{next.title}</b> ({next.from}–{next.to}년)

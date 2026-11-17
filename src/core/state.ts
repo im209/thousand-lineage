@@ -8,6 +8,7 @@ import type { ProjectState } from '../projects';
 import type { ChallengeBenchmark } from '../share-links';
 import type { Society } from '../society';
 import type { SurpriseState } from '../surprises';
+import type { Life, Tenure } from './lives';
 
 export type Person = {
   intendedJob?: 'trade' | 'study';
@@ -56,6 +57,10 @@ export type State = {
   endless?: boolean;
   challenge?: ChallengeBenchmark;
   introPending?: boolean;
+  /** What the current head has chosen and achieved so far. */
+  tenure?: Tenure;
+  /** Former heads, in order, as the family remembers them. */
+  lives?: Life[];
   /** Set when an era just closed: the year it closed. The era summary shows until dismissed. */
   chapterEnd?: number;
   chronicles?: ChronicleState;

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { clans } from './data';
-import type { Person, State } from './engine';
+import { lifeOf, type Person, type State } from './engine';
 import { Avatar } from './game-panels';
 import { parentNames } from './parentage';
 export function PersonDialog({ p, s, onClose }: { p: Person; s: State; onClose: () => void }) {
@@ -50,6 +50,7 @@ export function PersonDialog({ p, s, onClose }: { p: Person; s: State; onClose: 
           창시자로부터 {p.generation}세대 · {clans[p.clan].label}
         </p>
         <h2 id="person-name">{p.name}</h2>
+        {lifeOf(s, p.id) && <strong className="life-title">{lifeOf(s, p.id)!.title}</strong>}
         <p>
           {p.born}–{p.died ?? '현재'} · {p.sex === '남' ? '남성' : '여성'} · {p.job} · {p.region}
         </p>

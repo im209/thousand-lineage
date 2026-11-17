@@ -940,3 +940,51 @@ footer {
     scroll-behavior: auto !important;
   }
 }
+
+/* How a former head is remembered (succession screen, era summary). */
+.life-title {
+  display: inline-block;
+  margin: 4px 0 6px;
+  padding: 4px 10px;
+  border: var(--px-thin);
+  background: var(--px-gold-soft);
+  color: var(--px-ink);
+  font-family: var(--px-font, inherit);
+}
+.life-facts {
+  color: var(--px-muted);
+  font-size: 0.9rem;
+}
+.era-lives {
+  list-style: none;
+  margin: 18px 0;
+  padding: 0;
+  border: var(--px-thin);
+  background: var(--px-panel);
+}
+.era-lives li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--px-paper);
+}
+.era-lives li:last-child {
+  border-bottom: 0;
+}
+.era-lives span {
+  color: var(--px-ink-soft);
+  text-align: right;
+}
+.lives-roll {
+  margin: 18px 0;
+  text-align: left;
+}
+.lives-roll summary {
+  cursor: pointer;
+  font-family: var(--px-font, inherit);
+}
+.era-lives small {
+  color: var(--px-muted);
+  font-weight: normal;
+}

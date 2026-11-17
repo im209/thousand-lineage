@@ -15,6 +15,7 @@ import {
   takeExam,
 } from './actions';
 import { annual } from './annual';
+import { achievedSoFar, closeLife, noteChoice, startTenure } from './lives';
 import { chapterEnding, closesChapter } from './chapters';
 import {
   choiceAvailable,
@@ -174,6 +175,8 @@ export function choose(state: State, index: number): State {
     e = currentEvent(s),
     c = e.choices[index];
   if (!c) return state;
+  if (s.tenure?.head !== s.head) startTenure(s); // saves from before lives were tracked
+  const deedsBefore = achievedSoFar(s);
   const before = { ...s.stats },
     from = s.year,
     logStart = s.log.length,
@@ -201,6 +204,8 @@ export function choose(state: State, index: number): State {
 
   passYears(s, e, c, startingJourney || journeyDeath);
   if (s.phase !== 'ended') advanceProject(s, c, false);
+  noteChoice(s, c, deedsBefore);
+  closeLife(s, journeyDeath);
   if (s.stats.wealth > s.peak.wealth) s.peak = { year: s.year, wealth: s.stats.wealth };
   if (s.phase === 'play') {
     const pending = s.surprise as SurpriseState | undefined;
