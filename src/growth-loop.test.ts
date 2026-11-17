@@ -83,7 +83,7 @@ describe('a readable growth loop', () => {
     for (let seed = 1; seed <= 20; seed++) {
       const s = selectProject(create(seed, 0, 'commoner'), 'trade');
       s.projects!.progress.trade = 3;
-      s.stats.connections = 54;
+      s.stats.connections = 54.9; // a marriage (+2) must outweigh a few years of upkeep
       const next = choose(s, 0);
       if (next.phase !== 'ended' && next.stats.connections >= 55) {
         reached = true;

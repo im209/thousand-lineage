@@ -72,6 +72,19 @@ function livePeopleYear(s: State) {
   }
 }
 
+/**
+ * What a family has must be tended. Each year every stat loses UPKEEP_RATE of whatever it
+ * holds above UPKEEP_BASE, so a family can keep a few strengths high but not everything.
+ */
+export const UPKEEP_BASE = 35;
+export const UPKEEP_RATE = 0.015;
+function tendStats(s: State) {
+  for (const k of Object.keys(s.stats) as (keyof State['stats'])[])
+    if (k !== 'wealth')
+      // wealth is already spent by choices, debts and status burdens
+      s.stats[k] -= Math.max(0, s.stats[k] - UPKEEP_BASE) * UPKEEP_RATE;
+}
+
 /** Debt grows 1% a year but interest alone never pushes it past DEBT_CEILING. */
 export const DEBT_CEILING = 100;
 const growDebt = (debt: number) =>
@@ -80,7 +93,8 @@ const growDebt = (debt: number) =>
 /** Wealth drifts, stability follows wealth, debt repays from wealth above 15 and grows 1% a year. */
 function householdYear(s: State) {
   s.stats.wealth = clamp(s.stats.wealth + (rand(s) - 0.52) * 3 + (s.stats.education - 50) * 0.004);
-  s.stats.stability = clamp(s.stats.stability + (s.stats.wealth - 50) * 0.012);
+  // Livelihood improves while wealth is above a modest 30 and erodes below it.
+  s.stats.stability = clamp(s.stats.stability + (s.stats.wealth - 30) * 0.012);
   if (s.debt > 0) {
     const repayment = Math.min(s.debt, Math.max(0, s.stats.wealth - 15) * 0.08);
     s.stats.wealth = clamp(s.stats.wealth - repayment);
@@ -89,6 +103,7 @@ function householdYear(s: State) {
     s.stats.stability = clamp(s.stats.stability - Math.min(1, s.debt * 0.015));
   }
   s.stats.health = clamp(s.stats.health + (s.stats.stability - 50) * 0.006);
+  tendStats(s);
   if (s.stats.wealth > s.peak.wealth) s.peak = { year: s.year, wealth: s.stats.wealth };
 }
 

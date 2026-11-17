@@ -169,8 +169,8 @@ const choices: Choice[] = [
   },
   {
     title: '새로운 생업을 개척한다',
-    description: '재산 +8 · 생계 −5 · 상업 경험을 전승',
-    effects: { wealth: 8, stability: -5, connections: 4 },
+    description: '재산 +12 · 생계 −5 · 상업 경험을 전승',
+    effects: { wealth: 12, stability: -5, connections: 4 },
     legacy: 'trade',
     job: 'trade',
   },
@@ -185,8 +185,8 @@ const war: Choice[] = [
   },
   {
     title: '고향에서 생계를 지킨다',
-    description: '재산 +4 · 지역에 따라 생활환경 손실',
-    effects: { wealth: 4, health: -12, stability: -10 },
+    description: '재산 +6 · 지역에 따라 생활환경 손실',
+    effects: { wealth: 6, health: -12, stability: -10 },
     legacy: 'land',
   },
   {
@@ -220,8 +220,8 @@ export const events: Event[] = [
       },
       {
         title: '새로운 생업의 기회를 찾는다',
-        description: '재산 +8 · 연결 +5',
-        effects: { wealth: 8, connections: 5 },
+        description: '재산 +12 · 연결 +5',
+        effects: { wealth: 12, connections: 5 },
         socialAction: 'civic',
       },
       {
@@ -278,8 +278,8 @@ export const events: Event[] = [
     choices: [
       {
         title: '지출을 줄여 생활을 지킨다',
-        description: '재산 +5 · 결속 −5 · 안정 +5',
-        effects: { wealth: 5, cohesion: -5, stability: 5 },
+        description: '재산 +8 · 결속 −5 · 안정 +5',
+        effects: { wealth: 8, cohesion: -5, stability: 5 },
         legacy: 'care',
       },
       {

@@ -85,7 +85,7 @@ const businessCrisis: Variant = (s, e) => {
 const legacyBonus: Record<string, Partial<Record<Stat, number>>> = {
   learning: { education: 10 },
   migration: { stability: 10 },
-  trade: { wealth: 10 },
+  trade: { wealth: 15 },
   community: { connections: 10, reputation: 5 },
 };
 
@@ -102,8 +102,8 @@ const inheritedLegacy: Variant = (_s, e) => ({
     },
     {
       title: '당장의 생활에 힘을 보탠다',
-      description: '재산 +6 · 생계 +6',
-      effects: { wealth: 6, stability: 6 },
+      description: '재산 +9 · 생계 +6',
+      effects: { wealth: 9, stability: 6 },
     },
     {
       title: '다음 세대의 배움에 투자한다',

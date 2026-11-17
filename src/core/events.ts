@@ -32,7 +32,7 @@ export function turnYears(s: State) {
 }
 
 export const needsDebtRecovery = (s: State) =>
-  s.debt >= DEBT_RECOVERY_LEVEL && !s.seen.slice(-3).includes('life8');
+  s.debt >= DEBT_RECOVERY_LEVEL && !s.seen.slice(-6).includes('life8');
 
 /** Gyeongsang-do takes 1.4× losses in the 1592 war event. */
 export const warLossMultiplier = (s: State, eventId: string) =>
@@ -62,14 +62,18 @@ export function nextEvent(s: State): Event {
   const hasChild = livingLineage(s).some(p => isMinor(s, p));
   const pool = events.filter(
     e =>
-      /^life[0-7]$/.test(e.id) &&
+      /^life\d+$/.test(e.id) &&
+      e.id !== 'life8' && // debt recovery has its own trigger
       e.min <= s.year &&
       e.max >= s.year &&
       (e.id !== 'life2' || hasChild) &&
       (e.id !== 'life7' || s.stats.wealth < 65 || s.stats.stability < 65),
   );
-  const fresh = pool.filter(e => !s.seen.slice(-3).includes(e.id));
-  const eligible = fresh.length ? fresh : pool;
+  // A head meets each everyday event once; only when all are used does one come back.
+  const faced = s.tenure?.head === s.head ? (s.tenure.events ?? []) : [];
+  const unmet = pool.filter(e => !faced.includes(e.id));
+  const fresh = pool.filter(e => !s.seen.slice(-6).includes(e.id));
+  const eligible = unmet.length ? unmet : fresh.length ? fresh : pool;
   // Two tickets for a project-relevant event, one for other eligible family events.
   return pick(
     s,

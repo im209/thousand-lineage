@@ -140,17 +140,17 @@ export const surpriseEvents: Event[] = [
     description:
       '날씨가 도와 곳간이 넘칠 만큼 수확이 좋았습니다. 남는 것을 어디에 쓸지 정할 수 있습니다.',
     choices: [
-      option('곳간을 채워 둔다', '재산 +12', { wealth: 12 }),
+      option('곳간을 채워 둔다', '재산 +18', { wealth: 18 }),
       option(
         '잔치를 열어 이웃과 나눈다',
-        '재산 +3 · 명성 +8 · 연결 +6',
-        { wealth: 3, reputation: 8, connections: 6 },
+        '재산 +5 · 명성 +8 · 연결 +6',
+        { wealth: 5, reputation: 8, connections: 6 },
         { legacy: 'community' },
       ),
       option(
         '아이들의 배움에 쓴다',
-        '재산 +4 · 교육 +10',
-        { wealth: 4, education: 10 },
+        '재산 +6 · 교육 +10',
+        { wealth: 6, education: 10 },
         { legacy: 'learning' },
       ),
     ],
@@ -171,8 +171,8 @@ export const surpriseEvents: Event[] = [
       ),
       option(
         '사업 밑천을 빌린다',
-        '재산 +10 · 연결 +4',
-        { wealth: 10, connections: 4 },
+        '재산 +15 · 연결 +4',
+        { wealth: 15, connections: 4 },
         { legacy: 'trade' },
       ),
     ],

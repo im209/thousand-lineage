@@ -11,6 +11,8 @@ export type Tenure = {
   choices: number;
   tally: Record<string, number>;
   deeds: string[];
+  /** Everyday events this head has already faced, so one life does not repeat them. */
+  events?: string[];
 };
 export type Life = {
   id: string;
@@ -86,10 +88,11 @@ export function startTenure(s: State) {
 }
 
 /** Counts a choice for the head who made it. Call with the deeds known before the choice. */
-export function noteChoice(s: State, c: Choice, before: readonly string[]) {
+export function noteChoice(s: State, c: Choice, before: readonly string[], eventId: string) {
   const t = s.tenure;
   if (!t) return;
   t.choices++;
+  (t.events ??= []).push(eventId);
   if (c.legacy) t.tally[c.legacy] = (t.tally[c.legacy] ?? 0) + 1;
   for (const id of achievedSoFar(s))
     if (!before.includes(id) && !t.deeds.includes(id) && deedTitle(id)) t.deeds.push(id);

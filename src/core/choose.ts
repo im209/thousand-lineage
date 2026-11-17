@@ -207,7 +207,7 @@ export function choose(state: State, index: number): State {
   const ledger = s.ledger;
   delete s.ledger;
   if (s.phase !== 'ended') advanceProject(s, c, false);
-  noteChoice(s, c, deedsBefore);
+  noteChoice(s, c, deedsBefore, e.id);
   closeLife(s, journeyDeath);
   if (s.stats.wealth > s.peak.wealth) s.peak = { year: s.year, wealth: s.stats.wealth };
   if (s.phase === 'play') {

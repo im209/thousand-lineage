@@ -87,16 +87,16 @@ export function projectChoice(eventId: string): Choice | undefined {
   if (eventId === 'life0')
     return {
       title: '단골 거래를 꾸준히 이어 간다',
-      description: '재산 +7 · 연결 +3 · 결속 −2',
-      effects: { wealth: 7, connections: 3, cohesion: -2 },
+      description: '재산 +11 · 연결 +3 · 결속 −2',
+      effects: { wealth: 11, connections: 3, cohesion: -2 },
       legacy: 'trade',
       unlock: 'trade',
     };
   if (eventId === 'life3')
     return {
       title: '믿을 만한 거래처와 수익을 나눈다',
-      description: '재산 +6 · 연결 +5',
-      effects: { wealth: 6, connections: 5 },
+      description: '재산 +9 · 연결 +5',
+      effects: { wealth: 9, connections: 5 },
       legacy: 'trade',
       unlock: 'trade',
     };

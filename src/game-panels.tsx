@@ -332,7 +332,7 @@ export function TurnResult({
             ))}
         </div>
         <p className="tiny">
-          큰 숫자는 경과 기간 전체의 변화입니다. 선택 직후 변화와 이후 생활·상환을 함께 반영합니다.
+          큰 숫자는 그동안 전체의 변화예요. 높이 쌓은 것은 돌보지 않으면 해마다 조금씩 내려갑니다.
         </p>
         <WealthBreakdown r={r} />
         {s.surprise && s.phase === 'play' && (

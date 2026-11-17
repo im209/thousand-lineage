@@ -107,7 +107,7 @@ describe('family projects', () => {
       completed: ['trade'],
     };
     expect(choiceAvailable(s, 3)).toBe(true);
-    expect(choose(s, 3).report!.immediate.wealth).toBe(6);
+    expect(choose(s, 3).report!.immediate.wealth).toBe(9);
     s.event = 'life0';
     expect(choiceAvailable(s, 3)).toBe(true);
     expect(choiceAvailable(s, 4)).toBe(false);
@@ -219,7 +219,7 @@ describe('debt recovery decisions', () => {
     expect(choose(s, 0).debt).toBe(0);
     expect(choose(s, 1).debt).toBe(0);
   });
-  it('offers recovery at the threshold with a three-event cooldown and preserves history priority', () => {
+  it('offers recovery at the threshold with a six-event cooldown and preserves history priority', () => {
     const s = stoppedFixture();
     s.event = 'life0';
     s.debt = 25;
@@ -229,7 +229,7 @@ describe('debt recovery decisions', () => {
     s.debt = 25;
     s.seen = ['life8'];
     expect(choose(s, 0).event).not.toBe('life8');
-    s.seen = ['life8', 'life1', 'life3'];
+    s.seen = ['life8', 'life1', 'life3', 'life4', 'life5', 'life6'];
     expect(choose(s, 0).event).toBe('life8');
     const historical = create(42);
     historical.year = 1589;
