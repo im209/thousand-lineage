@@ -192,7 +192,7 @@ export function choose(state: State, index: number): State {
       s,
       '부족한 재산 ' +
         borrowed.toFixed(1) +
-        '점을 빌렸습니다. 남은 부채는 해마다 1% 증가하며 여유 자산에서 상환합니다.',
+        '점을 빌렸습니다. 빚은 해마다 1%씩 늘고, 재산이 15를 넘으면 조금씩 갚습니다.',
       'economy',
     );
 
@@ -202,7 +202,10 @@ export function choose(state: State, index: number): State {
   advanceProject(s, c);
   const immediate = statDelta(before, s);
 
+  s.ledger = { repaid: 0, upkeep: 0 };
   passYears(s, e, c, startingJourney || journeyDeath);
+  const ledger = s.ledger;
+  delete s.ledger;
   if (s.phase !== 'ended') advanceProject(s, c, false);
   noteChoice(s, c, deedsBefore);
   closeLife(s, journeyDeath);
@@ -228,6 +231,8 @@ export function choose(state: State, index: number): State {
     changes: statDelta(before, s),
     immediate,
     borrowed,
+    repaid: ledger.repaid,
+    upkeep: ledger.upkeep,
     debtBefore,
     debtAfter: s.debt,
     entries: s.log.slice(logStart),

@@ -79,7 +79,10 @@ export function addChild(s: State, parent: Person, partner: Person, how: string)
   child.education = clamp(s.stats.education * 0.5 + parent.education * 0.5);
   parent.children.push(child.id);
   partner.children.push(child.id);
-  child.life.push({ year: s.year, text: `${parent.name}와 ${partner.name}의 ${how}로 태어남` });
+  child.life.push({
+    year: s.year,
+    text: `${withParticle(parent.name, '과/와')} ${partner.name}의 ${how}로 태어남`,
+  });
   return child;
 }
 

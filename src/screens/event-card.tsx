@@ -82,7 +82,8 @@ export function EventCard({ s, onChoose }: { s: State; onChoose: (index: number)
               )}
               {available && cost > s.stats.wealth && (
                 <small className="borrow-label">
-                  부족액 {(cost - s.stats.wealth).toFixed(1)}점은 부채로 조달 · 연 1%
+                  가진 재산 {s.stats.wealth.toFixed(1)} · 모자란{' '}
+                  {(cost - s.stats.wealth).toFixed(1)}은 빚으로 (해마다 1%씩 늘어요)
                 </small>
               )}
             </span>

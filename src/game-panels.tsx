@@ -102,6 +102,39 @@ export function QuickStats({ s }: { s: State }) {
     </div>
   );
 }
+/** Explains the wealth number: the choice itself, debt repaid, status upkeep, everything else. */
+function WealthBreakdown({ r }: { r: NonNullable<State['report']> }) {
+  const signed = (n: number) => (n >= 0 ? '+' : '−') + Math.abs(n).toFixed(1);
+  const total = r.changes.wealth ?? 0,
+    choice = r.immediate.wealth ?? 0,
+    repaid = r.repaid ?? 0,
+    upkeep = r.upkeep ?? 0,
+    rest = total - choice + repaid + upkeep;
+  const parts = [
+    ['이번 선택', choice],
+    ['빚 갚음', -repaid],
+    [upkeep >= 0 ? '신분에 따른 부담' : '관직 수입', -upkeep],
+    ['그동안의 살림', rest],
+  ].filter(([, v]) => Math.abs(v as number) >= 0.05) as [string, number][];
+  const debtChanged = r.borrowed > 0 || r.debtBefore > 0 || r.debtAfter > 0;
+  if (Math.abs(total) < 0.5 && !debtChanged) return null;
+  return (
+    <div className="debt-note wealth-breakdown">
+      {parts.length > 0 && (
+        <p>
+          <b>재산 {signed(total)}</b> ={' '}
+          {parts.map(([label, v]) => `${label} ${signed(v)}`).join(' · ')}
+        </p>
+      )}
+      {debtChanged && (
+        <p>
+          <b>빚 {r.debtAfter.toFixed(1)}</b> (전에는 {r.debtBefore.toFixed(1)}
+          {r.borrowed > 0 ? ` · 이번에 빌린 돈 ${r.borrowed.toFixed(1)}` : ''})
+        </p>
+      )}
+    </div>
+  );
+}
 export function TurnResult({
   s,
   onContinue,
@@ -301,12 +334,7 @@ export function TurnResult({
         <p className="tiny">
           큰 숫자는 경과 기간 전체의 변화입니다. 선택 직후 변화와 이후 생활·상환을 함께 반영합니다.
         </p>
-        {r.borrowed > 0 && (
-          <p className="debt-note">
-            부족한 재산 {r.borrowed.toFixed(1)}점을 빌렸습니다. 현재 부채 {r.debtAfter.toFixed(1)}점
-            · 연 1%의 게임 규칙이 적용됩니다.
-          </p>
-        )}
+        <WealthBreakdown r={r} />
         {s.surprise && s.phase === 'play' && (
           <div className="surprise-notice" role="status">
             <b>!</b>

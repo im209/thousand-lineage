@@ -72,6 +72,11 @@ function livePeopleYear(s: State) {
   }
 }
 
+/** Debt grows 1% a year but interest alone never pushes it past DEBT_CEILING. */
+export const DEBT_CEILING = 100;
+const growDebt = (debt: number) =>
+  debt >= DEBT_CEILING ? debt : Math.min(DEBT_CEILING, debt * 1.01);
+
 /** Wealth drifts, stability follows wealth, debt repays from wealth above 15 and grows 1% a year. */
 function householdYear(s: State) {
   s.stats.wealth = clamp(s.stats.wealth + (rand(s) - 0.52) * 3 + (s.stats.education - 50) * 0.004);
@@ -79,7 +84,8 @@ function householdYear(s: State) {
   if (s.debt > 0) {
     const repayment = Math.min(s.debt, Math.max(0, s.stats.wealth - 15) * 0.08);
     s.stats.wealth = clamp(s.stats.wealth - repayment);
-    s.debt = Math.max(0, s.debt - repayment) * 1.01;
+    if (s.ledger) s.ledger.repaid += repayment;
+    s.debt = growDebt(Math.max(0, s.debt - repayment));
     s.stats.stability = clamp(s.stats.stability - Math.min(1, s.debt * 0.015));
   }
   s.stats.health = clamp(s.stats.health + (s.stats.stability - 50) * 0.006);
@@ -88,7 +94,9 @@ function householdYear(s: State) {
 
 export function annual(s: State) {
   s.year++;
+  const beforeUpkeep = s.stats.wealth;
   societyAnnual(s);
+  if (s.ledger) s.ledger.upkeep += beforeUpkeep - s.stats.wealth;
   livePeopleYear(s);
   retireOffice(s);
   householdYear(s);

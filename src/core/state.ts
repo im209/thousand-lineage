@@ -46,6 +46,9 @@ export type TurnReport = {
   changes: Partial<Record<Stat, number>>;
   immediate: Partial<Record<Stat, number>>;
   borrowed: number;
+  /** Where wealth went while the years passed: debt repaid, status upkeep (minus office income). */
+  repaid?: number;
+  upkeep?: number;
   debtBefore: number;
   debtAfter: number;
   entries: LogEntry[];
@@ -57,6 +60,8 @@ export type State = {
   endless?: boolean;
   challenge?: ChallengeBenchmark;
   introPending?: boolean;
+  /** Per-turn wealth bookkeeping; only exists while a choice is being resolved. */
+  ledger?: { repaid: number; upkeep: number };
   /** What the current head has chosen and achieved so far. */
   tenure?: Tenure;
   /** Former heads, in order, as the family remembers them. */
