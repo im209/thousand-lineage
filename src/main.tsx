@@ -1,6 +1,7 @@
 // App shell: header, which screen is showing, the person dialog, and the footer.
 // Each screen lives in ./screens; game rules live in ./engine (→ ./core).
 import './styles';
+import './dev-preview'; // must run before the store restores the save
 import React, { useState, useCallback, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useGame } from './store';

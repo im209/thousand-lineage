@@ -62,7 +62,10 @@ export function continueStory(state: State): State {
   if (!state.report && !state.chapterEnd) return state;
   const s = structuredClone(state);
   if (s.report) delete s.report;
-  else delete s.chapterEnd;
+  else {
+    delete s.chapterEnd;
+    delete s.eraDeeds; // the next era starts with a clean slate
+  }
   return s;
 }
 

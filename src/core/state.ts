@@ -72,6 +72,8 @@ export type State = {
   lives?: Life[];
   /** Set when an era just closed: the year it closed. The era summary shows until dismissed. */
   chapterEnd?: number;
+  /** Deeds achieved since the current era began; they decide that era's ending. */
+  eraDeeds?: string[];
   chronicles?: ChronicleState;
   society?: Society;
   runId?: string;

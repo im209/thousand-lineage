@@ -74,13 +74,16 @@ export const useGame = zustand<Store>((set, get) => {
         saved: false,
       });
     }
-    if (game.phase === 'ended') {
+    if (game.phase === 'ended' || game.chapterEnd) {
       const r = recordRun(game);
       set({ records: r.records, recordError: r.error });
     }
   };
   const initial = restore(),
-    r = initial.game?.phase === 'ended' ? recordRun(initial.game) : readRecords();
+    r =
+      initial.game?.phase === 'ended' || initial.game?.chapterEnd
+        ? recordRun(initial.game)
+        : readRecords();
   return {
     ...initial,
     records: r.records,

@@ -1,12 +1,24 @@
 import { chapterEnding, chapterOf, chapterSummary, type State } from '../engine';
+import { recordedEraEnding, type RunRecords } from '../records';
 
 /** Shown when an era closes: what the family lived through, and the era that comes next. */
-export function ChapterCard({ s, onContinue }: { s: State; onContinue: () => void }) {
+export function ChapterCard({
+  s,
+  records,
+  onContinue,
+  onShowEndings,
+}: {
+  s: State;
+  records: RunRecords;
+  onContinue: () => void;
+  onShowEndings: () => void;
+}) {
   const closed = chapterEnding(s.chapterEnd ?? s.year);
   if (!closed) return null;
   const next = chapterOf(closed.to);
   const result = chapterSummary(s, closed);
   const head = s.people[s.head];
+  const ending = recordedEraEnding(s, records);
   const lives = (s.lives ?? []).filter(l => l.to > closed.from && l.to <= closed.to);
   return (
     <div className="event ending chapter-end">
@@ -23,6 +35,8 @@ export function ChapterCard({ s, onContinue }: { s: State; onContinue: () => voi
           ? `${head.name}의 가족이 다음 시대의 문 앞에 섰습니다.`
           : '남은 가족이 다음 시대의 문 앞에 섰습니다.'}
       </p>
+      <span className="ending-badge">이 시대의 결말 · {ending.title}</span>
+      <p className="ending-description">{ending.description}</p>
       <div className="result-grid">
         <div>
           <b>{result.heads}명</b>이 시대의 대표
@@ -57,6 +71,9 @@ export function ChapterCard({ s, onContinue }: { s: State; onContinue: () => voi
           다음 시대로 →
         </button>
       </div>
+      <button className="ending-gallery-link" onClick={onShowEndings}>
+        결말 도감에 기록됨 · 보러 가기 ↗
+      </button>
       <p className="tiny">여기서 쉬어 가도 돼요. 자동 저장됩니다.</p>
     </div>
   );

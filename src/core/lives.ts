@@ -94,8 +94,11 @@ export function noteChoice(s: State, c: Choice, before: readonly string[], event
   t.choices++;
   (t.events ??= []).push(eventId);
   if (c.legacy) t.tally[c.legacy] = (t.tally[c.legacy] ?? 0) + 1;
-  for (const id of achievedSoFar(s))
-    if (!before.includes(id) && !t.deeds.includes(id) && deedTitle(id)) t.deeds.push(id);
+  for (const id of achievedSoFar(s)) {
+    if (before.includes(id)) continue;
+    if (!t.deeds.includes(id) && deedTitle(id)) t.deeds.push(id);
+    if (!(s.eraDeeds ??= []).includes(id)) s.eraDeeds.push(id);
+  }
 }
 
 function titleFor(s: State, t: Tenure, diedOnRoad: boolean, alive = false) {

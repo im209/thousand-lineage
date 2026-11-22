@@ -21,6 +21,11 @@ test('an era closes with a summary, then the story continues with the same famil
   const card = page.locator('.chapter-end');
   await expect(card).toContainText('조선 전기');
   await expect(card).toContainText('다음 시대 · 전란의 시대');
+  await expect(card).toContainText('이 시대의 결말 · 시대를 건넌 가문');
+  const records = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('thousand-lineage-records-v1')!),
+  );
+  expect(records.recent[0]).toMatchObject({ endedYear: 1550, endingId: 'survivor' });
   await expect(page.locator('.choice')).toHaveCount(0);
   await page.screenshot({
     path: `test-results/${info.project.name}-chapter-end.png`,

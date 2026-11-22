@@ -156,6 +156,7 @@ export function decodeSave(raw: string | null): State | null {
     )
       return null;
     if (s.introPending !== undefined && typeof s.introPending !== 'boolean') return null;
+    if (s.eraDeeds !== undefined && !strings(s.eraDeeds)) return null;
     if (s.chapterEnd !== undefined && (s.chapterEnd !== s.year || !closesChapter(s.year)))
       return null;
     if (!validSurprise(s, s.surprise) || !validJourney(s, s.journey)) return null;

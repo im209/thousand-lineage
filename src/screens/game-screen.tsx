@@ -234,6 +234,8 @@ export function GameScreen({
               {!s.report && s.chapterEnd && (
                 <ChapterCard
                   s={s}
+                  records={records}
+                  onShowEndings={() => openTab('endings')}
                   onContinue={() => {
                     setOverview(false);
                     continueStory();

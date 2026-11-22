@@ -1,4 +1,4 @@
-import { endingFor, endings, type EndingId, type Ending } from './endings';
+import { endingFor, eraEnding, endings, type EndingId, type Ending } from './endings';
 import { summary, type State } from './engine';
 
 export type RecordedProject = 'learning' | 'trade' | 'care';
@@ -150,7 +150,7 @@ function legacyId(s: State) {
 // classification rules may expose more eligible titles without awarding them.
 export function recordedEndingFor(s: State, records: RunRecords): Ending {
   if (s.phase === 'ended') {
-    const id = s.runId || legacyId(s),
+    const id = runKey(s),
       record = records.recent.find(run => run.id === id);
     const ending = record?.endingId
       ? endings.find(ending => ending.id === record.endingId)
@@ -159,15 +159,27 @@ export function recordedEndingFor(s: State, records: RunRecords): Ending {
   }
   return endingFor(s);
 }
+/** An era that closed mid-story gets its own record, keyed by the run and the closing year. */
+const closedEra = (s: State) => (s.phase !== 'ended' && s.chapterEnd ? s.chapterEnd : undefined);
+function runKey(s: State) {
+  const base = s.runId || legacyId(s);
+  const era = closedEra(s);
+  return era ? `${base.slice(0, 110)}-era${era}` : base;
+}
+/** The ending this era actually collected (new rules never rename an old record). */
+export function recordedEraEnding(s: State, records: RunRecords): Ending {
+  const record = records.recent.find(run => run.id === runKey(s));
+  return endings.find(ending => ending.id === record?.endingId) ?? eraEnding(s);
+}
 export function recordRun(s: State): RecordsResult {
   const previous = readRecords();
-  if (s.phase !== 'ended') return previous;
+  if (s.phase !== 'ended' && !closedEra(s)) return previous;
   // Structural intersection also keeps this module compatible with old saves.
   const extra = s as State & { runId?: string; projects?: { completed: RecordedProject[] } };
-  const id = extra.runId || legacyId(s);
+  const id = runKey(s);
   const result = summary(s),
     completed = projectIds.filter(id => extra.projects?.completed.includes(id)),
-    ending = endingFor(s);
+    ending = closedEra(s) ? eraEnding(s) : endingFor(s);
   const existing = previous.records.recent.find(r => r.id === id);
   let records: RunRecords;
   if (existing) {

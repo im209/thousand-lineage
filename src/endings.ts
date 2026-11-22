@@ -279,6 +279,26 @@ export function eligibleEndings(s: State): Ending[] {
     if (s.projects?.completed.includes(id)) ids.push(id);
   return (ids.length ? ids : (['survivor'] as EndingId[])).map(lookup);
 }
+/**
+ * The ending of the era that just closed, decided only by what the family achieved during
+ * it. Same priority as the whole-story ending; an era with no deeds is 시대를 건넌 가문.
+ */
+export function eraEnding(s: State): Ending {
+  const deeds = s.eraDeeds ?? [];
+  const did = (id: string) => deeds.includes(id);
+  const ids: EndingId[] = [];
+  if (did('freed') && did('founder')) ids.push('freed_founder');
+  if (did('freed') && did('yangban')) ids.push('freed_gentry');
+  if (did('relief') && did('medicine')) ids.push('healing_community');
+  if (did('books') && (did('market') || did('caravan'))) ids.push('knowledge_road');
+  for (const id of ['founder', 'restored', 'kingmaker'] as const) if (did(id)) ids.push(id);
+  for (const id of [...deeds].reverse())
+    if (arcIds.includes(id as EndingId) && !ids.includes(id as EndingId)) ids.push(id as EndingId);
+  if (did('yangban') || did('court')) ids.push('gentry');
+  if (did('freed')) ids.push('freed');
+  for (const id of ['care', 'trade', 'learning'] as const) if (did('project-' + id)) ids.push(id);
+  return lookup(ids[0] ?? 'survivor');
+}
 // Classification never changes the phase, history, resources, or achievements.
 export function endingFor(s: State): Ending {
   return eligibleEndings(s)[0];

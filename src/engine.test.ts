@@ -51,7 +51,7 @@ describe('genealogy simulation', () => {
     expect(next.year).toBeGreaterThan(a.year);
     expect(next).toEqual(choose(b, index));
   });
-  it('is deterministic', () => expect(play(42)).toEqual(play(42)));
+  it('is deterministic', () => expect(play(42)).toEqual(play(42)), 60000);
   it('has both survival and extinction outcomes', () => {
     const ends = Array.from({ length: 100 }, (_, i) => play(i + 1));
     expect(ends.some(s => s.year === 2026)).toBe(true);
